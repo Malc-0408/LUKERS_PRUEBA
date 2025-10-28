@@ -1,1 +1,0 @@
-# LUKERS_PRUEBA
