@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1 id="resultado">Probando...</h1>
+    
+    <script>
+        const SUPABASE_URL = 'https://dzxjzmlmmmwspemihhlv.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6eGp6bWxtbW13c3BlbWloaGx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NjI5MjAsImV4cCI6MjA3OTEzODkyMH0.uLXtsONi_c4myPbsvTIqV51pldRv6Wuff4adYWgVR6Q';
+        
+        try {
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            document.getElementById('resultado').textContent = '✅ Supabase conectado correctamente';
+            console.log('Supabase:', supabase);
+        } catch (error) {
+            document.getElementById('resultado').textContent = '❌ Error: ' + error.message;
+            console.error(error);
+        }
+    </script>
+</body>
+</html>
