@@ -473,26 +473,6 @@
         .stat-icon.orange { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
         .stat-icon.red { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
 
-        .stat-trend {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-        }
-
-        .stat-trend.up {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .stat-trend.down {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
         .stat-value {
             font-size: 2.25rem;
             font-weight: 800;
@@ -1799,11 +1779,6 @@
                                     <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                     Crear Orden Manual
                                 </button>
-                                <button class="btn btn-outline" disabled style="opacity: 0.5; cursor: not-allowed; position: relative;" title="Función temporalmente deshabilitada">
-                                    <i data-lucide="cpu" style="width: 16px; height: 16px;"></i>
-                                    Modo Automático
-                                    <span style="position: absolute; top: -8px; right: -8px; background: orange; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">🚧</span>
-                                </button>
                             </div>
                         </div>
 
@@ -2224,7 +2199,7 @@
         </div>
     </div>
 
-    <!-- Modal: Reclasificación Inmediata (NO CERRABLE) -->
+    <!-- Modal: Reclasificación Inmediata (CERRABLE AHORA) -->
     <div id="modalReclasificacionInmediata" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -2232,6 +2207,9 @@
                     <i data-lucide="alert-circle" style="width: 24px; height: 24px; color: var(--warning);"></i>
                     Reclasificación Obligatoria
                 </h3>
+                <button class="modal-close" onclick="cancelarReclasificacionCompleta()">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-warning">
@@ -2297,6 +2275,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-outline" onclick="cancelarReclasificacionCompleta()">Cancelar Todo</button>
                 <button class="btn btn-primary" onclick="procesarReclasificacionInmediata()">
                     <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
                     <span id="btnTextoReclasificar">Siguiente</span>
@@ -2373,13 +2352,13 @@
     <!-- TOAST CONTAINER -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- JAVASCRIPT -->
     <script>
         // ============================================
-        // CONFIGURACIÓN SUPABASE
+        // CONFIGURACIÓN SUPABASE (ACTUALIZADA - CORREGIDA)
         // ============================================
         const SUPABASE_URL = 'https://dzxjzmlmmmwspemihhlv.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6eGp6bWxtbW13c3BlbWloaGx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE5NjIyNzEsImV4cCI6MjA0NzUzODI3MX0.Rq8GBPJye3sZBjEk4KXqxU6edr6RZععC6_LrzDyeE';
+        // ⚠️ IMPORTANTE: Reemplaza esta key con tu key válida de Supabase
+        const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY_AQUI';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================
@@ -2422,7 +2401,6 @@
 
         // Variables para gráficas
         let chartGeneros, chartEvolucion, chartEstados, chartTiendas;
-
         // ============================================
         // AUTENTICACIÓN
         // ============================================
@@ -2569,13 +2547,9 @@
         // NAVEGACIÓN
         // ============================================
         function cambiarVista(nombreVista) {
-            // Ocultar todas las vistas
             document.querySelectorAll('.vista').forEach(v => v.classList.remove('active'));
-            
-            // Mostrar vista seleccionada
             document.getElementById(`vista-${nombreVista}`).classList.add('active');
             
-            // Actualizar navegación
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
                 if (item.getAttribute('data-vista') === nombreVista) {
@@ -2583,7 +2557,6 @@
                 }
             });
             
-            // Actualizar header
             const titulos = {
                 'dashboard': 'Dashboard',
                 'inventario': 'Inventario',
@@ -2597,25 +2570,13 @@
             document.getElementById('headerTitle').textContent = titulos[nombreVista] || 'Sistema';
             document.getElementById('headerBreadcrumb').textContent = titulos[nombreVista] || 'Sistema';
             
-            // Reinicializar iconos de Lucide
             setTimeout(() => lucide.createIcons(), 100);
         }
-
-        // Event listeners para navegación
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const vista = item.getAttribute('data-vista');
-                    if (vista) cambiarVista(vista);
-                });
-            });
-        });
 
         // ============================================
         // DASHBOARD Y KPIs
         // ============================================
         function actualizarDashboard() {
-            // Stats básicos
             const variantesUnicas = new Set(inventario.map(i => i.variante)).size;
             const unidadesTotales = inventario.reduce((sum, i) => sum + (i.stock_fisico || 0), 0);
             const unidadesBloqueadas = inventario.reduce((sum, i) => sum + (i.stock_bloqueado || 0), 0);
@@ -2627,8 +2588,6 @@
             document.getElementById('statDisponibles').textContent = unidadesDisponibles.toLocaleString();
             document.getElementById('statBloqueadas').textContent = unidadesBloqueadas.toLocaleString();
             document.getElementById('statOrdenesActivas').textContent = ordenesActivas;
-            
-            // Badge en nav
             document.getElementById('badgeOrdenes').textContent = ordenesActivas;
         }
 
@@ -2653,8 +2612,8 @@
 
             ordenesCompletadas.forEach(orden => {
                 const dias = diasTranscurridos(orden.fecha);
-                totalDiasPicking += dias * 0.6; // Simulado: 60% del tiempo
-                totalDiasPacking += dias * 0.4; // Simulado: 40% del tiempo
+                totalDiasPicking += dias * 0.6;
+                totalDiasPacking += dias * 0.4;
                 
                 if (dias <= DIAS_EXPIRACION_ORDEN) ordenesATiempo++;
                 
@@ -3097,17 +3056,16 @@
                         stock_fisico: parseInt(row.StockFisico || 0)
                     })).filter(p => p.variante && p.ubicacion && p.stock_fisico >= 0);
 
-                    for (let i = 0; i < productos.length; i += BATCH_SIZE) {
-                        const batch = productos.slice(i, i + BATCH_SIZE);
-                        
-                        for (const prod of batch) {
-                            await supabase
-                                .from('inventario')
-                                .update({ stock_fisico: prod.stock_fisico })
-                                .eq('variante', prod.variante)
-                                .eq('ubicacion', prod.ubicacion);
-                        }
-                    }
+                    // CORRECCIÓN: Usar Promise.all para paralelizar
+                    const updates = productos.map(prod => 
+                        supabase
+                            .from('inventario')
+                            .update({ stock_fisico: prod.stock_fisico })
+                            .eq('variante', prod.variante)
+                            .eq('ubicacion', prod.ubicacion)
+                    );
+
+                    await Promise.all(updates);
 
                     ocultarLoading();
                     mostrarToast('Stock actualizado correctamente', 'success');
@@ -3148,13 +3106,25 @@
                         ubicacion: String(row.Ubicacion || '').trim().toUpperCase()
                     })).filter(p => p.variante && p.ubicacion);
 
-                    for (const prod of productos) {
-                        await supabase
+                    // CORRECCIÓN: Agregar progreso
+                    const total = productos.length;
+                    let procesados = 0;
+                    actualizarProgreso(0);
+
+                    // CORRECCIÓN: Usar Promise.all para paralelizar
+                    const deletes = productos.map(async (prod) => {
+                        const result = await supabase
                             .from('inventario')
                             .delete()
                             .eq('variante', prod.variante)
                             .eq('ubicacion', prod.ubicacion);
-                    }
+                        
+                        procesados++;
+                        actualizarProgreso((procesados / total) * 100);
+                        return result;
+                    });
+
+                    await Promise.all(deletes);
 
                     ocultarLoading();
                     mostrarToast(`${productos.length} productos eliminados`, 'success');
@@ -3203,15 +3173,6 @@
             dropdown.classList.toggle('active');
         }
 
-        // Cerrar dropdown al hacer clic fuera
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.dropdown-container')) {
-                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
-                    dropdown.classList.remove('active');
-                });
-            }
-        });
-
         // ============================================
         // PRODUCTOS SYSTEM
         // ============================================
@@ -3239,7 +3200,6 @@
                 productosFiltrados = productosFiltrados.filter(p => (p.talla || '').toString().toUpperCase() === tallaSeleccionada.toUpperCase());
             }
 
-            // Actualizar opciones de los selectores
             const generos = [...new Set(productosSystem.map(p => p.genero).filter(Boolean))].sort();
             const lineas = [...new Set(productosFiltrados.map(p => p.linea).filter(Boolean))].sort();
             const marcas = [...new Set(productosFiltrados.map(p => p.marca).filter(Boolean))].sort();
@@ -3365,15 +3325,13 @@
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet);
 
-                    // Limpiar tabla existente
                     const { error: deleteError } = await supabase
                         .from('productos_system')
                         .delete()
-                        .neq('variante', ''); // Elimina todo
+                        .neq('variante', '');
 
                     if (deleteError) throw deleteError;
 
-                    // Preparar productos
                     const productos = jsonData.map(row => ({
                         variante: String(row.variante || row.Variante || '').trim().toUpperCase(),
                         kardex: parseFloat(row.kardex || row.Kardex || 0),
@@ -3396,7 +3354,6 @@
                     const total = productos.length;
                     let procesados = 0;
 
-                    // Insertar por lotes
                     for (let i = 0; i < productos.length; i += BATCH_SIZE) {
                         const batch = productos.slice(i, i + BATCH_SIZE);
                         
@@ -3440,8 +3397,8 @@
             mostrarToast('Catálogo exportado correctamente', 'success');
         }
 
-// ============================================
-        // ÓRDENES
+        // ============================================
+        // ÓRDENES (CORREGIDO: bloqueo con validación DB)
         // ============================================
         function renderizarOrdenes() {
             const tbody = document.getElementById('tablaOrdenes');
@@ -3505,7 +3462,6 @@
                 document.getElementById('alertaOrdenesTexto').textContent = 
                     `${ordenesProximas.length} orden${ordenesProximas.length !== 1 ? 'es' : ''} próxima${ordenesProximas.length !== 1 ? 's' : ''} a expirar`;
                 
-                // Mostrar notificación
                 const notificationDot = document.getElementById('notificationDot');
                 if (notificationDot) notificationDot.style.display = 'block';
             } else {
@@ -3533,19 +3489,17 @@
                         return;
                     }
 
-                    // Consolidar hoja de ruta
                     const hojaRuta = consolidarHojaRuta(jsonData);
                     
-                    // Verificar disponibilidad y bloquear stock
-                    const resultadoBloqueo = await bloquearStockOrden(hojaRuta);
+                    // CORRECCIÓN: Verificar y bloquear con validación DB
+                    const resultadoBloqueo = await bloquearStockOrdenConValidacion(hojaRuta);
                     
                     if (!resultadoBloqueo.exito) {
                         ocultarLoading();
-                        mostrarToast('Stock insuficiente para algunos productos', 'error');
+                        mostrarToast(resultadoBloqueo.mensaje, 'error');
                         return;
                     }
 
-                    // Crear orden
                     const nuevaOrden = {
                         id: generarIdOrden(),
                         fecha: new Date().toISOString(),
@@ -3618,83 +3572,101 @@
             return Object.values(consolidado);
         }
 
-        async function bloquearStockOrden(hojaRuta) {
-            const actualizaciones = [];
+        // CORRECCIÓN: Bloqueo con validación en DB
+        async function bloquearStockOrdenConValidacion(hojaRuta) {
+            try {
+                for (const item of hojaRuta) {
+                    for (const ub of item.ubicaciones) {
+                        // Obtener stock actual directamente de DB
+                        const { data: itemDB, error } = await supabase
+                            .from('inventario')
+                            .select('*')
+                            .eq('variante', item.variante)
+                            .eq('ubicacion', ub.ubicacion)
+                            .single();
 
-            for (const item of hojaRuta) {
-                for (const ub of item.ubicaciones) {
-                    const itemInventario = inventario.find(i => 
-                        i.variante === item.variante && i.ubicacion === ub.ubicacion
-                    );
+                        if (error || !itemDB) {
+                            return { 
+                                exito: false, 
+                                mensaje: `No existe ${item.variante} en ${ub.ubicacion}` 
+                            };
+                        }
 
-                    if (!itemInventario) {
-                        return { exito: false, mensaje: `No existe ${item.variante} en ${ub.ubicacion}` };
+                        const disponible = (itemDB.stock_fisico || 0) - (itemDB.stock_bloqueado || 0);
+                        
+                        if (disponible < ub.cantidadSolicitada) {
+                            return { 
+                                exito: false, 
+                                mensaje: `Stock insuficiente para ${item.variante} en ${ub.ubicacion}. Disponible: ${disponible}, Solicitado: ${ub.cantidadSolicitada}` 
+                            };
+                        }
+
+                        // Actualizar con el nuevo stock bloqueado
+                        const nuevoStockBloqueado = (itemDB.stock_bloqueado || 0) + ub.cantidadSolicitada;
+                        
+                        const { error: updateError } = await supabase
+                            .from('inventario')
+                            .update({ stock_bloqueado: nuevoStockBloqueado })
+                            .eq('variante', item.variante)
+                            .eq('ubicacion', ub.ubicacion);
+
+                        if (updateError) throw updateError;
                     }
-
-                    const disponible = (itemInventario.stock_fisico || 0) - (itemInventario.stock_bloqueado || 0);
-                    
-                    if (disponible < ub.cantidadSolicitada) {
-                        return { exito: false, mensaje: `Stock insuficiente para ${item.variante} en ${ub.ubicacion}` };
-                    }
-
-                    actualizaciones.push({
-                        variante: item.variante,
-                        ubicacion: ub.ubicacion,
-                        nuevoStockBloqueado: (itemInventario.stock_bloqueado || 0) + ub.cantidadSolicitada
-                    });
                 }
-            }
 
-            // Aplicar bloqueos
-            for (const upd of actualizaciones) {
-                await supabase
-                    .from('inventario')
-                    .update({ stock_bloqueado: upd.nuevoStockBloqueado })
-                    .eq('variante', upd.variante)
-                    .eq('ubicacion', upd.ubicacion);
+                return { exito: true };
+            } catch (error) {
+                return { exito: false, mensaje: error.message };
             }
-
-            return { exito: true };
         }
 
+        // CORRECCIÓN: Liberar stock correctamente al eliminar
         async function eliminarOrden(ordenId) {
             if (!confirm('¿Eliminar esta orden? Se liberará el stock bloqueado.')) return;
 
             mostrarLoading('Eliminando orden...', 'Liberando stock');
 
-            const orden = ordenes.find(o => o.id === ordenId);
-            if (!orden) return;
+            try {
+                const orden = ordenes.find(o => o.id === ordenId);
+                if (!orden) return;
 
-            // Liberar stock bloqueado
-            for (const item of orden.items) {
-                for (const ub of item.ubicaciones) {
-                    const itemInventario = inventario.find(i => 
-                        i.variante === item.variante && i.ubicacion === ub.ubicacion
-                    );
-
-                    if (itemInventario) {
-                        const nuevoStockBloqueado = Math.max(0, (itemInventario.stock_bloqueado || 0) - ub.cantidadSolicitada);
-                        
-                        await supabase
+                // Liberar stock bloqueado
+                for (const item of orden.items) {
+                    for (const ub of item.ubicaciones) {
+                        // CORRECCIÓN: Obtener stock actual de DB
+                        const { data: itemDB } = await supabase
                             .from('inventario')
-                            .update({ stock_bloqueado: nuevoStockBloqueado })
+                            .select('*')
                             .eq('variante', item.variante)
-                            .eq('ubicacion', ub.ubicacion);
+                            .eq('ubicacion', ub.ubicacion)
+                            .single();
+
+                        if (itemDB) {
+                            const nuevoStockBloqueado = Math.max(0, (itemDB.stock_bloqueado || 0) - ub.cantidadSolicitada);
+                            
+                            await supabase
+                                .from('inventario')
+                                .update({ stock_bloqueado: nuevoStockBloqueado })
+                                .eq('variante', item.variante)
+                                .eq('ubicacion', ub.ubicacion);
+                        }
                     }
                 }
+
+                await supabase
+                    .from('ordenes')
+                    .delete()
+                    .eq('id', ordenId);
+
+                ocultarLoading();
+                mostrarToast('Orden eliminada', 'success');
+                await cargarOrdenes();
+                await cargarInventario();
+                actualizarDashboard();
+            } catch (error) {
+                ocultarLoading();
+                mostrarToast('Error: ' + error.message, 'error');
             }
-
-            // Eliminar orden
-            await supabase
-                .from('ordenes')
-                .delete()
-                .eq('id', ordenId);
-
-            ocultarLoading();
-            mostrarToast('Orden eliminada', 'success');
-            await cargarOrdenes();
-            await cargarInventario();
-            actualizarDashboard();
         }
 
         function verOrdenDetalle(ordenId) {
@@ -3938,10 +3910,8 @@
                         }
                     }
 
-                    // Generar hoja de packing sugerida
                     const hojaPacking = generarHojaPacking(orden, cantidadesEncontradas);
 
-                    // Actualizar orden
                     await supabase
                         .from('ordenes')
                         .update({
@@ -3971,7 +3941,6 @@
             for (const item of orden.items) {
                 const variante = item.variante;
                 
-                // Calcular totales
                 let totalSolicitado = 0;
                 let totalEncontrado = 0;
                 const distribucionOriginal = {};
@@ -3983,13 +3952,11 @@
                     totalSolicitado += ub.cantidadSolicitada;
                     totalEncontrado += encontrado;
 
-                    // Sumar distribución original por tienda
                     TIENDAS_LUKERS.forEach(tienda => {
                         distribucionOriginal[tienda] = (distribucionOriginal[tienda] || 0) + (ub.distribucion[tienda] || 0);
                     });
                 }
 
-                // Generar distribución proporcional
                 const distribucionAjustada = {};
                 
                 if (totalEncontrado > 0 && totalSolicitado > 0) {
@@ -3999,12 +3966,10 @@
                         distribucionAjustada[tienda] = Math.floor((distribucionOriginal[tienda] || 0) * factor);
                     });
 
-                    // Ajustar diferencia por redondeo
                     let sumaAjustada = Object.values(distribucionAjustada).reduce((a, b) => a + b, 0);
                     const diferencia = totalEncontrado - sumaAjustada;
                     
                     if (diferencia > 0) {
-                        // Asignar diferencia a la tienda con mayor solicitud original
                         const tiendaMayor = TIENDAS_LUKERS.reduce((prev, curr) => 
                             distribucionOriginal[curr] > distribucionOriginal[prev] ? curr : prev
                         );
@@ -4012,11 +3977,8 @@
                     }
                 }
 
-                // Obtener datos del producto
                 const producto = productosSystem.find(p => p.variante === variante);
                 const kardex = producto ? parseFloat(producto.kardex || 0) : 0;
-
-                // Encontrar primera ubicación (para referencia)
                 const primeraUbicacion = item.ubicaciones[0]?.ubicacion || '';
 
                 hojaPacking.push({
@@ -4031,6 +3993,7 @@
             return hojaPacking;
         }
 
+// CONTINÚA EN MENSAJE SIGUIENTE (Packing, Reclasificación y Utilidades)...
         // ============================================
         // PACKING
         // ============================================
@@ -4138,7 +4101,6 @@
                     const orden = ordenes.find(o => o.id === ordenId);
                     if (!orden) throw new Error('Orden no encontrada');
 
-                    // Procesar hoja de packing real
                     const variantesEmpaquetadas = new Set();
                     const hojaPackingFinal = [];
 
@@ -4193,7 +4155,6 @@
                     ocultarLoading();
 
                     if (variantesNoEmpaquetadas.length > 0) {
-                        // Hay productos no empaquetados: abrir modal de reclasificación
                         ordenActualPacking = orden;
                         orden.hojaPacking = hojaPackingFinal;
                         indiceReclasificacionActual = 0;
@@ -4204,7 +4165,6 @@
                         mostrarToast(`${variantesNoEmpaquetadas.length} producto(s) requieren reclasificación`, 'warning');
                         mostrarModalReclasificacionInmediata();
                     } else {
-                        // Todo OK, cerrar orden directamente
                         await cerrarOrdenDirectamente(orden, hojaPackingFinal);
                         cerrarModal('modalSubirExcelPacking');
                         document.getElementById('filePackingReal').value = '';
@@ -4218,64 +4178,75 @@
             reader.readAsArrayBuffer(file);
         }
 
+        // CORRECCIÓN: Desbloquear y descontar correctamente
         async function cerrarOrdenDirectamente(orden, hojaPackingFinal) {
             mostrarLoading('Cerrando orden...', 'Finalizando proceso');
 
-            // Calcular monto total
-            let montoTotal = 0;
-            for (const fila of hojaPackingFinal) {
-                let cantidadTotal = 0;
-                TIENDAS_LUKERS.forEach(tienda => {
-                    cantidadTotal += fila[tienda] || 0;
-                });
-                montoTotal += cantidadTotal * (fila.kardex || 0);
-            }
+            try {
+                let montoTotal = 0;
+                for (const fila of hojaPackingFinal) {
+                    let cantidadTotal = 0;
+                    TIENDAS_LUKERS.forEach(tienda => {
+                        cantidadTotal += fila[tienda] || 0;
+                    });
+                    montoTotal += cantidadTotal * (fila.kardex || 0);
+                }
 
-            // Liberar stock bloqueado y descontar del físico
-            for (const item of orden.items) {
-                for (const ub of item.ubicaciones) {
-                    const key = `${item.variante}|${ub.ubicacion}`;
-                    const encontrado = orden.cantidadesEncontradas[key] || 0;
+                // CORRECCIÓN: Desbloquear correctamente según lo encontrado
+                for (const item of orden.items) {
+                    for (const ub of item.ubicaciones) {
+                        const key = `${item.variante}|${ub.ubicacion}`;
+                        const encontrado = orden.cantidadesEncontradas[key] || 0;
 
-                    const itemInventario = inventario.find(i => 
-                        i.variante === item.variante && i.ubicacion === ub.ubicacion
-                    );
-
-                    if (itemInventario) {
-                        const nuevoStockFisico = Math.max(0, (itemInventario.stock_fisico || 0) - encontrado);
-                        const nuevoStockBloqueado = Math.max(0, (itemInventario.stock_bloqueado || 0) - ub.cantidadSolicitada);
-
-                        await supabase
+                        // Obtener stock actual de DB
+                        const { data: itemDB } = await supabase
                             .from('inventario')
-                            .update({
-                                stock_fisico: nuevoStockFisico,
-                                stock_bloqueado: nuevoStockBloqueado
-                            })
+                            .select('*')
                             .eq('variante', item.variante)
-                            .eq('ubicacion', ub.ubicacion);
+                            .eq('ubicacion', ub.ubicacion)
+                            .single();
+
+                        if (itemDB) {
+                            // Descontar lo encontrado del físico
+                            const nuevoStockFisico = Math.max(0, (itemDB.stock_fisico || 0) - encontrado);
+                            
+                            // Desbloquear lo solicitado
+                            const nuevoStockBloqueado = Math.max(0, (itemDB.stock_bloqueado || 0) - ub.cantidadSolicitada);
+
+                            await supabase
+                                .from('inventario')
+                                .update({
+                                    stock_fisico: nuevoStockFisico,
+                                    stock_bloqueado: nuevoStockBloqueado
+                                })
+                                .eq('variante', item.variante)
+                                .eq('ubicacion', ub.ubicacion);
+                        }
                     }
                 }
+
+                await supabase
+                    .from('ordenes')
+                    .update({
+                        estado: 'Completada',
+                        fechaCierre: new Date().toISOString(),
+                        hojaPacking: hojaPackingFinal,
+                        montoTotal: montoTotal,
+                        prendasRechazadas: orden.prendasRechazadas || 0
+                    })
+                    .eq('id', orden.id);
+
+                ocultarLoading();
+                mostrarToast('Orden completada correctamente', 'success');
+                await cargarOrdenes();
+                await cargarInventario();
+                actualizarDashboard();
+                actualizarKPIs();
+                generarGraficas();
+            } catch (error) {
+                ocultarLoading();
+                mostrarToast('Error al cerrar orden: ' + error.message, 'error');
             }
-
-            // Actualizar orden a Completada
-            await supabase
-                .from('ordenes')
-                .update({
-                    estado: 'Completada',
-                    fechaCierre: new Date().toISOString(),
-                    hojaPacking: hojaPackingFinal,
-                    montoTotal: montoTotal,
-                    prendasRechazadas: orden.prendasRechazadas || 0
-                })
-                .eq('id', orden.id);
-
-            ocultarLoading();
-            mostrarToast('Orden completada correctamente', 'success');
-            await cargarOrdenes();
-            await cargarInventario();
-            actualizarDashboard();
-            actualizarKPIs();
-            generarGraficas();
         }
 
         // ============================================
@@ -4283,7 +4254,6 @@
         // ============================================
         function mostrarModalReclasificacionInmediata() {
             if (indiceReclasificacionActual >= variantesNoEmpaquetadas.length) {
-                // Terminamos todas las reclasificaciones
                 finalizarReclasificacionesYCerrarOrden();
                 return;
             }
@@ -4379,10 +4349,13 @@
                         ordenId: item.ordenId
                     });
 
-                // Descontar del stock original
-                const itemInventarioOriginal = inventario.find(i => 
-                    i.variante === item.variante && i.ubicacion === item.ubicacion
-                );
+                // CORRECCIÓN: Descontar del stock original de forma segura
+                const { data: itemInventarioOriginal } = await supabase
+                    .from('inventario')
+                    .select('*')
+                    .eq('variante', item.variante)
+                    .eq('ubicacion', item.ubicacion)
+                    .single();
 
                 if (itemInventarioOriginal) {
                     const nuevoStockFisico = Math.max(0, (itemInventarioOriginal.stock_fisico || 0) - item.cantidad);
@@ -4405,7 +4378,6 @@
                 
                 cerrarModal('modalReclasificacionInmediata');
                 
-                // Mostrar siguiente o finalizar
                 setTimeout(() => {
                     mostrarModalReclasificacionInmediata();
                 }, 300);
@@ -4414,6 +4386,19 @@
                 ocultarLoading();
                 mostrarToast('Error al reclasificar: ' + error.message, 'error');
             }
+        }
+
+        // CORRECCIÓN: Nueva función para cancelar reclasificación
+        async function cancelarReclasificacionCompleta() {
+            if (!confirm('¿Cancelar todas las reclasificaciones? La orden NO se cerrará.')) return;
+
+            cerrarModal('modalReclasificacionInmediata');
+            
+            ordenActualPacking = null;
+            variantesNoEmpaquetadas = [];
+            indiceReclasificacionActual = 0;
+            
+            mostrarToast('Reclasificación cancelada. Completa el proceso más tarde.', 'info');
         }
 
         async function finalizarReclasificacionesYCerrarOrden() {
@@ -4548,7 +4533,6 @@
             mostrarLoading('Completando reclasificación...', 'Actualizando inventario');
 
             try {
-                // Mover de ubicación temporal a definitiva
                 const ubicacionTemporal = itemReclasificacionActual.ubicacion;
                 const variante = itemReclasificacionActual.nuevaVariante;
                 const cantidad = itemReclasificacionActual.cantidad;
@@ -4560,8 +4544,13 @@
                     .eq('variante', variante)
                     .eq('ubicacion', ubicacionTemporal);
 
-                // Crear/actualizar en ubicación final
-                const itemFinal = inventario.find(i => i.variante === variante && i.ubicacion === ubicacionFinal);
+                // Obtener item en ubicación final
+                const { data: itemFinal } = await supabase
+                    .from('inventario')
+                    .select('*')
+                    .eq('variante', variante)
+                    .eq('ubicacion', ubicacionFinal)
+                    .single();
                 
                 if (itemFinal) {
                     await supabase
@@ -4666,14 +4655,11 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Cerrar modal al hacer clic fuera
+        // Cerrar modal al hacer clic fuera (excepto reclasificación que ahora sí se puede cerrar)
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', function(e) {
                 if (e.target === this) {
-                    // No cerrar modalReclasificacionInmediata
-                    if (this.id !== 'modalReclasificacionInmediata') {
-                        cerrarModal(this.id);
-                    }
+                    cerrarModal(this.id);
                 }
             });
         });
@@ -4758,7 +4744,7 @@
         }
 
         // ============================================
-        // BÚSQUEDA GLOBAL
+        // BÚSQUEDA GLOBAL (MEJORADA)
         // ============================================
         document.getElementById('searchGlobal')?.addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
@@ -4786,6 +4772,25 @@
                 productos: resultadosProductos.length,
                 ordenes: resultadosOrdenes.length
             });
+
+            // Mostrar toast con resultados
+            if (resultadosInventario.length > 0 || resultadosProductos.length > 0 || resultadosOrdenes.length > 0) {
+                mostrarToast(
+                    `${resultadosInventario.length} en inventario, ${resultadosProductos.length} productos, ${resultadosOrdenes.length} órdenes`,
+                    'info'
+                );
+            }
+        });
+
+        // ============================================
+        // CERRAR DROPDOWN AL HACER CLIC FUERA
+        // ============================================
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown-container')) {
+                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            }
         });
 
         // ============================================
@@ -4802,17 +4807,84 @@
             document.getElementById('loginPassword')?.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') iniciarSesion();
             });
+
+            // Event listeners para navegación
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const vista = item.getAttribute('data-vista');
+                    if (vista) cambiarVista(vista);
+                });
+            });
         });
 
-        // Recargar iconos cuando cambie de vista
-        const observer = new MutationObserver(() => {
-            lucide.createIcons();
+        // Recargar iconos cuando cambie de vista (Observer mejorado)
+        const observer = new MutationObserver((mutations) => {
+            // Solo recargar si hay cambios en el DOM
+            let shouldReload = false;
+            mutations.forEach(mutation => {
+                if (mutation.addedNodes.length > 0) {
+                    shouldReload = true;
+                }
+            });
+            
+            if (shouldReload) {
+                lucide.createIcons();
+            }
         });
 
         observer.observe(document.body, {
             childList: true,
             subtree: true
         });
+
+        // ============================================
+        // MANEJO DE ERRORES GLOBALES
+        // ============================================
+        window.addEventListener('error', function(event) {
+            console.error('Error global capturado:', event.error);
+            mostrarToast('Ocurrió un error inesperado. Por favor recarga la página.', 'error');
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Promise rechazada no manejada:', event.reason);
+            mostrarToast('Error de conexión. Verifica tu conexión a internet.', 'error');
+        });
+
+        // ============================================
+        // PREVENIR PÉRDIDA DE DATOS
+        // ============================================
+        window.addEventListener('beforeunload', function(e) {
+            // Solo advertir si hay una orden en proceso de reclasificación
+            if (ordenActualPacking && variantesNoEmpaquetadas.length > 0) {
+                e.preventDefault();
+                e.returnValue = 'Tienes una reclasificación en proceso. ¿Estás seguro de salir?';
+                return e.returnValue;
+            }
+        });
+
+        // ============================================
+        // INFORMACIÓN DEL SISTEMA (CONSOLA)
+        // ============================================
+        console.log(`
+        ╔═══════════════════════════════════════╗
+        ║      MAWI v6.0 - Sistema Lukers      ║
+        ║     Warehouse Management System       ║
+        ╠═══════════════════════════════════════╣
+        ║  ✓ Gestión de Inventario             ║
+        ║  ✓ Control de Órdenes                ║
+        ║  ✓ Módulo de Picking & Packing       ║
+        ║  ✓ Sistema de Reclasificación        ║
+        ║  ✓ Analytics & KPIs                  ║
+        ╚═══════════════════════════════════════╝
+        
+        ⚙️  Estado: Inicializando...
+        📊 Base de datos: Supabase
+        🔐 Autenticación: Activa
+        
+        Desarrollado por: GENIUS
+        Versión: 6.0 (Corregida y Optimizada)
+        `);
+
     </script>
 </body>
 </html>
