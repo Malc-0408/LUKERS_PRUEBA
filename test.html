@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAWI v6.0 - Diagnóstico</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 2rem; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .card { background: white; border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h1 { color: #1e293b; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        h2 { color: #475569; font-size: 1.1rem; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+        .status { padding: 1rem; border-radius: 10px; margin-bottom: 1rem; font-weight: 600; }
+        .status.success { background: #dcfce7; color: #166534; border-left: 4px solid #22c55e; }
+        .status.error { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+        .status.warning { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+        .status.info { background: #dbeafe; color: #1e40af; border-left: 4px solid #3b82f6; }
+        .status.loading { background: #f1f5f9; color: #475569; border-left: 4px solid #94a3b8; }
+        pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; margin-top: 0.5rem; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; margin-right: 0.5rem; margin-bottom: 0.5rem; transition: all 0.2s; }
+        .btn-primary { background: #6366f1; color: white; }
+        .btn-primary:hover { background: #4f46e5; transform: translateY(-2px); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; font-weight: 600; color: #475569; }
+        .badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-error { background: #fee2e2; color: #991b1b; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .test-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid #e2e8f0; }
+        .test-item:last-child { border-bottom: none; }
+        .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #e2e8f0; border-top-color: #6366f1; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .log-entry { padding: 0.5rem; border-left: 3px solid #94a3b8; margin-bottom: 0.5rem; background: #f8fafc; font-size: 0.875rem; }
+        .log-entry.error { border-color: #ef4444; background: #fef2f2; }
+        .log-entry.success { border-color: #22c55e; background: #f0fdf4; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔍 MAWI v6.0 - Diagnóstico de Conexión</h1>
+            <p style="color: #64748b; margin-bottom: 1rem;">Esta herramienta verifica la conexión con Supabase y diagnostica problemas.</p>
+            
+            <div id="connectionStatus" class="status loading">
+                <span class="spinner"></span> Iniciando diagnóstico...
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Estado de las Tablas</h2>
+            <div id="tablesStatus">
+                <div class="status loading"><span class="spinner"></span> Verificando tablas...</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🧪 Pruebas de Conexión</h2>
+            <div id="testResults"></div>
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-primary" onclick="ejecutarDiagnostico()">🔄 Ejecutar Diagnóstico Completo</button>
+                <button class="btn btn-success" onclick="probarInsercion()">➕ Probar Inserción</button>
+                <button class="btn btn-danger" onclick="verificarRLS()">🔒 Verificar RLS</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Log de Eventos</h2>
+            <div id="logContainer" style="max-height: 300px; overflow-y: auto;"></div>
+        </div>
+
+        <div class="card">
+            <h2>⚙️ Configuración Detectada</h2>
+            <pre id="configInfo"></pre>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN SUPABASE (CON TUS CREDENCIALES)
+        // ============================================
+        const SUPABASE_URL = 'https://dzxjzmlmmmwspemihhlv.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6eGp6bWxtbW13c3BlbWloaGx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NjI5MjAsImV4cCI6MjA3OTEzODkyMH0.uLXtsONi_c4myPbsvTIqV51pldRv6Wuff4adYWgVR6Q';
+        
+        let supabase;
+        let logs = [];
+
+        // ============================================
+        // FUNCIONES DE LOG
+        // ============================================
+        function log(mensaje, tipo = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push({ timestamp, mensaje, tipo });
+            
+            const container = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${tipo}`;
+            entry.innerHTML = `<strong>[${timestamp}]</strong> ${mensaje}`;
+            container.insertBefore(entry, container.firstChild);
+        }
+
+        function updateStatus(elementId, html, className) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = html;
+            el.className = `status ${className}`;
+        }
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        async function inicializar() {
+            log('Iniciando diagnóstico de MAWI v6.0...', 'info');
+            
+            // Mostrar configuración
+            document.getElementById('configInfo').textContent = JSON.stringify({
+                url: SUPABASE_URL,
+                keyPreview: SUPABASE_ANON_KEY.substring(0, 50) + '...',
+                keyLength: SUPABASE_ANON_KEY.length
+            }, null, 2);
+
+            try {
+                log('Creando cliente Supabase...', 'info');
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                if (supabase) {
+                    log('✅ Cliente Supabase creado correctamente', 'success');
+                    updateStatus('connectionStatus', '✅ Cliente Supabase inicializado correctamente', 'success');
+                    
+                    // Ejecutar diagnóstico automático
+                    await ejecutarDiagnostico();
+                } else {
+                    throw new Error('El cliente Supabase es null');
+                }
+            } catch (error) {
+                log(`❌ Error al crear cliente: ${error.message}`, 'error');
+                updateStatus('connectionStatus', `❌ Error de inicialización: ${error.message}`, 'error');
+            }
+        }
+
+        // ============================================
+        // DIAGNÓSTICO COMPLETO
+        // ============================================
+        async function ejecutarDiagnostico() {
+            log('Ejecutando diagnóstico completo...', 'info');
+            
+            const tablas = ['inventario', 'ordenes', 'productos_system', 'reclasificacion'];
+            let resultadosHTML = '';
+            
+            document.getElementById('tablesStatus').innerHTML = '<div class="status loading"><span class="spinner"></span> Verificando tablas...</div>';
+
+            for (const tabla of tablas) {
+                try {
+                    log(`Consultando tabla: ${tabla}...`, 'info');
+                    
+                    const startTime = performance.now();
+                    const { data, error, count } = await supabase
+                        .from(tabla)
+                        .select('*', { count: 'exact', head: false })
+                        .limit(5);
+                    const endTime = performance.now();
+                    
+                    const tiempo = (endTime - startTime).toFixed(2);
+
+                    if (error) {
+                        log(`❌ Error en ${tabla}: ${error.message} (Code: ${error.code})`, 'error');
+                        resultadosHTML += `
+                            <div class="test-item">
+                                <span><strong>${tabla}</strong></span>
+                                <span class="badge badge-error">❌ Error: ${error.message}</span>
+                            </div>
+                        `;
+                        
+                        // Verificar si es error de RLS
+                        if (error.code === '42501' || error.message.includes('policy')) {
+                            log(`⚠️ Posible problema de RLS en ${tabla}`, 'error');
+                        }
+                    } else {
+                        const rowCount = data ? data.length : 0;
+                        log(`✅ ${tabla}: ${rowCount} registros obtenidos (${tiempo}ms)`, 'success');
+                        
+                        resultadosHTML += `
+                            <div class="test-item">
+                                <span><strong>${tabla}</strong></span>
+                                <span>
+                                    <span class="badge badge-success">✅ OK</span>
+                                    <span style="margin-left: 0.5rem; color: #64748b;">${rowCount} registros (${tiempo}ms)</span>
+                                </span>
+                            </div>
+                        `;
+                        
+                        // Mostrar muestra de datos si hay
+                        if (data && data.length > 0) {
+                            log(`   Columnas en ${tabla}: ${Object.keys(data[0]).join(', ')}`, 'info');
+                        }
+                    }
+                } catch (e) {
+                    log(`❌ Excepción en ${tabla}: ${e.message}`, 'error');
+                    resultadosHTML += `
+                        <div class="test-item">
+                            <span><strong>${tabla}</strong></span>
+                            <span class="badge badge-error">❌ Excepción: ${e.message}</span>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('tablesStatus').innerHTML = resultadosHTML || '<div class="status warning">No se pudieron verificar las tablas</div>';
+            
+            // Prueba de autenticación
+            await probarAutenticacion();
+        }
+
+        // ============================================
+        // PROBAR AUTENTICACIÓN
+        // ============================================
+        async function probarAutenticacion() {
+            log('Verificando estado de autenticación...', 'info');
+            
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    log(`⚠️ Error de auth: ${error.message}`, 'error');
+                } else if (session) {
+                    log(`✅ Sesión activa: ${session.user.email}`, 'success');
+                } else {
+                    log('ℹ️ Sin sesión activa (usuario anónimo)', 'info');
+                }
+            } catch (e) {
+                log(`❌ Excepción en auth: ${e.message}`, 'error');
+            }
+        }
+
+        // ============================================
+        // VERIFICAR RLS
+        // ============================================
+        async function verificarRLS() {
+            log('Verificando políticas RLS...', 'info');
+            
+            const tablas = ['inventario', 'ordenes', 'productos_system', 'reclasificacion'];
+            
+            for (const tabla of tablas) {
+                try {
+                    // Intentar SELECT
+                    const { data: selectData, error: selectError } = await supabase
+                        .from(tabla)
+                        .select('*')
+                        .limit(1);
+
+                    if (selectError) {
+                        if (selectError.code === '42501') {
+                            log(`🔒 ${tabla}: RLS BLOQUEANDO SELECT - Necesitas crear política`, 'error');
+                        } else {
+                            log(`❌ ${tabla} SELECT: ${selectError.message}`, 'error');
+                        }
+                    } else {
+                        log(`✅ ${tabla}: SELECT permitido (${selectData?.length || 0} registros)`, 'success');
+                    }
+
+                } catch (e) {
+                    log(`❌ ${tabla}: ${e.message}`, 'error');
+                }
+            }
+
+            log('', 'info');
+            log('💡 Si RLS está bloqueando, ve a Supabase Dashboard → Authentication → Policies', 'info');
+            log('💡 O desactiva RLS temporalmente en la tabla para pruebas', 'info');
+        }
+
+        // ============================================
+        // PROBAR INSERCIÓN
+        // ============================================
+        async function probarInsercion() {
+            log('Probando inserción en inventario...', 'info');
+            
+            const testData = {
+                variante: 'TEST-' + Date.now(),
+                ubicacion: 'TEST-UBI',
+                stock_fisico: 1,
+                stock_bloqueado: 0
+            };
+
+            try {
+                const { data, error } = await supabase
+                    .from('inventario')
+                    .insert(testData)
+                    .select();
+
+                if (error) {
+                    log(`❌ Error INSERT: ${error.message} (Code: ${error.code})`, 'error');
+                    
+                    if (error.code === '42501') {
+                        log('🔒 RLS está bloqueando INSERT - Necesitas política de INSERT', 'error');
+                    } else if (error.code === '23505') {
+                        log('⚠️ Registro duplicado', 'warning');
+                    }
+                } else {
+                    log(`✅ INSERT exitoso: ${JSON.stringify(data)}`, 'success');
+                    
+                    // Limpiar dato de prueba
+                    const { error: deleteError } = await supabase
+                        .from('inventario')
+                        .delete()
+                        .eq('variante', testData.variante);
+                    
+                    if (!deleteError) {
+                        log('🧹 Dato de prueba eliminado', 'info');
+                    }
+                }
+            } catch (e) {
+                log(`❌ Excepción INSERT: ${e.message}`, 'error');
+            }
+        }
+
+        // ============================================
+        // INICIAR
+        // ============================================
+        window.addEventListener('DOMContentLoaded', inicializar);
+    </script>
+</body>
+</html>
