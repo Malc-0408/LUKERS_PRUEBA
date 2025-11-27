@@ -14,14 +14,12 @@
         :root{--primary:#6366f1;--primary-dark:#4f46e5;--primary-light:#818cf8;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6;--purple:#a855f7;--bg-main:#0f172a;--bg-card:#fff;--bg-hover:#f1f5f9;--text-primary:#0f172a;--text-secondary:#64748b;--text-light:#94a3b8;--text-white:#fff;--border:#e2e8f0;--shadow:0 4px 6px -1px rgba(0,0,0,0.1);--shadow-lg:0 20px 25px -5px rgba(0,0,0,0.1)}
         body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh}
         
-        /* LOGIN */
         .login-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
         .login-card{background:#fff;padding:3rem;border-radius:20px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);max-width:420px;width:100%}
         .login-logo{width:70px;height:70px;background:linear-gradient(135deg,var(--primary),#818cf8);border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:2rem;margin:0 auto 1.5rem}
         .login-title{font-size:2rem;font-weight:800;text-align:center;margin-bottom:0.5rem}
         .login-subtitle{text-align:center;color:var(--text-secondary);margin-bottom:2rem}
         
-        /* FORMS */
         .form-group{margin-bottom:1.25rem}
         .form-label{display:block;font-weight:600;margin-bottom:0.5rem;font-size:0.875rem}
         .form-input,.form-select,.form-textarea{width:100%;padding:0.75rem 1rem;border:2px solid var(--border);border-radius:10px;font-size:0.9rem;transition:all 0.2s;font-family:inherit}
@@ -30,8 +28,7 @@
         .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem}
         .form-help{font-size:0.75rem;color:var(--text-secondary);margin-top:0.5rem}
         
-        /* BUTTONS */
-        .btn{padding:0.75rem 1.25rem;border:none;border-radius:10px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem;transition:all 0.2s;font-size:0.875rem}
+        .btn{padding:0.6rem 1rem;border:none;border-radius:8px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;transition:all 0.2s;font-size:0.8rem}
         .btn-primary{background:var(--primary);color:#fff}
         .btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px)}
         .btn-success{background:var(--success);color:#fff}
@@ -41,91 +38,83 @@
         .btn-outline{background:#fff;color:var(--primary);border:2px solid var(--primary)}
         .btn-outline:hover{background:var(--primary);color:#fff}
         .btn-full{width:100%;justify-content:center}
-        .btn-icon{width:36px;height:36px;padding:0;justify-content:center}
+        .btn-icon{width:32px;height:32px;padding:0;justify-content:center}
         .btn:disabled{opacity:0.5;cursor:not-allowed}
         
-        /* APP LAYOUT */
         .app-container{display:none;height:100vh;overflow:hidden}
-        .sidebar{width:260px;background:var(--bg-main);display:flex;flex-direction:column}
-        .sidebar-header{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,0.1)}
+        .sidebar{width:240px;background:var(--bg-main);display:flex;flex-direction:column}
+        .sidebar-header{padding:1.25rem;border-bottom:1px solid rgba(255,255,255,0.1)}
         .logo-container{display:flex;align-items:center;gap:0.75rem}
-        .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
-        .logo-title{font-size:1.25rem;font-weight:700;color:#fff}
-        .logo-subtitle{font-size:0.7rem;color:#94a3b8}
+        .logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+        .logo-title{font-size:1.1rem;font-weight:700;color:#fff}
+        .logo-subtitle{font-size:0.65rem;color:#94a3b8}
         
-        /* NAV */
         .nav-menu{flex:1;padding:1rem;overflow-y:auto}
         .nav-section{margin-bottom:1.5rem}
-        .nav-section-title{font-size:0.7rem;font-weight:600;text-transform:uppercase;color:#94a3b8;padding:0 1rem;margin-bottom:0.5rem;letter-spacing:0.05em}
-        .nav-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;border-radius:10px;cursor:pointer;color:#94a3b8;transition:all 0.2s;margin-bottom:0.25rem}
+        .nav-section-title{font-size:0.65rem;font-weight:600;text-transform:uppercase;color:#94a3b8;padding:0 0.75rem;margin-bottom:0.5rem;letter-spacing:0.05em}
+        .nav-item{display:flex;align-items:center;gap:0.6rem;padding:0.6rem 0.75rem;border-radius:8px;cursor:pointer;color:#94a3b8;transition:all 0.2s;margin-bottom:0.2rem;font-size:0.85rem}
         .nav-item:hover{background:rgba(255,255,255,0.05);color:#fff}
         .nav-item.active{background:var(--primary);color:#fff}
-        .nav-item i{width:20px;height:20px}
-        .nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:0.7rem;padding:0.15rem 0.5rem;border-radius:10px}
+        .nav-item i{width:18px;height:18px}
+        .nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:0.65rem;padding:0.1rem 0.4rem;border-radius:10px}
         
-        /* USER */
         .user-profile{padding:1rem;border-top:1px solid rgba(255,255,255,0.1)}
-        .user-info{display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:rgba(255,255,255,0.05);border-radius:10px;cursor:pointer}
-        .user-avatar{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),#818cf8);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600}
-        .user-name{color:#fff;font-weight:600;font-size:0.875rem}
-        .user-role{color:#94a3b8;font-size:0.75rem}
+        .user-info{display:flex;align-items:center;gap:0.6rem;padding:0.6rem;background:rgba(255,255,255,0.05);border-radius:8px;cursor:pointer}
+        .user-avatar{width:32px;height:32px;background:linear-gradient(135deg,var(--primary),#818cf8);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:0.85rem}
+        .user-name{color:#fff;font-weight:600;font-size:0.8rem}
+        .user-role{color:#94a3b8;font-size:0.7rem}
         
-        /* MAIN */
         .main-content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#f8fafc}
-        .header{background:#fff;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:1rem}
+        .header{background:#fff;padding:0.875rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:0.75rem}
         .header-left{display:flex;flex-direction:column}
-        .header-title{font-size:1.5rem;font-weight:700}
-        .header-breadcrumb{font-size:0.8rem;color:var(--text-secondary);display:flex;align-items:center;gap:0.5rem}
-        .header-actions{display:flex;gap:0.75rem;align-items:center}
-        .content-area{flex:1;overflow-y:auto;padding:2rem}
+        .header-title{font-size:1.25rem;font-weight:700}
+        .header-breadcrumb{font-size:0.75rem;color:var(--text-secondary);display:flex;align-items:center;gap:0.4rem}
+        .header-actions{display:flex;gap:0.5rem;align-items:center}
+        .content-area{flex:1;overflow-y:auto;padding:1.5rem}
         
-        /* STATS */
-        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;margin-bottom:2rem}
-        .stat-card{background:#fff;padding:1.5rem;border-radius:16px;box-shadow:var(--shadow);transition:transform 0.2s}
-        .stat-card:hover{transform:translateY(-4px)}
-        .stat-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
-        .stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;margin-bottom:1.5rem}
+        .stat-card{background:#fff;padding:1.25rem;border-radius:14px;box-shadow:var(--shadow);transition:transform 0.2s}
+        .stat-card:hover{transform:translateY(-3px)}
+        .stat-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem}
+        .stat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center}
         .stat-icon.blue{background:rgba(99,102,241,0.1);color:var(--primary)}
         .stat-icon.green{background:rgba(16,185,129,0.1);color:var(--success)}
         .stat-icon.orange{background:rgba(245,158,11,0.1);color:var(--warning)}
         .stat-icon.red{background:rgba(239,68,68,0.1);color:var(--danger)}
-        .stat-value{font-size:2rem;font-weight:800;margin-bottom:0.25rem}
-        .stat-label{color:var(--text-secondary);font-size:0.875rem}
-        .stat-footer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:0.75rem}
+        .stat-value{font-size:1.75rem;font-weight:800;margin-bottom:0.2rem}
+        .stat-label{color:var(--text-secondary);font-size:0.8rem}
+        .stat-footer{margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:0.7rem}
         .stat-footer-label{color:var(--text-secondary)}
         .stat-footer-value{font-weight:600}
         
-        /* KPI */
-        .kpi-container{background:linear-gradient(135deg,#667eea,#764ba2);padding:1.5rem;border-radius:16px;margin-bottom:2rem}
-        .kpi-title{color:#fff;font-size:1.1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
-        .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem}
-        .kpi-item{background:rgba(255,255,255,0.15);padding:1rem;border-radius:10px;backdrop-filter:blur(10px)}
-        .kpi-label{color:rgba(255,255,255,0.9);font-size:0.7rem;text-transform:uppercase;margin-bottom:0.25rem;letter-spacing:0.05em}
-        .kpi-value{color:#fff;font-size:1.5rem;font-weight:800;display:flex;align-items:baseline;gap:0.25rem}
-        .kpi-unit{font-size:0.75rem;opacity:0.8}
+        .kpi-container{background:linear-gradient(135deg,#667eea,#764ba2);padding:1.25rem;border-radius:14px;margin-bottom:1.5rem}
+        .kpi-title{color:#fff;font-size:1rem;font-weight:700;margin-bottom:0.875rem;display:flex;align-items:center;gap:0.4rem}
+        .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.75rem}
+        .kpi-item{background:rgba(255,255,255,0.15);padding:0.875rem;border-radius:10px;backdrop-filter:blur(10px)}
+        .kpi-label{color:rgba(255,255,255,0.9);font-size:0.65rem;text-transform:uppercase;margin-bottom:0.2rem;letter-spacing:0.05em}
+        .kpi-value{color:#fff;font-size:1.25rem;font-weight:800;display:flex;align-items:baseline;gap:0.2rem}
+        .kpi-unit{font-size:0.7rem;opacity:0.8}
         
-        /* CHARTS */
-        .charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:1.5rem;margin-bottom:2rem}
-        .chart-card{background:#fff;padding:1.5rem;border-radius:16px;box-shadow:var(--shadow)}
-        .chart-title{font-size:1rem;font-weight:600;margin-bottom:1rem}
-        .chart-wrapper{height:280px;position:relative}
+        .charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.25rem;margin-bottom:1.5rem}
+        .chart-card{background:#fff;padding:1.25rem;border-radius:14px;box-shadow:var(--shadow)}
+        .chart-title{font-size:0.9rem;font-weight:600;margin-bottom:0.875rem}
+        .chart-wrapper{height:240px;position:relative}
         
-        /* CARDS */
-        .card{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.5rem}
-        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--border);flex-wrap:wrap;gap:1rem}
-        .card-title{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:0.5rem}
-        .card-actions{display:flex;gap:0.5rem;flex-wrap:wrap}
+        .card{background:#fff;border-radius:14px;padding:1.25rem;box-shadow:var(--shadow);margin-bottom:1.25rem}
+        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;padding-bottom:0.875rem;border-bottom:2px solid var(--border);flex-wrap:wrap;gap:0.75rem}
+        .card-title{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:0.4rem}
+        .card-actions{display:flex;gap:0.4rem;flex-wrap:wrap}
         
-        /* TABLES */
-        .table-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:1rem}
+        .table-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.875rem;flex-wrap:wrap;gap:0.75rem}
         .table-container{overflow-x:auto}
-        table{width:100%;border-collapse:collapse}
-        th,td{padding:0.875rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
-        th{background:var(--bg-hover);font-weight:600;font-size:0.75rem;text-transform:uppercase;color:var(--text-secondary)}
+        table{width:100%;border-collapse:collapse;font-size:0.75rem}
+        th,td{padding:0.6rem 0.5rem;text-align:left;border-bottom:1px solid var(--border)}
+        th{background:var(--bg-hover);font-weight:600;font-size:0.65rem;text-transform:uppercase;color:var(--text-secondary);white-space:nowrap}
         tr:hover{background:var(--bg-hover)}
+        td{white-space:nowrap}
+        .td-wrap{white-space:normal;max-width:200px;font-size:0.7rem;line-height:1.3}
         
-        /* BADGES */
-        .badge{padding:0.25rem 0.75rem;border-radius:9999px;font-size:0.75rem;font-weight:600}
+        .badge{padding:0.2rem 0.5rem;border-radius:9999px;font-size:0.65rem;font-weight:600}
         .badge-primary{background:rgba(99,102,241,0.1);color:var(--primary)}
         .badge-success{background:rgba(16,185,129,0.1);color:var(--success)}
         .badge-warning{background:rgba(245,158,11,0.1);color:var(--warning)}
@@ -133,75 +122,69 @@
         .badge-info{background:rgba(59,130,246,0.1);color:var(--info)}
         .badge-purple{background:rgba(168,85,247,0.1);color:var(--purple)}
         
-        /* SEARCH */
-        .search-box{display:flex;align-items:center;gap:0.5rem;background:var(--bg-hover);padding:0.5rem 1rem;border-radius:10px;min-width:250px}
-        .search-box input{border:none;background:transparent;outline:none;flex:1;font-size:0.875rem}
+        .search-box{display:flex;align-items:center;gap:0.4rem;background:var(--bg-hover);padding:0.4rem 0.75rem;border-radius:8px;min-width:220px}
+        .search-box input{border:none;background:transparent;outline:none;flex:1;font-size:0.8rem}
         
-        /* PAGINATION */
-        .pagination{display:flex;justify-content:center;gap:0.5rem;margin-top:1.5rem}
-        .pagination button{padding:0.5rem 1rem;border:1px solid var(--border);background:#fff;border-radius:8px;cursor:pointer;font-weight:500}
+        .pagination{display:flex;justify-content:center;align-items:center;gap:0.5rem;margin-top:1.25rem;flex-wrap:wrap}
+        .pagination button{padding:0.4rem 0.875rem;border:1px solid var(--border);background:#fff;border-radius:6px;cursor:pointer;font-weight:500;font-size:0.8rem}
         .pagination button:hover:not(:disabled){background:var(--primary);color:#fff;border-color:var(--primary)}
         .pagination button:disabled{opacity:0.5;cursor:not-allowed}
+        .pagination-info{font-size:0.75rem;color:var(--text-secondary)}
         
-        /* ALERTS */
-        .alert{padding:1rem;border-radius:10px;margin-bottom:1rem;display:flex;align-items:flex-start;gap:0.75rem;border-left:4px solid}
+        .alert{padding:0.875rem;border-radius:10px;margin-bottom:0.875rem;display:flex;align-items:flex-start;gap:0.6rem;border-left:4px solid;font-size:0.85rem}
         .alert-warning{background:rgba(245,158,11,0.1);border-color:var(--warning);color:#92400e}
         .alert-danger{background:rgba(239,68,68,0.1);border-color:var(--danger);color:#991b1b}
         .alert-info{background:rgba(59,130,246,0.1);border-color:var(--info);color:#1e40af}
         .alert-success{background:rgba(16,185,129,0.1);border-color:var(--success);color:#065f46}
         
-        /* MODALS */
         .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:1rem}
         .modal.active{display:flex}
-        .modal-content{background:#fff;border-radius:16px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto}
+        .modal-content{background:#fff;border-radius:14px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto}
         .modal-content.large{max-width:900px}
-        .modal-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-        .modal-title{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:0.5rem}
-        .modal-close{width:32px;height:32px;border:none;background:var(--bg-hover);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .modal-header{padding:1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+        .modal-title{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:0.4rem}
+        .modal-close{width:30px;height:30px;border:none;background:var(--bg-hover);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center}
         .modal-close:hover{background:var(--danger);color:#fff}
-        .modal-body{padding:1.5rem}
-        .modal-footer{padding:1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:0.75rem}
+        .modal-body{padding:1.25rem}
+        .modal-footer{padding:1.25rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:0.6rem}
         
-        /* FILE UPLOAD */
-        .file-upload-btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;background:var(--bg-hover);border:2px dashed var(--border);border-radius:10px;cursor:pointer;font-weight:600}
+        .file-upload-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.25rem;background:var(--bg-hover);border:2px dashed var(--border);border-radius:10px;cursor:pointer;font-weight:600;font-size:0.85rem}
         .file-upload-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
         .form-file{display:none}
         
-        /* DROPDOWN */
         .dropdown{position:relative;display:inline-block}
-        .dropdown-menu{position:absolute;top:100%;right:0;margin-top:0.5rem;background:#fff;border-radius:12px;box-shadow:var(--shadow-lg);min-width:200px;z-index:100;opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.2s}
+        .dropdown-menu{position:absolute;top:100%;right:0;margin-top:0.4rem;background:#fff;border-radius:10px;box-shadow:var(--shadow-lg);min-width:180px;z-index:100;opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.2s}
         .dropdown-menu.active{opacity:1;visibility:visible;transform:translateY(0)}
-        .dropdown-item{padding:0.75rem 1rem;display:flex;align-items:center;gap:0.75rem;cursor:pointer;transition:background 0.2s}
+        .dropdown-item{padding:0.6rem 0.875rem;display:flex;align-items:center;gap:0.6rem;cursor:pointer;transition:background 0.2s;font-size:0.85rem}
         .dropdown-item:hover{background:var(--bg-hover)}
-        .dropdown-item:first-child{border-radius:12px 12px 0 0}
-        .dropdown-item:last-child{border-radius:0 0 12px 12px}
+        .dropdown-item:first-child{border-radius:10px 10px 0 0}
+        .dropdown-item:last-child{border-radius:0 0 10px 10px}
         
-        /* LOADING */
         .loading-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center}
         .loading-overlay.active{display:flex}
         .loading-content{text-align:center;color:#fff}
-        .spinner{width:50px;height:50px;border:4px solid rgba(255,255,255,0.2);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem}
+        .spinner{width:45px;height:45px;border:4px solid rgba(255,255,255,0.2);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 0.875rem}
         @keyframes spin{to{transform:rotate(360deg)}}
-        .progress-bar{width:200px;height:6px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden;margin:1rem auto 0}
+        .progress-bar{width:200px;height:5px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden;margin:0.875rem auto 0}
         .progress-fill{height:100%;background:var(--primary);width:0%;transition:width 0.3s}
         
-        /* TOAST */
-        .toast-container{position:fixed;top:1rem;right:1rem;z-index:10000;display:flex;flex-direction:column;gap:0.5rem}
-        .toast{background:#fff;padding:1rem 1.5rem;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.2);display:flex;align-items:center;gap:0.75rem;animation:slideIn 0.3s ease;border-left:4px solid}
+        .toast-container{position:fixed;top:1rem;right:1rem;z-index:10000;display:flex;flex-direction:column;gap:0.4rem}
+        .toast{background:#fff;padding:0.875rem 1.25rem;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.2);display:flex;align-items:center;gap:0.6rem;animation:slideIn 0.3s ease;border-left:4px solid;font-size:0.85rem}
         .toast.success{border-color:var(--success)}
         .toast.error{border-color:var(--danger)}
         .toast.warning{border-color:var(--warning)}
         .toast.info{border-color:var(--info)}
         @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
         
-        /* VISTAS */
         .vista{display:none}
         .vista.active{display:block}
+        .empty-state{text-align:center;padding:2rem;color:var(--text-secondary)}
         
-        /* EMPTY */
-        .empty-state{text-align:center;padding:3rem;color:var(--text-secondary)}
+        .detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
+        .detail-item{background:var(--bg-hover);padding:0.875rem;border-radius:8px}
+        .detail-label{font-size:0.7rem;color:var(--text-secondary);text-transform:uppercase;margin-bottom:0.25rem}
+        .detail-value{font-weight:600;font-size:0.9rem}
         
-        /* RESPONSIVE */
         @media(max-width:768px){
             .sidebar{display:none}
             .stats-grid,.charts-grid{grid-template-columns:1fr}
@@ -217,7 +200,7 @@
         <div class="loading-content">
             <div class="spinner"></div>
             <div id="loadingText">Cargando...</div>
-            <div id="loadingSubtext" style="font-size:0.875rem;opacity:0.8;margin-top:0.5rem"></div>
+            <div id="loadingSubtext" style="font-size:0.8rem;opacity:0.8;margin-top:0.4rem"></div>
             <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
         </div>
     </div>
@@ -284,13 +267,13 @@
                     <h1 class="header-title" id="headerTitle">Dashboard</h1>
                     <div class="header-breadcrumb">
                         <span>Principal</span>
-                        <i data-lucide="chevron-right" style="width:14px;height:14px"></i>
+                        <i data-lucide="chevron-right" style="width:12px;height:12px"></i>
                         <span id="headerBreadcrumb" style="color:var(--primary);font-weight:600">Dashboard</span>
                     </div>
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-primary" onclick="sincronizarDatos()">
-                        <i data-lucide="refresh-cw" style="width:16px;height:16px"></i> Sincronizar
+                        <i data-lucide="refresh-cw" style="width:14px;height:14px"></i> Sincronizar
                     </button>
                 </div>
             </header>
@@ -298,12 +281,11 @@
             <div class="content-area">
                 <!-- DASHBOARD -->
                 <div id="vista-dashboard" class="vista active">
-                    <!-- Alerta órdenes próximas -->
                     <div id="alertaOrdenes" class="alert alert-warning" style="display:none">
-                        <i data-lucide="alert-triangle" style="width:20px;height:20px;flex-shrink:0"></i>
+                        <i data-lucide="alert-triangle" style="width:18px;height:18px;flex-shrink:0"></i>
                         <div>
                             <strong id="alertaOrdenesTexto"></strong>
-                            <div style="font-size:0.875rem;margin-top:0.25rem">Revisa el listado para tomar acción</div>
+                            <div style="font-size:0.8rem;margin-top:0.2rem">Revisa el listado para tomar acción</div>
                         </div>
                     </div>
 
@@ -335,7 +317,7 @@
                     </div>
 
                     <div class="kpi-container">
-                        <div class="kpi-title"><i data-lucide="clock" style="width:20px;height:20px"></i> KPIs de Tiempo y Eficiencia</div>
+                        <div class="kpi-title"><i data-lucide="clock" style="width:18px;height:18px"></i> KPIs de Tiempo y Eficiencia</div>
                         <div class="kpi-grid">
                             <div class="kpi-item">
                                 <div class="kpi-label">Días Prom. Picking</div>
@@ -388,35 +370,35 @@
                 <div id="vista-inventario" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="package" style="width:20px;height:20px;color:var(--primary)"></i> Gestión de Inventario</h3>
+                            <h3 class="card-title"><i data-lucide="package" style="width:18px;height:18px;color:var(--primary)"></i> Gestión de Inventario</h3>
                             <div class="card-actions">
-                                <button class="btn btn-primary" onclick="abrirModal('modalSubirInventario')"><i data-lucide="upload" style="width:16px;height:16px"></i> Subir Excel</button>
-                                <button class="btn btn-success" onclick="abrirModal('modalAgregarItem')"><i data-lucide="plus" style="width:16px;height:16px"></i> Agregar</button>
-                                <button class="btn btn-outline" onclick="exportarInventario()"><i data-lucide="download" style="width:16px;height:16px"></i> Exportar</button>
+                                <button class="btn btn-primary" onclick="abrirModal('modalSubirInventario')"><i data-lucide="upload" style="width:14px;height:14px"></i> Subir Excel</button>
+                                <button class="btn btn-success" onclick="abrirModal('modalAgregarItem')"><i data-lucide="plus" style="width:14px;height:14px"></i> Agregar</button>
+                                <button class="btn btn-outline" onclick="exportarInventario()"><i data-lucide="download" style="width:14px;height:14px"></i> Exportar</button>
                                 <div class="dropdown">
-                                    <button class="btn btn-outline" onclick="toggleDropdown('dropdownInventario')"><i data-lucide="more-horizontal" style="width:16px;height:16px"></i></button>
+                                    <button class="btn btn-outline" onclick="toggleDropdown('dropdownInventario')"><i data-lucide="more-horizontal" style="width:14px;height:14px"></i></button>
                                     <div class="dropdown-menu" id="dropdownInventario">
-                                        <div class="dropdown-item" onclick="abrirModal('modalModificarMasivo')"><i data-lucide="edit" style="width:16px;height:16px"></i> Modificar Masivo</div>
-                                        <div class="dropdown-item" onclick="abrirModal('modalEliminarMasivo')"><i data-lucide="trash-2" style="width:16px;height:16px"></i> Eliminar Masivo</div>
+                                        <div class="dropdown-item" onclick="abrirModal('modalModificarMasivo')"><i data-lucide="edit" style="width:14px;height:14px"></i> Modificar Masivo</div>
+                                        <div class="dropdown-item" onclick="abrirModal('modalEliminarMasivo')"><i data-lucide="trash-2" style="width:14px;height:14px"></i> Eliminar Masivo</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="table-controls">
                             <div class="search-box">
-                                <i data-lucide="search" style="width:18px;height:18px;color:var(--text-secondary)"></i>
+                                <i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i>
                                 <input type="text" id="searchInventario" placeholder="Buscar variante o ubicación..." oninput="filtrarInventario()">
                             </div>
-                            <span style="color:var(--text-secondary)">Total: <strong id="countInventario">0</strong> registros</span>
+                            <span class="pagination-info">Total: <strong id="countInventario">0</strong> registros</span>
                         </div>
                         <div class="table-container">
                             <table><thead><tr><th>Variante</th><th>Ubicación</th><th>Stock Físico</th><th>Bloqueado</th><th>Disponible</th><th>Acciones</th></tr></thead>
                             <tbody id="tablaInventario"></tbody></table>
                         </div>
                         <div class="pagination">
-                            <button onclick="cambiarPagina('inventario',-1)" id="prevInventario">Anterior</button>
-                            <span>Página <strong id="paginaInventario">1</strong> de <strong id="totalPaginasInventario">1</strong></span>
-                            <button onclick="cambiarPagina('inventario',1)" id="nextInventario">Siguiente</button>
+                            <button onclick="cambiarPagina('inventario',-1)" id="prevInventario">← Anterior</button>
+                            <span class="pagination-info">Página <strong id="paginaInventario">1</strong> de <strong id="totalPaginasInventario">1</strong></span>
+                            <button onclick="cambiarPagina('inventario',1)" id="nextInventario">Siguiente →</button>
                         </div>
                     </div>
                 </div>
@@ -425,32 +407,33 @@
                 <div id="vista-productos" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="database" style="width:20px;height:20px;color:var(--primary)"></i> Catálogo de Productos</h3>
+                            <h3 class="card-title"><i data-lucide="database" style="width:18px;height:18px;color:var(--primary)"></i> Catálogo de Productos</h3>
                             <div class="card-actions">
-                                <button class="btn btn-primary" onclick="abrirModal('modalSubirProductos')"><i data-lucide="upload" style="width:16px;height:16px"></i> Subir Catálogo</button>
-                                <button class="btn btn-outline" onclick="exportarProductos()"><i data-lucide="download" style="width:16px;height:16px"></i> Exportar</button>
+                                <button class="btn btn-primary" onclick="abrirModal('modalSubirProductos')"><i data-lucide="upload" style="width:14px;height:14px"></i> Subir Catálogo</button>
+                                <button class="btn btn-outline" onclick="exportarProductos()"><i data-lucide="download" style="width:14px;height:14px"></i> Exportar</button>
                             </div>
                         </div>
                         <div class="table-controls">
-                            <div class="form-row" style="flex:1;max-width:800px">
-                                <select id="filtroGenero" class="form-select" onchange="aplicarFiltrosProductos()"><option value="">Todos los Géneros</option></select>
-                                <select id="filtroLinea" class="form-select" onchange="aplicarFiltrosProductos()"><option value="">Todas las Líneas</option></select>
-                                <select id="filtroMarca" class="form-select" onchange="aplicarFiltrosProductos()"><option value="">Todas las Marcas</option></select>
-                                <select id="filtroTalla" class="form-select" onchange="aplicarFiltrosProductos()"><option value="">Todas las Tallas</option></select>
+                            <div class="form-row" style="flex:1;max-width:700px">
+                                <select id="filtroGenero" class="form-select" onchange="aplicarFiltrosProductos()" style="font-size:0.8rem;padding:0.5rem"><option value="">Géneros</option></select>
+                                <select id="filtroLinea" class="form-select" onchange="aplicarFiltrosProductos()" style="font-size:0.8rem;padding:0.5rem"><option value="">Líneas</option></select>
+                                <select id="filtroMarca" class="form-select" onchange="aplicarFiltrosProductos()" style="font-size:0.8rem;padding:0.5rem"><option value="">Marcas</option></select>
+                                <select id="filtroTalla" class="form-select" onchange="aplicarFiltrosProductos()" style="font-size:0.8rem;padding:0.5rem"><option value="">Tallas</option></select>
                             </div>
-                            <div class="search-box" style="min-width:200px">
-                                <i data-lucide="search" style="width:18px;height:18px;color:var(--text-secondary)"></i>
+                            <div class="search-box" style="min-width:180px">
+                                <i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i>
                                 <input type="text" id="searchProductos" placeholder="Buscar..." oninput="filtrarProductos()">
                             </div>
                         </div>
+                        <div style="margin-bottom:0.5rem"><span class="pagination-info">Total: <strong id="countProductos">0</strong> productos</span></div>
                         <div class="table-container">
-                            <table><thead><tr><th>Variante</th><th>Género</th><th>Línea</th><th>Marca</th><th>Talla</th><th>Kardex</th><th>PVP</th></tr></thead>
+                            <table><thead><tr><th>Variante</th><th>Descripción</th><th>Género</th><th>Línea</th><th>Marca</th><th>Talla</th><th>Kardex</th><th>PVP</th></tr></thead>
                             <tbody id="tablaProductos"></tbody></table>
                         </div>
                         <div class="pagination">
-                            <button onclick="cambiarPagina('productos',-1)" id="prevProductos">Anterior</button>
-                            <span>Página <strong id="paginaProductos">1</strong> de <strong id="totalPaginasProductos">1</strong></span>
-                            <button onclick="cambiarPagina('productos',1)" id="nextProductos">Siguiente</button>
+                            <button onclick="cambiarPagina('productos',-1)" id="prevProductos">← Anterior</button>
+                            <span class="pagination-info">Página <strong id="paginaProductos">1</strong> de <strong id="totalPaginasProductos">1</strong></span>
+                            <button onclick="cambiarPagina('productos',1)" id="nextProductos">Siguiente →</button>
                         </div>
                     </div>
                 </div>
@@ -459,9 +442,9 @@
                 <div id="vista-ordenes" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="shopping-cart" style="width:20px;height:20px;color:var(--primary)"></i> Gestión de Órdenes</h3>
+                            <h3 class="card-title"><i data-lucide="shopping-cart" style="width:18px;height:18px;color:var(--primary)"></i> Gestión de Órdenes</h3>
                             <div class="card-actions">
-                                <button class="btn btn-primary" onclick="abrirModal('modalCrearOrden')"><i data-lucide="plus" style="width:16px;height:16px"></i> Nueva Orden</button>
+                                <button class="btn btn-primary" onclick="abrirModal('modalCrearOrden')"><i data-lucide="plus" style="width:14px;height:14px"></i> Nueva Orden</button>
                             </div>
                         </div>
                         <div class="table-container">
@@ -475,7 +458,7 @@
                 <div id="vista-picking" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="scan" style="width:20px;height:20px;color:var(--primary)"></i> Módulo de Picking</h3>
+                            <h3 class="card-title"><i data-lucide="scan" style="width:18px;height:18px;color:var(--primary)"></i> Módulo de Picking</h3>
                         </div>
                         <div class="table-container">
                             <table><thead><tr><th>ID Orden</th><th>Fecha</th><th>Variantes</th><th>Unidades</th><th>Estado</th><th>Acciones</th></tr></thead>
@@ -488,10 +471,10 @@
                 <div id="vista-packing" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="box" style="width:20px;height:20px;color:var(--primary)"></i> Módulo de Packing</h3>
+                            <h3 class="card-title"><i data-lucide="box" style="width:18px;height:18px;color:var(--primary)"></i> Módulo de Packing</h3>
                         </div>
                         <div class="table-container">
-                            <table><thead><tr><th>ID Orden</th><th>Fecha</th><th>Variantes Enc.</th><th>Unidades Enc.</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <table><thead><tr><th>ID Orden</th><th>Fecha</th><th>Var. Enc.</th><th>Und. Enc.</th><th>Estado</th><th>Acciones</th></tr></thead>
                             <tbody id="tablaPacking"></tbody></table>
                         </div>
                     </div>
@@ -501,16 +484,16 @@
                 <div id="vista-reclasificacion" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="repeat" style="width:20px;height:20px;color:var(--primary)"></i> Productos en Reclasificación</h3>
+                            <h3 class="card-title"><i data-lucide="repeat" style="width:18px;height:18px;color:var(--primary)"></i> Productos en Reclasificación</h3>
                         </div>
                         <div class="table-controls">
                             <div class="search-box">
-                                <i data-lucide="search" style="width:18px;height:18px;color:var(--text-secondary)"></i>
+                                <i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i>
                                 <input type="text" id="searchReclasificacion" placeholder="Buscar..." oninput="filtrarReclasificacion()">
                             </div>
                         </div>
                         <div class="table-container">
-                            <table><thead><tr><th>ID</th><th>Variante Original</th><th>Nueva Variante</th><th>Ubicación</th><th>Cantidad</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <table><thead><tr><th>ID</th><th>Var. Original</th><th>Nueva Var.</th><th>Ubic.</th><th>Cant.</th><th>Motivo</th><th>Estado</th><th>Acc.</th></tr></thead>
                             <tbody id="tablaReclasificacion"></tbody></table>
                         </div>
                     </div>
@@ -520,7 +503,6 @@
     </div>
 
     <!-- MODALES -->
-    <!-- Subir Inventario -->
     <div id="modalSubirInventario" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -531,7 +513,7 @@
                 <div class="form-group">
                     <label class="form-label">Archivo Excel</label>
                     <input type="file" id="fileInventario" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileInventario" class="file-upload-btn"><i data-lucide="file-plus" style="width:18px;height:18px"></i> Seleccionar archivo</label>
+                    <label for="fileInventario" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
                     <p class="form-help">Columnas: Variante, Ubicacion, StockFisico</p>
                 </div>
             </div>
@@ -542,7 +524,6 @@
         </div>
     </div>
 
-    <!-- Agregar Item -->
     <div id="modalAgregarItem" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -561,7 +542,6 @@
         </div>
     </div>
 
-    <!-- Modificar Masivo -->
     <div id="modalModificarMasivo" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -572,8 +552,8 @@
                 <div class="form-group">
                     <label class="form-label">Archivo Excel</label>
                     <input type="file" id="fileModificar" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileModificar" class="file-upload-btn"><i data-lucide="file-plus" style="width:18px;height:18px"></i> Seleccionar archivo</label>
-                    <p class="form-help">Columnas: Variante, Ubicacion, StockFisico (nuevo valor)</p>
+                    <label for="fileModificar" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                    <p class="form-help">Columnas: Variante, Ubicacion, StockFisico</p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -583,19 +563,17 @@
         </div>
     </div>
 
-    <!-- Eliminar Masivo -->
     <div id="modalEliminarMasivo" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="trash-2"></i> Eliminar Productos Masivo</h3>
+                <h3 class="modal-title"><i data-lucide="trash-2"></i> Eliminar Masivo</h3>
                 <button class="modal-close" onclick="cerrarModal('modalEliminarMasivo')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-danger"><i data-lucide="alert-triangle" style="width:20px;height:20px"></i><div><strong>Acción Irreversible</strong><br>Los registros se eliminarán permanentemente</div></div>
+                <div class="alert alert-danger"><i data-lucide="alert-triangle" style="width:18px;height:18px"></i><div><strong>Acción Irreversible</strong></div></div>
                 <div class="form-group">
-                    <label class="form-label">Archivo Excel</label>
                     <input type="file" id="fileEliminar" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileEliminar" class="file-upload-btn"><i data-lucide="file-plus" style="width:18px;height:18px"></i> Seleccionar archivo</label>
+                    <label for="fileEliminar" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
                     <p class="form-help">Columnas: Variante, Ubicacion</p>
                 </div>
             </div>
@@ -606,7 +584,6 @@
         </div>
     </div>
 
-    <!-- Subir Productos -->
     <div id="modalSubirProductos" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -614,12 +591,11 @@
                 <button class="modal-close" onclick="cerrarModal('modalSubirProductos')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-info"><i data-lucide="info" style="width:20px;height:20px"></i><span>Esto reemplazará todo el catálogo actual</span></div>
+                <div class="alert alert-info"><i data-lucide="info" style="width:18px;height:18px"></i><span>Esto reemplazará el catálogo actual</span></div>
                 <div class="form-group">
-                    <label class="form-label">Archivo Excel</label>
                     <input type="file" id="fileProductos" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileProductos" class="file-upload-btn"><i data-lucide="file-plus" style="width:18px;height:18px"></i> Seleccionar archivo</label>
-                    <p class="form-help">Columnas: variante, kardex, pvp, genero, linea, marca, talla</p>
+                    <label for="fileProductos" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                    <p class="form-help">Columnas: variante, descripcion, kardex, pvp, genero, linea, marca, talla</p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -629,7 +605,6 @@
         </div>
     </div>
 
-    <!-- Crear Orden -->
     <div id="modalCrearOrden" class="modal">
         <div class="modal-content large">
             <div class="modal-header">
@@ -640,8 +615,8 @@
                 <div class="form-group">
                     <label class="form-label">Archivo Excel con Hoja de Ruta</label>
                     <input type="file" id="fileOrden" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileOrden" class="file-upload-btn"><i data-lucide="file-plus" style="width:18px;height:18px"></i> Seleccionar archivo</label>
-                    <p class="form-help">Columnas: Variante, Ubicacion, y columnas por tienda con cantidades</p>
+                    <label for="fileOrden" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                    <p class="form-help">Columnas: Variante, Ubicacion, y columnas por tienda</p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -651,29 +626,36 @@
         </div>
     </div>
 
-    <!-- Ver Orden -->
     <div id="modalVerOrden" class="modal">
         <div class="modal-content large">
             <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="file-text"></i> Detalle de Orden <span id="ordenDetalleId"></span></h3>
+                <h3 class="modal-title"><i data-lucide="file-text"></i> Detalle Orden <span id="ordenDetalleId"></span></h3>
                 <button class="modal-close" onclick="cerrarModal('modalVerOrden')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body" id="ordenDetalleContenido"></div>
         </div>
     </div>
 
-    <!-- Subir Cantidades Picking -->
+    <div id="modalVerVariante" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i data-lucide="eye"></i> Detalle de Variante</h3>
+                <button class="modal-close" onclick="cerrarModal('modalVerVariante')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" id="varianteDetalleContenido"></div>
+        </div>
+    </div>
+
     <div id="modalSubirCantidades" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="scan"></i> Confirmar Cantidades Encontradas</h3>
+                <h3 class="modal-title"><i data-lucide="scan"></i> Confirmar Cantidades</h3>
                 <button class="modal-close" onclick="cerrarModal('modalSubirCantidades')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom:1rem;color:var(--text-secondary)">Sube el Excel con las cantidades realmente encontradas</p>
                 <div class="form-group">
                     <input type="file" id="fileCantidades" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileCantidades" class="file-upload-btn"><i data-lucide="file-plus" style="width:18px;height:18px"></i> Seleccionar archivo</label>
+                    <label for="fileCantidades" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
                     <p class="form-help">Columnas: Variante, Ubicacion, Encontrado</p>
                 </div>
             </div>
@@ -684,7 +666,6 @@
         </div>
     </div>
 
-    <!-- Subir Packing Real -->
     <div id="modalSubirPacking" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -692,11 +673,9 @@
                 <button class="modal-close" onclick="cerrarModal('modalSubirPacking')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-info"><i data-lucide="info" style="width:20px;height:20px"></i><span>Sube el Excel con la distribución REAL por tienda</span></div>
                 <div class="form-group">
                     <input type="file" id="filePackingReal" class="form-file" accept=".xlsx,.xls">
-                    <label for="filePackingReal" class="file-upload-btn"><i data-lucide="file-plus" style="width:18px;height:18px"></i> Seleccionar archivo</label>
-                    <p class="form-help">Columnas: Variante, Ubicacion, y columnas por tienda</p>
+                    <label for="filePackingReal" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
                 </div>
             </div>
             <div class="modal-footer">
@@ -706,38 +685,33 @@
         </div>
     </div>
 
-    <!-- Reclasificación Inmediata -->
     <div id="modalReclasificacion" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="alert-circle" style="color:var(--warning)"></i> Reclasificación Obligatoria</h3>
+                <h3 class="modal-title"><i data-lucide="alert-circle" style="color:var(--warning)"></i> Reclasificación</h3>
                 <button class="modal-close" onclick="cancelarReclasificacion()"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-warning"><i data-lucide="alert-triangle" style="width:20px;height:20px"></i><span>Clasifica los productos no empaquetados</span></div>
-                <div style="background:var(--bg-hover);padding:1rem;border-radius:10px;margin-bottom:1rem">
-                    <div style="display:flex;justify-content:space-between"><span>Progreso:</span><strong id="progresoReclas">1/1</strong></div>
-                </div>
+                <div style="background:var(--bg-hover);padding:0.75rem;border-radius:8px;margin-bottom:1rem;display:flex;justify-content:space-between"><span>Progreso:</span><strong id="progresoReclas">1/1</strong></div>
                 <div class="form-group"><label class="form-label">Variante</label><input type="text" id="reclasVariante" class="form-input" readonly></div>
                 <div class="form-group"><label class="form-label">Ubicación</label><input type="text" id="reclasUbicacion" class="form-input" readonly></div>
                 <div class="form-group"><label class="form-label">Cantidad</label><input type="text" id="reclasCantidad" class="form-input" readonly></div>
                 <div class="form-group">
-                    <label class="form-label">Motivo de Rechazo</label>
+                    <label class="form-label">Motivo</label>
                     <select id="reclasMotivo" class="form-select" onchange="toggleNuevaVariante()">
                         <option value="">Seleccionar...</option>
-                        <option value="mal_estado">Mal Estado / Defectuoso</option>
-                        <option value="no_corresponde_linea">No Corresponde a Línea</option>
-                        <option value="no_corresponde_genero">No Corresponde a Género</option>
-                        <option value="no_corresponde_talla">No Corresponde a Talla</option>
+                        <option value="mal_estado">Mal Estado</option>
+                        <option value="no_corresponde_linea">No Corresponde Línea</option>
+                        <option value="no_corresponde_genero">No Corresponde Género</option>
+                        <option value="no_corresponde_talla">No Corresponde Talla</option>
                     </select>
                 </div>
                 <div class="form-group" id="grupoNuevaVariante" style="display:none">
-                    <label class="form-label">Nueva Variante Correcta</label>
-                    <input type="text" id="reclasNuevaVariante" class="form-input" placeholder="Variante correcta">
-                    <p class="form-help">Se asignará a ubicación 999-PENDIENTE</p>
+                    <label class="form-label">Nueva Variante</label>
+                    <input type="text" id="reclasNuevaVariante" class="form-input">
                 </div>
-                <div id="grupoMalEstado" class="alert alert-danger" style="display:none"><i data-lucide="x-circle" style="width:20px;height:20px"></i><span>Se asignará a ubicación <strong>191</strong></span></div>
-                <div class="form-group"><label class="form-label">Comentario</label><textarea id="reclasComentario" class="form-textarea" placeholder="Describe el motivo..."></textarea></div>
+                <div id="grupoMalEstado" class="alert alert-danger" style="display:none"><span>Se asignará a ubicación <strong>191</strong></span></div>
+                <div class="form-group"><label class="form-label">Comentario</label><textarea id="reclasComentario" class="form-textarea"></textarea></div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="cancelarReclasificacion()">Cancelar</button>
@@ -746,7 +720,6 @@
         </div>
     </div>
 
-    <!-- Completar Reclasificación -->
     <div id="modalCompletarReclas" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -757,8 +730,7 @@
                 <div id="infoCompletarReclas"></div>
                 <div class="form-group" style="margin-top:1rem">
                     <label class="form-label">Ubicación Final</label>
-                    <input type="text" id="ubicacionFinalReclas" class="form-input" placeholder="Ej: A1, B2">
-                    <p class="form-help">Ubicación definitiva donde se almacenará</p>
+                    <input type="text" id="ubicacionFinalReclas" class="form-input" placeholder="Ej: A1">
                 </div>
             </div>
             <div class="modal-footer">
@@ -776,17 +748,19 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6eGp6bWxtbW13c3BlbWloaGx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NjI5MjAsImV4cCI6MjA3OTEzODkyMH0.uLXtsONi_c4myPbsvTIqV51pldRv6Wuff4adYWgVR6Q';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const TIENDAS = ['LUKERS EL SOL','LUKERS TRU PIZARRO','LUKERS LA MARINA','LUKERS JR UNION','LUKERS PROLONGACIÓN IQUITOS','LUKERS CHI P. RUIZ','LUKERS TARAPOTO','LUKERS MENDIOLA','LUKERS ALFONSO UGARTE','LUKERS IQT LORES','LUKERS JIRON'];
+        const TIENDAS = ['LUKERS EL SOL','LUKERS TRU PIZARRO','LUKERS LA MARINA','LUKERS PROLONGACIÓN IQUITOS','LUKERS CHI P. RUIZ','LUKERS TARAPOTO','LUKERS MENDIOLA','LUKERS ALFONSO UGARTE','LUKERS IQT LORES','LUKERS JIRON'];
         const DIAS_EXPIRACION = 7;
         const DIAS_ALERTA = 3;
-        const ITEMS_POR_PAGINA = 50;
+        const ITEMS_POR_PAGINA = 100; // Cambiado a 100
         const BATCH_SIZE = 500;
 
         // ============================================
         // VARIABLES GLOBALES
         // ============================================
         let inventario = [], productos = [], ordenes = [], reclasificacion = [];
+        let inventarioFiltrado = [], productosFiltrado = [];
         let paginaInv = 1, paginaProd = 1;
+        let totalInventario = 0, totalProductos = 0;
         let chartGeneros, chartEvolucion, chartEstados, chartTiendas;
         let ordenActualPicking = null, ordenActualPacking = null;
         let variantesNoEmpaquetadas = [], indiceReclas = 0;
@@ -827,55 +801,90 @@
         }
 
         // ============================================
-        // CARGA DE DATOS
+        // CARGA DE DATOS - TODOS LOS REGISTROS
         // ============================================
+        async function cargarTodosLosRegistros(tabla, orderColumn = 'variante') {
+            let allData = [];
+            let from = 0;
+            const batchSize = 1000;
+            
+            while (true) {
+                const { data, error } = await supabase
+                    .from(tabla)
+                    .select('*')
+                    .order(orderColumn, { ascending: true })
+                    .range(from, from + batchSize - 1);
+                
+                if (error) {
+                    console.error(`Error cargando ${tabla}:`, error);
+                    break;
+                }
+                
+                if (!data || data.length === 0) break;
+                
+                allData = allData.concat(data);
+                actualizarProgreso((allData.length / (from + batchSize * 2)) * 100);
+                document.getElementById('loadingSubtext').textContent = `${tabla}: ${allData.length.toLocaleString()} registros...`;
+                
+                if (data.length < batchSize) break;
+                from += batchSize;
+            }
+            
+            return allData;
+        }
+
         async function cargarDatos() {
             mostrarLoading('Cargando datos...');
             try {
-                await Promise.all([cargarInventario(), cargarProductos(), cargarOrdenes(), cargarReclasificacion()]);
+                // Cargar inventario completo
+                document.getElementById('loadingText').textContent = 'Cargando inventario...';
+                inventario = await cargarTodosLosRegistros('inventario', 'variante');
+                inventarioFiltrado = [...inventario];
+                totalInventario = inventario.length;
+                
+                // Cargar productos completo
+                document.getElementById('loadingText').textContent = 'Cargando productos...';
+                productos = await cargarTodosLosRegistros('productos_system', 'variante');
+                productosFiltrado = [...productos];
+                totalProductos = productos.length;
+                
+                // Cargar órdenes
+                document.getElementById('loadingText').textContent = 'Cargando órdenes...';
+                const { data: ordenesData } = await supabase.from('ordenes').select('*').order('fecha', { ascending: false });
+                ordenes = ordenesData || [];
+                
+                // Cargar reclasificación
+                const { data: reclasData } = await supabase.from('reclasificacion').select('*').order('fecha', { ascending: false });
+                reclasificacion = reclasData || [];
+
+                actualizarFiltros();
+                renderizarInventario();
+                renderizarProductos();
+                renderizarOrdenes();
+                renderizarPicking();
+                renderizarPacking();
+                renderizarReclasificacion();
                 actualizarDashboard();
+                verificarOrdenesProximas();
+                
                 ocultarLoading();
-                toast('Datos cargados', 'success');
-            } catch (e) { ocultarLoading(); toast('Error: ' + e.message, 'error'); }
+                toast(`Datos cargados: ${totalInventario.toLocaleString()} inv, ${totalProductos.toLocaleString()} prod`, 'success');
+            } catch (e) { 
+                ocultarLoading(); 
+                toast('Error: ' + e.message, 'error'); 
+                console.error(e);
+            }
         }
 
         async function sincronizarDatos() { await cargarDatos(); }
-
-        async function cargarInventario() {
-            const { data } = await supabase.from('inventario').select('*').order('variante');
-            inventario = data || [];
-            renderizarInventario();
-        }
-
-        async function cargarProductos() {
-            const { data } = await supabase.from('productos_system').select('*').order('variante');
-            productos = data || [];
-            actualizarFiltros();
-            renderizarProductos();
-        }
-
-        async function cargarOrdenes() {
-            const { data } = await supabase.from('ordenes').select('*').order('fecha', { ascending: false });
-            ordenes = data || [];
-            renderizarOrdenes();
-            renderizarPicking();
-            renderizarPacking();
-            verificarOrdenesProximas();
-        }
-
-        async function cargarReclasificacion() {
-            const { data } = await supabase.from('reclasificacion').select('*').order('fecha', { ascending: false });
-            reclasificacion = data || [];
-            renderizarReclasificacion();
-        }
 
         // ============================================
         // DASHBOARD
         // ============================================
         function actualizarDashboard() {
             const variantes = new Set(inventario.map(i => i.variante)).size;
-            const unidades = inventario.reduce((s, i) => s + (i.stock_fisico || 0), 0);
-            const bloqueadas = inventario.reduce((s, i) => s + (i.stock_bloqueado || 0), 0);
+            const unidades = inventario.reduce((s, i) => s + (parseInt(i.stock_fisico) || 0), 0);
+            const bloqueadas = inventario.reduce((s, i) => s + (parseInt(i.stock_bloqueado) || 0), 0);
             const activas = ordenes.filter(o => !['Completada', 'Cancelada', 'Expirada'].includes(o.estado)).length;
 
             document.getElementById('statVariantes').textContent = variantes.toLocaleString();
@@ -917,7 +926,6 @@
         }
 
         function generarGraficas() {
-            // Gráfica Géneros
             const ctxG = document.getElementById('chartGeneros');
             if (chartGeneros) chartGeneros.destroy();
             let montoH = 0, montoM = 0, montoI = 0;
@@ -933,9 +941,8 @@
                     else montoI += monto;
                 });
             });
-            chartGeneros = new Chart(ctxG, { type: 'bar', data: { labels: ['Hombre', 'Mujer', 'Infantil'], datasets: [{ data: [montoH, montoM, montoI], backgroundColor: ['rgba(99,102,241,0.8)', 'rgba(236,72,153,0.8)', 'rgba(245,158,11,0.8)'], borderRadius: 8 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            chartGeneros = new Chart(ctxG, { type: 'bar', data: { labels: ['Hombre', 'Mujer', 'Infantil'], datasets: [{ data: [montoH, montoM, montoI], backgroundColor: ['rgba(99,102,241,0.8)', 'rgba(236,72,153,0.8)', 'rgba(245,158,11,0.8)'], borderRadius: 6 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
 
-            // Gráfica Evolución
             const ctxE = document.getElementById('chartEvolucion');
             if (chartEvolucion) chartEvolucion.destroy();
             const labels = [], dataE = [];
@@ -946,7 +953,6 @@
             }
             chartEvolucion = new Chart(ctxE, { type: 'line', data: { labels, datasets: [{ data: dataE, borderColor: 'rgba(99,102,241,1)', backgroundColor: 'rgba(99,102,241,0.1)', tension: 0.4, fill: true }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
 
-            // Gráfica Estados
             const ctxS = document.getElementById('chartEstados');
             if (chartEstados) chartEstados.destroy();
             const estados = {};
@@ -954,7 +960,6 @@
             const colores = { 'Pendiente Picking': 'rgba(245,158,11,0.8)', 'En Picking': 'rgba(59,130,246,0.8)', 'Pendiente Packing': 'rgba(168,85,247,0.8)', 'Completada': 'rgba(16,185,129,0.8)', 'Expirada': 'rgba(239,68,68,0.8)' };
             chartEstados = new Chart(ctxS, { type: 'doughnut', data: { labels: Object.keys(estados), datasets: [{ data: Object.values(estados), backgroundColor: Object.keys(estados).map(e => colores[e] || 'rgba(100,100,100,0.8)') }] }, options: { responsive: true, maintainAspectRatio: false } });
 
-            // Gráfica Tiendas
             const ctxT = document.getElementById('chartTiendas');
             if (chartTiendas) chartTiendas.destroy();
             const unidadesTienda = {};
@@ -962,7 +967,7 @@
             ordenes.filter(o => o.estado === 'Completada' && o.hojaPacking).forEach(o => {
                 o.hojaPacking.forEach(f => { TIENDAS.forEach(t => { unidadesTienda[t] += f[t] || 0; }); });
             });
-            chartTiendas = new Chart(ctxT, { type: 'bar', data: { labels: TIENDAS.map(t => t.replace('LUKERS ', '')), datasets: [{ data: Object.values(unidadesTienda), backgroundColor: 'rgba(99,102,241,0.8)', borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            chartTiendas = new Chart(ctxT, { type: 'bar', data: { labels: TIENDAS.map(t => t.replace('LUKERS ', '')), datasets: [{ data: Object.values(unidadesTienda), backgroundColor: 'rgba(99,102,241,0.8)', borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
         }
 
         function verificarOrdenesProximas() {
@@ -978,18 +983,26 @@
         // INVENTARIO
         // ============================================
         function renderizarInventario() {
-            const search = document.getElementById('searchInventario')?.value.toLowerCase() || '';
-            let filtrado = inventario.filter(i => i.variante.toLowerCase().includes(search) || i.ubicacion.toLowerCase().includes(search));
-            document.getElementById('countInventario').textContent = filtrado.length;
-
-            const totalPag = Math.ceil(filtrado.length / ITEMS_POR_PAGINA) || 1;
-            const items = filtrado.slice((paginaInv - 1) * ITEMS_POR_PAGINA, paginaInv * ITEMS_POR_PAGINA);
+            document.getElementById('countInventario').textContent = inventarioFiltrado.length.toLocaleString();
+            const totalPag = Math.ceil(inventarioFiltrado.length / ITEMS_POR_PAGINA) || 1;
+            if (paginaInv > totalPag) paginaInv = totalPag;
+            const items = inventarioFiltrado.slice((paginaInv - 1) * ITEMS_POR_PAGINA, paginaInv * ITEMS_POR_PAGINA);
 
             const tbody = document.getElementById('tablaInventario');
             tbody.innerHTML = items.length === 0 ? '<tr><td colspan="6" class="empty-state">No hay datos</td></tr>' :
                 items.map(i => {
-                    const disp = (i.stock_fisico || 0) - (i.stock_bloqueado || 0);
-                    return `<tr><td><strong>${i.variante}</strong></td><td><span class="badge badge-info">${i.ubicacion}</span></td><td>${i.stock_fisico || 0}</td><td>${i.stock_bloqueado || 0}</td><td><strong style="color:var(--success)">${disp}</strong></td><td><button class="btn btn-danger btn-icon" onclick="eliminarItem('${i.variante}','${i.ubicacion}')"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button></td></tr>`;
+                    const disp = (parseInt(i.stock_fisico) || 0) - (parseInt(i.stock_bloqueado) || 0);
+                    return `<tr>
+                        <td><strong>${i.variante}</strong></td>
+                        <td><span class="badge badge-info">${i.ubicacion}</span></td>
+                        <td>${i.stock_fisico || 0}</td>
+                        <td>${i.stock_bloqueado || 0}</td>
+                        <td><strong style="color:var(--success)">${disp}</strong></td>
+                        <td>
+                            <button class="btn btn-info btn-icon" onclick="verVariante('${i.variante}','${i.ubicacion}')" title="Ver Info"><i data-lucide="eye" style="width:14px;height:14px"></i></button>
+                            <button class="btn btn-danger btn-icon" onclick="eliminarItem('${i.variante}','${i.ubicacion}')" title="Eliminar"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
+                        </td>
+                    </tr>`;
                 }).join('');
 
             document.getElementById('paginaInventario').textContent = paginaInv;
@@ -999,7 +1012,46 @@
             lucide.createIcons();
         }
 
-        function filtrarInventario() { paginaInv = 1; renderizarInventario(); }
+        function filtrarInventario() {
+            const search = document.getElementById('searchInventario')?.value.toLowerCase() || '';
+            inventarioFiltrado = inventario.filter(i => 
+                i.variante.toLowerCase().includes(search) || 
+                i.ubicacion.toLowerCase().includes(search)
+            );
+            paginaInv = 1;
+            renderizarInventario();
+        }
+
+        function verVariante(variante, ubicacion) {
+            const inv = inventario.find(i => i.variante === variante && i.ubicacion === ubicacion);
+            const prod = productos.find(p => p.variante === variante);
+            
+            let html = '<div class="detail-grid">';
+            html += `<div class="detail-item"><div class="detail-label">Variante</div><div class="detail-value">${variante}</div></div>`;
+            html += `<div class="detail-item"><div class="detail-label">Ubicación</div><div class="detail-value">${ubicacion}</div></div>`;
+            
+            if (inv) {
+                html += `<div class="detail-item"><div class="detail-label">Stock Físico</div><div class="detail-value">${inv.stock_fisico || 0}</div></div>`;
+                html += `<div class="detail-item"><div class="detail-label">Stock Bloqueado</div><div class="detail-value">${inv.stock_bloqueado || 0}</div></div>`;
+                html += `<div class="detail-item"><div class="detail-label">Disponible</div><div class="detail-value" style="color:var(--success)">${(inv.stock_fisico || 0) - (inv.stock_bloqueado || 0)}</div></div>`;
+            }
+            
+            if (prod) {
+                html += `<div class="detail-item"><div class="detail-label">Descripción</div><div class="detail-value">${prod.descripcion || '-'}</div></div>`;
+                html += `<div class="detail-item"><div class="detail-label">Género</div><div class="detail-value">${prod.genero || '-'}</div></div>`;
+                html += `<div class="detail-item"><div class="detail-label">Línea</div><div class="detail-value">${prod.linea || '-'}</div></div>`;
+                html += `<div class="detail-item"><div class="detail-label">Marca</div><div class="detail-value">${prod.marca || '-'}</div></div>`;
+                html += `<div class="detail-item"><div class="detail-label">Talla</div><div class="detail-value">${prod.talla || '-'}</div></div>`;
+                html += `<div class="detail-item"><div class="detail-label">Kardex</div><div class="detail-value" style="color:var(--primary)">S/ ${parseFloat(prod.kardex || 0).toFixed(2)}</div></div>`;
+                html += `<div class="detail-item"><div class="detail-label">PVP</div><div class="detail-value" style="color:var(--success)">S/ ${parseFloat(prod.pvp || 0).toFixed(2)}</div></div>`;
+            } else {
+                html += `<div class="detail-item" style="grid-column:span 2"><div class="detail-label">Info Producto</div><div class="detail-value" style="color:var(--warning)">No encontrado en catálogo</div></div>`;
+            }
+            
+            html += '</div>';
+            document.getElementById('varianteDetalleContenido').innerHTML = html;
+            abrirModal('modalVerVariante');
+        }
 
         async function guardarItem() {
             const v = document.getElementById('inputVariante').value.trim().toUpperCase();
@@ -1010,7 +1062,7 @@
             const { error } = await supabase.from('inventario').upsert({ variante: v, ubicacion: u, stock_fisico: s, stock_bloqueado: 0 }, { onConflict: 'variante,ubicacion' });
             ocultarLoading();
             if (error) toast('Error: ' + error.message, 'error');
-            else { toast('Guardado', 'success'); cerrarModal('modalAgregarItem'); await cargarInventario(); actualizarDashboard(); }
+            else { toast('Guardado', 'success'); cerrarModal('modalAgregarItem'); await cargarDatos(); }
         }
 
         async function eliminarItem(v, u) {
@@ -1019,8 +1071,7 @@
             await supabase.from('inventario').delete().eq('variante', v).eq('ubicacion', u);
             ocultarLoading();
             toast('Eliminado', 'success');
-            await cargarInventario();
-            actualizarDashboard();
+            await cargarDatos();
         }
 
         async function procesarInventario() {
@@ -1032,12 +1083,12 @@
             for (let i = 0; i < items.length; i += BATCH_SIZE) {
                 await supabase.from('inventario').upsert(items.slice(i, i + BATCH_SIZE), { onConflict: 'variante,ubicacion' });
                 actualizarProgreso((i / items.length) * 100);
+                document.getElementById('loadingSubtext').textContent = `${i + BATCH_SIZE} de ${items.length}`;
             }
             ocultarLoading();
             toast(`${items.length} registros procesados`, 'success');
             cerrarModal('modalSubirInventario');
-            await cargarInventario();
-            actualizarDashboard();
+            await cargarDatos();
         }
 
         async function procesarModificarMasivo() {
@@ -1054,7 +1105,7 @@
             ocultarLoading();
             toast('Stock actualizado', 'success');
             cerrarModal('modalModificarMasivo');
-            await cargarInventario();
+            await cargarDatos();
         }
 
         async function procesarEliminarMasivo() {
@@ -1071,8 +1122,7 @@
             ocultarLoading();
             toast('Eliminados', 'success');
             cerrarModal('modalEliminarMasivo');
-            await cargarInventario();
-            actualizarDashboard();
+            await cargarDatos();
         }
 
         function exportarInventario() {
@@ -1092,25 +1142,29 @@
             const lineas = [...new Set(productos.map(p => p.linea).filter(Boolean))].sort();
             const marcas = [...new Set(productos.map(p => p.marca).filter(Boolean))].sort();
             const tallas = [...new Set(productos.map(p => p.talla).filter(Boolean))].sort();
-            document.getElementById('filtroGenero').innerHTML = '<option value="">Todos</option>' + generos.map(g => `<option value="${g}">${g}</option>`).join('');
-            document.getElementById('filtroLinea').innerHTML = '<option value="">Todas</option>' + lineas.map(l => `<option value="${l}">${l}</option>`).join('');
-            document.getElementById('filtroMarca').innerHTML = '<option value="">Todas</option>' + marcas.map(m => `<option value="${m}">${m}</option>`).join('');
-            document.getElementById('filtroTalla').innerHTML = '<option value="">Todas</option>' + tallas.map(t => `<option value="${t}">${t}</option>`).join('');
+            document.getElementById('filtroGenero').innerHTML = '<option value="">Géneros</option>' + generos.map(g => `<option value="${g}">${g}</option>`).join('');
+            document.getElementById('filtroLinea').innerHTML = '<option value="">Líneas</option>' + lineas.map(l => `<option value="${l}">${l}</option>`).join('');
+            document.getElementById('filtroMarca').innerHTML = '<option value="">Marcas</option>' + marcas.map(m => `<option value="${m}">${m}</option>`).join('');
+            document.getElementById('filtroTalla').innerHTML = '<option value="">Tallas</option>' + tallas.map(t => `<option value="${t}">${t}</option>`).join('');
         }
 
         function renderizarProductos() {
-            const search = document.getElementById('searchProductos')?.value.toLowerCase() || '';
-            const gen = document.getElementById('filtroGenero')?.value || '';
-            const lin = document.getElementById('filtroLinea')?.value || '';
-            const mar = document.getElementById('filtroMarca')?.value || '';
-            const tal = document.getElementById('filtroTalla')?.value || '';
-            let filtrado = productos.filter(p => p.variante.toLowerCase().includes(search) && (!gen || p.genero === gen) && (!lin || p.linea === lin) && (!mar || p.marca === mar) && (!tal || p.talla == tal));
+            document.getElementById('countProductos').textContent = productosFiltrado.length.toLocaleString();
+            const totalPag = Math.ceil(productosFiltrado.length / ITEMS_POR_PAGINA) || 1;
+            if (paginaProd > totalPag) paginaProd = totalPag;
+            const items = productosFiltrado.slice((paginaProd - 1) * ITEMS_POR_PAGINA, paginaProd * ITEMS_POR_PAGINA);
 
-            const totalPag = Math.ceil(filtrado.length / ITEMS_POR_PAGINA) || 1;
-            const items = filtrado.slice((paginaProd - 1) * ITEMS_POR_PAGINA, paginaProd * ITEMS_POR_PAGINA);
-
-            document.getElementById('tablaProductos').innerHTML = items.length === 0 ? '<tr><td colspan="7" class="empty-state">No hay productos</td></tr>' :
-                items.map(p => `<tr><td><strong>${p.variante}</strong></td><td>${p.genero || '-'}</td><td>${p.linea || '-'}</td><td>${p.marca || '-'}</td><td>${p.talla || '-'}</td><td><strong style="color:var(--primary)">S/ ${parseFloat(p.kardex || 0).toFixed(2)}</strong></td><td><strong style="color:var(--success)">S/ ${parseFloat(p.pvp || 0).toFixed(2)}</strong></td></tr>`).join('');
+            document.getElementById('tablaProductos').innerHTML = items.length === 0 ? '<tr><td colspan="8" class="empty-state">No hay productos</td></tr>' :
+                items.map(p => `<tr>
+                    <td><strong>${p.variante}</strong></td>
+                    <td class="td-wrap">${p.descripcion || '-'}</td>
+                    <td>${p.genero || '-'}</td>
+                    <td>${p.linea || '-'}</td>
+                    <td>${p.marca || '-'}</td>
+                    <td>${p.talla || '-'}</td>
+                    <td><strong style="color:var(--primary)">S/ ${parseFloat(p.kardex || 0).toFixed(2)}</strong></td>
+                    <td><strong style="color:var(--success)">S/ ${parseFloat(p.pvp || 0).toFixed(2)}</strong></td>
+                </tr>`).join('');
 
             document.getElementById('paginaProductos').textContent = paginaProd;
             document.getElementById('totalPaginasProductos').textContent = totalPag;
@@ -1118,8 +1172,27 @@
             document.getElementById('nextProductos').disabled = paginaProd >= totalPag;
         }
 
-        function filtrarProductos() { paginaProd = 1; renderizarProductos(); }
-        function aplicarFiltrosProductos() { paginaProd = 1; renderizarProductos(); }
+        function filtrarProductos() {
+            aplicarFiltrosProductos();
+        }
+
+        function aplicarFiltrosProductos() {
+            const search = document.getElementById('searchProductos')?.value.toLowerCase() || '';
+            const gen = document.getElementById('filtroGenero')?.value || '';
+            const lin = document.getElementById('filtroLinea')?.value || '';
+            const mar = document.getElementById('filtroMarca')?.value || '';
+            const tal = document.getElementById('filtroTalla')?.value || '';
+            
+            productosFiltrado = productos.filter(p => 
+                (p.variante.toLowerCase().includes(search) || (p.descripcion || '').toLowerCase().includes(search)) &&
+                (!gen || p.genero === gen) && 
+                (!lin || p.linea === lin) && 
+                (!mar || p.marca === mar) && 
+                (!tal || p.talla == tal)
+            );
+            paginaProd = 1;
+            renderizarProductos();
+        }
 
         async function procesarProductos() {
             const file = document.getElementById('fileProductos').files[0];
@@ -1128,16 +1201,25 @@
             mostrarLoading('Procesando catálogo...');
             await supabase.from('productos_system').delete().neq('variante', '');
             const data = await leerExcel(file);
-            const items = data.map(r => ({ variante: String(r.variante || r.Variante || '').trim().toUpperCase(), kardex: parseFloat(r.kardex || r.Kardex || 0), pvp: parseFloat(r.pvp || r.PVP || 0), genero: String(r.genero || r.Genero || '').trim(), linea: String(r.linea || r.Linea || '').trim(), marca: String(r.marca || r.Marca || '').trim(), talla: String(r.talla || r.Talla || '').trim() })).filter(i => i.variante);
+            const items = data.map(r => ({ 
+                variante: String(r.variante || r.Variante || '').trim().toUpperCase(), 
+                descripcion: String(r.descripcion || r.Descripcion || '').trim(),
+                kardex: parseFloat(r.kardex || r.Kardex || 0), 
+                pvp: parseFloat(r.pvp || r.PVP || 0), 
+                genero: String(r.genero || r.Genero || '').trim(), 
+                linea: String(r.linea || r.Linea || '').trim(), 
+                marca: String(r.marca || r.Marca || '').trim(), 
+                talla: String(r.talla || r.Talla || '').trim() 
+            })).filter(i => i.variante);
             for (let i = 0; i < items.length; i += BATCH_SIZE) {
                 await supabase.from('productos_system').insert(items.slice(i, i + BATCH_SIZE));
                 actualizarProgreso((i / items.length) * 100);
+                document.getElementById('loadingSubtext').textContent = `${i + BATCH_SIZE} de ${items.length}`;
             }
             ocultarLoading();
             toast(`${items.length} productos cargados`, 'success');
             cerrarModal('modalSubirProductos');
-            await cargarProductos();
-            actualizarDashboard();
+            await cargarDatos();
         }
 
         function exportarProductos() {
@@ -1159,7 +1241,7 @@
                     const dias = diasTranscurridos(o.fecha);
                     const badge = getBadge(o.estado);
                     const diasBadge = dias > DIAS_EXPIRACION ? 'badge-danger' : dias > DIAS_ALERTA ? 'badge-warning' : 'badge-success';
-                    return `<tr><td><strong>${o.id}</strong></td><td>${formatFecha(o.fecha)}</td><td>${o.items?.length || 0}</td><td>${calcUnidades(o)}</td><td><span class="badge ${diasBadge}">${dias} días</span></td><td>${badge}</td><td>
+                    return `<tr><td><strong>${o.id}</strong></td><td>${formatFecha(o.fecha)}</td><td>${o.items?.length || 0}</td><td>${calcUnidades(o)}</td><td><span class="badge ${diasBadge}">${dias}d</span></td><td>${badge}</td><td>
                         <button class="btn btn-outline btn-icon" onclick="verOrden('${o.id}')"><i data-lucide="eye" style="width:14px;height:14px"></i></button>
                         ${['Pendiente Picking', 'Expirada'].includes(o.estado) ? `<button class="btn btn-danger btn-icon" onclick="eliminarOrden('${o.id}')"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>` : ''}
                     </td></tr>`;
@@ -1169,22 +1251,22 @@
 
         function renderizarPicking() {
             const items = ordenes.filter(o => ['Pendiente Picking', 'En Picking'].includes(o.estado));
-            document.getElementById('tablaPicking').innerHTML = items.length === 0 ? '<tr><td colspan="6" class="empty-state">No hay órdenes en picking</td></tr>' :
+            document.getElementById('tablaPicking').innerHTML = items.length === 0 ? '<tr><td colspan="6" class="empty-state">No hay órdenes</td></tr>' :
                 items.map(o => `<tr><td><strong>${o.id}</strong></td><td>${formatFecha(o.fecha)}</td><td>${o.items?.length || 0}</td><td>${calcUnidades(o)}</td><td>${getBadge(o.estado)}</td><td>
-                    <button class="btn btn-info" onclick="descargarHojaPicking('${o.id}')"><i data-lucide="download" style="width:14px;height:14px"></i> Hoja</button>
-                    ${o.estado === 'Pendiente Picking' ? `<button class="btn btn-success" onclick="iniciarPicking('${o.id}')">Iniciar</button>` : `<button class="btn btn-warning" onclick="abrirSubirCantidades('${o.id}')">Subir Cant.</button>`}
+                    <button class="btn btn-info" onclick="descargarHojaPicking('${o.id}')"><i data-lucide="download" style="width:14px;height:14px"></i></button>
+                    ${o.estado === 'Pendiente Picking' ? `<button class="btn btn-success" onclick="iniciarPicking('${o.id}')">Iniciar</button>` : `<button class="btn btn-warning" onclick="abrirSubirCantidades('${o.id}')">Subir</button>`}
                 </td></tr>`).join('');
             lucide.createIcons();
         }
 
         function renderizarPacking() {
             const items = ordenes.filter(o => o.estado === 'Pendiente Packing');
-            document.getElementById('tablaPacking').innerHTML = items.length === 0 ? '<tr><td colspan="6" class="empty-state">No hay órdenes en packing</td></tr>' :
+            document.getElementById('tablaPacking').innerHTML = items.length === 0 ? '<tr><td colspan="6" class="empty-state">No hay órdenes</td></tr>' :
                 items.map(o => {
                     const enc = Object.values(o.cantidadesEncontradas || {}).reduce((a, b) => a + b, 0);
                     return `<tr><td><strong>${o.id}</strong></td><td>${formatFecha(o.fecha)}</td><td>${Object.keys(o.cantidadesEncontradas || {}).length}</td><td>${enc}</td><td>${getBadge(o.estado)}</td><td>
-                        <button class="btn btn-info" onclick="descargarHojaPacking('${o.id}')"><i data-lucide="download" style="width:14px;height:14px"></i> Sugerida</button>
-                        <button class="btn btn-success" onclick="abrirSubirPacking('${o.id}')">Subir Real</button>
+                        <button class="btn btn-info" onclick="descargarHojaPacking('${o.id}')"><i data-lucide="download" style="width:14px;height:14px"></i></button>
+                        <button class="btn btn-success" onclick="abrirSubirPacking('${o.id}')">Subir</button>
                     </td></tr>`;
                 }).join('');
             lucide.createIcons();
@@ -1206,7 +1288,6 @@
                 if (cant > 0) items.push({ variante: v, ubicacion: u, cantidad: cant, distribucion: dist });
             });
 
-            // Validar stock
             for (const item of items) {
                 const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
                 const disp = inv ? (inv.stock_fisico || 0) - (inv.stock_bloqueado || 0) : 0;
@@ -1217,7 +1298,6 @@
                 }
             }
 
-            // Bloquear stock
             for (const item of items) {
                 const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
                 if (inv) await supabase.from('inventario').update({ stock_bloqueado: (inv.stock_bloqueado || 0) + item.cantidad }).eq('variante', item.variante).eq('ubicacion', item.ubicacion);
@@ -1228,22 +1308,20 @@
             ocultarLoading();
             toast('Orden creada', 'success');
             cerrarModal('modalCrearOrden');
-            await cargarOrdenes();
-            await cargarInventario();
-            actualizarDashboard();
+            await cargarDatos();
         }
 
         function verOrden(id) {
             const o = ordenes.find(x => x.id === id);
             if (!o) return;
             document.getElementById('ordenDetalleId').textContent = o.id;
-            let html = `<div class="form-row" style="margin-bottom:1rem"><div><label style="font-size:0.75rem;color:var(--text-secondary)">Fecha</label><div style="font-weight:600">${formatFecha(o.fecha)}</div></div><div><label style="font-size:0.75rem;color:var(--text-secondary)">Estado</label><div>${getBadge(o.estado)}</div></div><div><label style="font-size:0.75rem;color:var(--text-secondary)">Días</label><div style="font-weight:600">${diasTranscurridos(o.fecha)}</div></div></div>`;
-            html += '<h4 style="margin:1rem 0 0.5rem">Productos</h4><table><thead><tr><th>Variante</th><th>Ubicación</th><th>Solicitado</th><th>Encontrado</th></tr></thead><tbody>';
+            let html = `<div class="detail-grid" style="margin-bottom:1rem"><div class="detail-item"><div class="detail-label">Fecha</div><div class="detail-value">${formatFecha(o.fecha)}</div></div><div class="detail-item"><div class="detail-label">Estado</div><div class="detail-value">${getBadge(o.estado)}</div></div><div class="detail-item"><div class="detail-label">Días</div><div class="detail-value">${diasTranscurridos(o.fecha)}</div></div></div>`;
+            html += '<h4 style="margin:1rem 0 0.5rem;font-size:0.9rem">Productos</h4><div class="table-container"><table><thead><tr><th>Variante</th><th>Ubic.</th><th>Solic.</th><th>Enc.</th></tr></thead><tbody>';
             o.items?.forEach(i => {
                 const key = `${i.variante}|${i.ubicacion}`;
                 html += `<tr><td>${i.variante}</td><td><span class="badge badge-info">${i.ubicacion}</span></td><td>${i.cantidad}</td><td>${o.cantidadesEncontradas[key] || '-'}</td></tr>`;
             });
-            html += '</tbody></table>';
+            html += '</tbody></table></div>';
             document.getElementById('ordenDetalleContenido').innerHTML = html;
             abrirModal('modalVerOrden');
         }
@@ -1261,18 +1339,16 @@
             await supabase.from('ordenes').delete().eq('id', id);
             ocultarLoading();
             toast('Orden eliminada', 'success');
-            await cargarOrdenes();
-            await cargarInventario();
-            actualizarDashboard();
+            await cargarDatos();
         }
 
         // ============================================
-        // PICKING
+        // PICKING & PACKING
         // ============================================
         async function iniciarPicking(id) {
             await supabase.from('ordenes').update({ estado: 'En Picking' }).eq('id', id);
             toast('Picking iniciado', 'success');
-            await cargarOrdenes();
+            await cargarDatos();
         }
 
         function descargarHojaPicking(id) {
@@ -1311,7 +1387,6 @@
                 if (v && u) cantidades[`${v}|${u}`] = e;
             });
 
-            // Generar hoja packing sugerida
             const hojaPacking = o.items.map(i => {
                 const key = `${i.variante}|${i.ubicacion}`;
                 const enc = cantidades[key] || 0;
@@ -1326,12 +1401,9 @@
             ocultarLoading();
             toast('Cantidades procesadas', 'success');
             cerrarModal('modalSubirCantidades');
-            await cargarOrdenes();
+            await cargarDatos();
         }
 
-        // ============================================
-        // PACKING
-        // ============================================
         function descargarHojaPacking(id) {
             const o = ordenes.find(x => x.id === id);
             if (!o?.hojaPacking) return;
@@ -1374,7 +1446,6 @@
                 hojaFinal.push({ variante: v, ubicacion: u, kardex: prod?.kardex || 0, encontrado: total, ...dist });
             });
 
-            // Detectar no empaquetadas
             variantesNoEmpaquetadas = [];
             o.items.forEach(i => {
                 const key = `${i.variante}|${i.ubicacion}`;
@@ -1400,7 +1471,6 @@
 
         async function cerrarOrden(o) {
             mostrarLoading('Cerrando orden...');
-            // Desbloquear y descontar stock
             for (const i of o.items) {
                 const key = `${i.variante}|${i.ubicacion}`;
                 const enc = o.cantidadesEncontradas[key] || 0;
@@ -1415,9 +1485,7 @@
             await supabase.from('ordenes').update({ estado: 'Completada', fechaCierre: new Date().toISOString(), hojaPacking: o.hojaPacking, prendasRechazadas: o.prendasRechazadas || 0 }).eq('id', o.id);
             ocultarLoading();
             toast('Orden completada', 'success');
-            await cargarOrdenes();
-            await cargarInventario();
-            actualizarDashboard();
+            await cargarDatos();
         }
 
         // ============================================
@@ -1428,8 +1496,8 @@
             let filtrado = reclasificacion.filter(r => r.varianteOriginal.toLowerCase().includes(search) || (r.nuevaVariante || '').toLowerCase().includes(search));
             document.getElementById('tablaReclasificacion').innerHTML = filtrado.length === 0 ? '<tr><td colspan="8" class="empty-state">No hay reclasificaciones</td></tr>' :
                 filtrado.map(r => {
-                    const motivos = { mal_estado: 'Mal Estado', no_corresponde_linea: 'No Corresponde Línea', no_corresponde_genero: 'No Corresponde Género', no_corresponde_talla: 'No Corresponde Talla' };
-                    return `<tr><td>#${r.id}</td><td>${r.varianteOriginal}</td><td>${r.nuevaVariante || '-'}</td><td><span class="badge badge-info">${r.ubicacion}</span></td><td>${r.cantidad}</td><td><span class="badge badge-purple">${motivos[r.motivo] || r.motivo}</span></td><td>${r.estado === 'Completada' ? '<span class="badge badge-success">Completada</span>' : '<span class="badge badge-warning">Pendiente</span>'}</td><td>${r.estado === 'Pendiente' ? `<button class="btn btn-success btn-icon" onclick="abrirCompletarReclas(${r.id})"><i data-lucide="check" style="width:14px;height:14px"></i></button>` : ''}</td></tr>`;
+                    const motivos = { mal_estado: 'Mal Estado', no_corresponde_linea: 'No Línea', no_corresponde_genero: 'No Género', no_corresponde_talla: 'No Talla' };
+                    return `<tr><td>#${r.id}</td><td>${r.varianteOriginal}</td><td>${r.nuevaVariante || '-'}</td><td><span class="badge badge-info">${r.ubicacion}</span></td><td>${r.cantidad}</td><td><span class="badge badge-purple">${motivos[r.motivo] || r.motivo}</span></td><td>${r.estado === 'Completada' ? '<span class="badge badge-success">OK</span>' : '<span class="badge badge-warning">Pend.</span>'}</td><td>${r.estado === 'Pendiente' ? `<button class="btn btn-success btn-icon" onclick="abrirCompletarReclas(${r.id})"><i data-lucide="check" style="width:14px;height:14px"></i></button>` : ''}</td></tr>`;
                 }).join('');
             lucide.createIcons();
         }
@@ -1492,13 +1560,13 @@
             if (!confirm('¿Cancelar? La orden NO se cerrará.')) return;
             cerrarModal('modalReclasificacion');
             variantesNoEmpaquetadas = [];
-            toast('Reclasificación cancelada', 'info');
+            toast('Cancelado', 'info');
         }
 
         function abrirCompletarReclas(id) {
             reclasActual = reclasificacion.find(r => r.id === id);
             if (!reclasActual) return;
-            document.getElementById('infoCompletarReclas').innerHTML = `<div style="background:var(--bg-hover);padding:1rem;border-radius:10px"><div class="form-row"><div><label style="font-size:0.75rem;color:var(--text-secondary)">Variante</label><div style="font-weight:600">${reclasActual.nuevaVariante}</div></div><div><label style="font-size:0.75rem;color:var(--text-secondary)">Cantidad</label><div style="font-weight:600">${reclasActual.cantidad}</div></div><div><label style="font-size:0.75rem;color:var(--text-secondary)">Ubicación Actual</label><div><span class="badge badge-warning">${reclasActual.ubicacion}</span></div></div></div></div>`;
+            document.getElementById('infoCompletarReclas').innerHTML = `<div class="detail-grid"><div class="detail-item"><div class="detail-label">Variante</div><div class="detail-value">${reclasActual.nuevaVariante}</div></div><div class="detail-item"><div class="detail-label">Cantidad</div><div class="detail-value">${reclasActual.cantidad}</div></div><div class="detail-item"><div class="detail-label">Ubic. Actual</div><div class="detail-value"><span class="badge badge-warning">${reclasActual.ubicacion}</span></div></div></div>`;
             document.getElementById('ubicacionFinalReclas').value = '';
             abrirModal('modalCompletarReclas');
         }
@@ -1513,10 +1581,9 @@
             else await supabase.from('inventario').insert({ variante: reclasActual.nuevaVariante, ubicacion: ubi, stock_fisico: reclasActual.cantidad, stock_bloqueado: 0 });
             await supabase.from('reclasificacion').update({ estado: 'Completada', ubicacion: ubi, fechaCompletado: new Date().toISOString() }).eq('id', reclasActual.id);
             ocultarLoading();
-            toast('Reclasificación completada', 'success');
+            toast('Completada', 'success');
             cerrarModal('modalCompletarReclas');
-            await cargarReclasificacion();
-            await cargarInventario();
+            await cargarDatos();
         }
 
         // ============================================
@@ -1577,7 +1644,7 @@
             document.getElementById('loadingOverlay').classList.add('active');
         }
         function ocultarLoading() { document.getElementById('loadingOverlay').classList.remove('active'); document.getElementById('progressFill').style.width = '0%'; }
-        function actualizarProgreso(p) { document.getElementById('progressFill').style.width = p + '%'; }
+        function actualizarProgreso(p) { document.getElementById('progressFill').style.width = Math.min(p, 100) + '%'; }
 
         function toast(msg, tipo = 'info') {
             const div = document.createElement('div');
@@ -1596,7 +1663,7 @@
             document.getElementById('loginPassword')?.addEventListener('keypress', e => { if (e.key === 'Enter') iniciarSesion(); });
         });
 
-        console.log('✅ MAWI v6.0 COMPLETO - Sistema Lukers');
+        console.log('✅ MAWI v6.0 FIXED - Carga completa de datos');
     </script>
 </body>
 </html>
