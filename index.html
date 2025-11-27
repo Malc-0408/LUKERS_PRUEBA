@@ -148,9 +148,16 @@
         .modal-body{padding:1.25rem}
         .modal-footer{padding:1.25rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:0.6rem}
         
-        .file-upload-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.25rem;background:var(--bg-hover);border:2px dashed var(--border);border-radius:10px;cursor:pointer;font-weight:600;font-size:0.85rem}
+        /* FILE UPLOAD MEJORADO */
+        .file-upload-container{position:relative}
+        .file-upload-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.25rem;background:var(--bg-hover);border:2px dashed var(--border);border-radius:10px;cursor:pointer;font-weight:600;font-size:0.85rem;transition:all 0.2s}
         .file-upload-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
         .form-file{display:none}
+        .file-selected{display:none;align-items:center;gap:0.5rem;margin-top:0.75rem;padding:0.75rem;background:rgba(16,185,129,0.1);border:2px solid var(--success);border-radius:10px;color:#065f46}
+        .file-selected.show{display:flex}
+        .file-selected-icon{width:24px;height:24px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+        .file-selected-name{flex:1;font-weight:600;font-size:0.85rem;word-break:break-all}
+        .file-selected-remove{background:none;border:none;color:var(--danger);cursor:pointer;padding:0.25rem}
         
         .dropdown{position:relative;display:inline-block}
         .dropdown-menu{position:absolute;top:100%;right:0;margin-top:0.4rem;background:#fff;border-radius:10px;box-shadow:var(--shadow-lg);min-width:180px;z-index:100;opacity:0;visibility:hidden;transform:translateY(-10px);transition:all 0.2s}
@@ -512,8 +519,15 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label">Archivo Excel</label>
-                    <input type="file" id="fileInventario" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileInventario" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="fileInventario" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this, 'fileInventarioInfo')">
+                        <label for="fileInventario" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                        <div class="file-selected" id="fileInventarioInfo">
+                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
+                            <span class="file-selected-name"></span>
+                            <button class="file-selected-remove" onclick="limpiarArchivo('fileInventario', 'fileInventarioInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+                        </div>
+                    </div>
                     <p class="form-help">Columnas: Variante, Ubicacion, StockFisico</p>
                 </div>
             </div>
@@ -551,8 +565,15 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label">Archivo Excel</label>
-                    <input type="file" id="fileModificar" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileModificar" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="fileModificar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this, 'fileModificarInfo')">
+                        <label for="fileModificar" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                        <div class="file-selected" id="fileModificarInfo">
+                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
+                            <span class="file-selected-name"></span>
+                            <button class="file-selected-remove" onclick="limpiarArchivo('fileModificar', 'fileModificarInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+                        </div>
+                    </div>
                     <p class="form-help">Columnas: Variante, Ubicacion, StockFisico</p>
                 </div>
             </div>
@@ -572,8 +593,15 @@
             <div class="modal-body">
                 <div class="alert alert-danger"><i data-lucide="alert-triangle" style="width:18px;height:18px"></i><div><strong>Acción Irreversible</strong></div></div>
                 <div class="form-group">
-                    <input type="file" id="fileEliminar" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileEliminar" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="fileEliminar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this, 'fileEliminarInfo')">
+                        <label for="fileEliminar" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                        <div class="file-selected" id="fileEliminarInfo">
+                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
+                            <span class="file-selected-name"></span>
+                            <button class="file-selected-remove" onclick="limpiarArchivo('fileEliminar', 'fileEliminarInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+                        </div>
+                    </div>
                     <p class="form-help">Columnas: Variante, Ubicacion</p>
                 </div>
             </div>
@@ -593,8 +621,15 @@
             <div class="modal-body">
                 <div class="alert alert-info"><i data-lucide="info" style="width:18px;height:18px"></i><span>Esto reemplazará el catálogo actual</span></div>
                 <div class="form-group">
-                    <input type="file" id="fileProductos" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileProductos" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="fileProductos" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this, 'fileProductosInfo')">
+                        <label for="fileProductos" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                        <div class="file-selected" id="fileProductosInfo">
+                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
+                            <span class="file-selected-name"></span>
+                            <button class="file-selected-remove" onclick="limpiarArchivo('fileProductos', 'fileProductosInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+                        </div>
+                    </div>
                     <p class="form-help">Columnas: variante, descripcion, kardex, pvp, genero, linea, marca, talla</p>
                 </div>
             </div>
@@ -612,15 +647,34 @@
                 <button class="modal-close" onclick="cerrarModal('modalCrearOrden')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
+                <div class="alert alert-info">
+                    <i data-lucide="info" style="width:18px;height:18px"></i>
+                    <div>
+                        <strong>Formato requerido:</strong><br>
+                        Columnas: Variante, Ubicacion, y una columna por cada tienda con las cantidades
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="form-label">Archivo Excel con Hoja de Ruta</label>
-                    <input type="file" id="fileOrden" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileOrden" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
-                    <p class="form-help">Columnas: Variante, Ubicacion, y columnas por tienda</p>
+                    <div class="file-upload-container">
+                        <input type="file" id="fileOrden" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this, 'fileOrdenInfo')">
+                        <label for="fileOrden" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                        <div class="file-selected" id="fileOrdenInfo">
+                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
+                            <span class="file-selected-name"></span>
+                            <button class="file-selected-remove" onclick="limpiarArchivo('fileOrden', 'fileOrdenInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+                        </div>
+                    </div>
+                    <p class="form-help">Tiendas disponibles: LUKERS EL SOL, LUKERS TRU PIZARRO, LUKERS LA MARINA, etc.</p>
+                </div>
+                <div id="previewOrden" style="display:none;margin-top:1rem">
+                    <h4 style="font-size:0.9rem;margin-bottom:0.5rem">📋 Vista previa de la orden:</h4>
+                    <div id="previewOrdenContent" style="background:var(--bg-hover);padding:1rem;border-radius:8px;font-size:0.8rem"></div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="cerrarModal('modalCrearOrden')">Cancelar</button>
+                <button class="btn btn-info" onclick="previsualizarOrden()">Vista Previa</button>
                 <button class="btn btn-primary" onclick="procesarOrden()">Crear Orden</button>
             </div>
         </div>
@@ -654,8 +708,15 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <input type="file" id="fileCantidades" class="form-file" accept=".xlsx,.xls">
-                    <label for="fileCantidades" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="fileCantidades" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this, 'fileCantidadesInfo')">
+                        <label for="fileCantidades" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                        <div class="file-selected" id="fileCantidadesInfo">
+                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
+                            <span class="file-selected-name"></span>
+                            <button class="file-selected-remove" onclick="limpiarArchivo('fileCantidades', 'fileCantidadesInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+                        </div>
+                    </div>
                     <p class="form-help">Columnas: Variante, Ubicacion, Encontrado</p>
                 </div>
             </div>
@@ -674,8 +735,15 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <input type="file" id="filePackingReal" class="form-file" accept=".xlsx,.xls">
-                    <label for="filePackingReal" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="filePackingReal" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this, 'filePackingRealInfo')">
+                        <label for="filePackingReal" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                        <div class="file-selected" id="filePackingRealInfo">
+                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
+                            <span class="file-selected-name"></span>
+                            <button class="file-selected-remove" onclick="limpiarArchivo('filePackingReal', 'filePackingRealInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -748,10 +816,10 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6eGp6bWxtbW13c3BlbWloaGx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NjI5MjAsImV4cCI6MjA3OTEzODkyMH0.uLXtsONi_c4myPbsvTIqV51pldRv6Wuff4adYWgVR6Q';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const TIENDAS = ['LUKERS EL SOL','LUKERS TRU PIZARRO','LUKERS JR UNION','LUKERS LA MARINA','LUKERS PROLONGACIÓN IQUITOS','LUKERS CHI P. RUIZ','LUKERS TARAPOTO','LUKERS MENDIOLA','LUKERS ALFONSO UGARTE','LUKERS IQT LORES','LUKERS JIRON'];
+        const TIENDAS = ['LUKERS EL SOL','LUKERS JR UNION','LUKERS TRU PIZARRO','LUKERS LA MARINA','LUKERS PROLONGACIÓN IQUITOS','LUKERS CHI P. RUIZ','LUKERS TARAPOTO','LUKERS MENDIOLA','LUKERS ALFONSO UGARTE','LUKERS IQT LORES','LUKERS JIRON'];
         const DIAS_EXPIRACION = 7;
         const DIAS_ALERTA = 3;
-        const ITEMS_POR_PAGINA = 100; // Cambiado a 100
+        const ITEMS_POR_PAGINA = 100;
         const BATCH_SIZE = 500;
 
         // ============================================
@@ -765,6 +833,25 @@
         let ordenActualPicking = null, ordenActualPacking = null;
         let variantesNoEmpaquetadas = [], indiceReclas = 0;
         let reclasActual = null;
+        let ordenPreviewData = null;
+
+        // ============================================
+        // FUNCIONES DE ARCHIVO
+        // ============================================
+        function mostrarArchivoSeleccionado(input, infoId) {
+            const infoDiv = document.getElementById(infoId);
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                infoDiv.querySelector('.file-selected-name').textContent = fileName;
+                infoDiv.classList.add('show');
+                lucide.createIcons();
+            }
+        }
+
+        function limpiarArchivo(inputId, infoId) {
+            document.getElementById(inputId).value = '';
+            document.getElementById(infoId).classList.remove('show');
+        }
 
         // ============================================
         // AUTENTICACIÓN
@@ -836,24 +923,20 @@
         async function cargarDatos() {
             mostrarLoading('Cargando datos...');
             try {
-                // Cargar inventario completo
                 document.getElementById('loadingText').textContent = 'Cargando inventario...';
                 inventario = await cargarTodosLosRegistros('inventario', 'variante');
                 inventarioFiltrado = [...inventario];
                 totalInventario = inventario.length;
                 
-                // Cargar productos completo
                 document.getElementById('loadingText').textContent = 'Cargando productos...';
                 productos = await cargarTodosLosRegistros('productos_system', 'variante');
                 productosFiltrado = [...productos];
                 totalProductos = productos.length;
                 
-                // Cargar órdenes
                 document.getElementById('loadingText').textContent = 'Cargando órdenes...';
                 const { data: ordenesData } = await supabase.from('ordenes').select('*').order('fecha', { ascending: false });
                 ordenes = ordenesData || [];
                 
-                // Cargar reclasificación
                 const { data: reclasData } = await supabase.from('reclasificacion').select('*').order('fecha', { ascending: false });
                 reclasificacion = reclasData || [];
 
@@ -868,7 +951,7 @@
                 verificarOrdenesProximas();
                 
                 ocultarLoading();
-                toast(`Datos cargados: ${totalInventario.toLocaleString()} inv, ${totalProductos.toLocaleString()} prod`, 'success');
+                toast(`Cargados: ${totalInventario.toLocaleString()} inv, ${totalProductos.toLocaleString()} prod`, 'success');
             } catch (e) { 
                 ocultarLoading(); 
                 toast('Error: ' + e.message, 'error'); 
@@ -1076,52 +1159,80 @@
 
         async function procesarInventario() {
             const file = document.getElementById('fileInventario').files[0];
-            if (!file) { toast('Selecciona archivo', 'error'); return; }
-            mostrarLoading('Procesando...');
-            const data = await leerExcel(file);
-            const items = data.map(r => ({ variante: String(r.Variante || r.variante || '').trim().toUpperCase(), ubicacion: String(r.Ubicacion || r.ubicacion || '').trim().toUpperCase(), stock_fisico: parseInt(r.StockFisico || r.stock_fisico || 0), stock_bloqueado: 0 })).filter(i => i.variante && i.ubicacion);
-            for (let i = 0; i < items.length; i += BATCH_SIZE) {
-                await supabase.from('inventario').upsert(items.slice(i, i + BATCH_SIZE), { onConflict: 'variante,ubicacion' });
-                actualizarProgreso((i / items.length) * 100);
-                document.getElementById('loadingSubtext').textContent = `${i + BATCH_SIZE} de ${items.length}`;
+            if (!file) { toast('Selecciona un archivo primero', 'error'); return; }
+            mostrarLoading('Procesando inventario...');
+            try {
+                const data = await leerExcel(file);
+                const items = data.map(r => ({ 
+                    variante: String(r.Variante || r.variante || r.VARIANTE || '').trim().toUpperCase(), 
+                    ubicacion: String(r.Ubicacion || r.ubicacion || r.UBICACION || '').trim().toUpperCase(), 
+                    stock_fisico: parseInt(r.StockFisico || r.stock_fisico || r.STOCKFISICO || r.Stock || r.stock || 0), 
+                    stock_bloqueado: 0 
+                })).filter(i => i.variante && i.ubicacion);
+                
+                if (items.length === 0) {
+                    ocultarLoading();
+                    toast('No se encontraron registros válidos. Verifica las columnas.', 'error');
+                    return;
+                }
+                
+                for (let i = 0; i < items.length; i += BATCH_SIZE) {
+                    await supabase.from('inventario').upsert(items.slice(i, i + BATCH_SIZE), { onConflict: 'variante,ubicacion' });
+                    actualizarProgreso((i / items.length) * 100);
+                    document.getElementById('loadingSubtext').textContent = `${Math.min(i + BATCH_SIZE, items.length)} de ${items.length}`;
+                }
+                ocultarLoading();
+                toast(`✅ ${items.length} registros procesados`, 'success');
+                cerrarModal('modalSubirInventario');
+                limpiarArchivo('fileInventario', 'fileInventarioInfo');
+                await cargarDatos();
+            } catch (e) {
+                ocultarLoading();
+                toast('Error: ' + e.message, 'error');
             }
-            ocultarLoading();
-            toast(`${items.length} registros procesados`, 'success');
-            cerrarModal('modalSubirInventario');
-            await cargarDatos();
         }
 
         async function procesarModificarMasivo() {
             const file = document.getElementById('fileModificar').files[0];
-            if (!file) { toast('Selecciona archivo', 'error'); return; }
+            if (!file) { toast('Selecciona un archivo', 'error'); return; }
             mostrarLoading('Modificando...');
             const data = await leerExcel(file);
+            let count = 0;
             for (const r of data) {
-                const v = String(r.Variante || '').trim().toUpperCase();
-                const u = String(r.Ubicacion || '').trim().toUpperCase();
-                const s = parseInt(r.StockFisico || 0);
-                if (v && u) await supabase.from('inventario').update({ stock_fisico: s }).eq('variante', v).eq('ubicacion', u);
+                const v = String(r.Variante || r.variante || '').trim().toUpperCase();
+                const u = String(r.Ubicacion || r.ubicacion || '').trim().toUpperCase();
+                const s = parseInt(r.StockFisico || r.stock_fisico || 0);
+                if (v && u) {
+                    await supabase.from('inventario').update({ stock_fisico: s }).eq('variante', v).eq('ubicacion', u);
+                    count++;
+                }
             }
             ocultarLoading();
-            toast('Stock actualizado', 'success');
+            toast(`✅ ${count} registros actualizados`, 'success');
             cerrarModal('modalModificarMasivo');
+            limpiarArchivo('fileModificar', 'fileModificarInfo');
             await cargarDatos();
         }
 
         async function procesarEliminarMasivo() {
             const file = document.getElementById('fileEliminar').files[0];
-            if (!file) { toast('Selecciona archivo', 'error'); return; }
+            if (!file) { toast('Selecciona un archivo', 'error'); return; }
             if (!confirm('¿Eliminar estos productos?')) return;
             mostrarLoading('Eliminando...');
             const data = await leerExcel(file);
+            let count = 0;
             for (const r of data) {
-                const v = String(r.Variante || '').trim().toUpperCase();
-                const u = String(r.Ubicacion || '').trim().toUpperCase();
-                if (v && u) await supabase.from('inventario').delete().eq('variante', v).eq('ubicacion', u);
+                const v = String(r.Variante || r.variante || '').trim().toUpperCase();
+                const u = String(r.Ubicacion || r.ubicacion || '').trim().toUpperCase();
+                if (v && u) {
+                    await supabase.from('inventario').delete().eq('variante', v).eq('ubicacion', u);
+                    count++;
+                }
             }
             ocultarLoading();
-            toast('Eliminados', 'success');
+            toast(`✅ ${count} eliminados`, 'success');
             cerrarModal('modalEliminarMasivo');
+            limpiarArchivo('fileEliminar', 'fileEliminarInfo');
             await cargarDatos();
         }
 
@@ -1172,9 +1283,7 @@
             document.getElementById('nextProductos').disabled = paginaProd >= totalPag;
         }
 
-        function filtrarProductos() {
-            aplicarFiltrosProductos();
-        }
+        function filtrarProductos() { aplicarFiltrosProductos(); }
 
         function aplicarFiltrosProductos() {
             const search = document.getElementById('searchProductos')?.value.toLowerCase() || '';
@@ -1196,29 +1305,30 @@
 
         async function procesarProductos() {
             const file = document.getElementById('fileProductos').files[0];
-            if (!file) { toast('Selecciona archivo', 'error'); return; }
+            if (!file) { toast('Selecciona un archivo', 'error'); return; }
             if (!confirm('Esto reemplazará el catálogo. ¿Continuar?')) return;
             mostrarLoading('Procesando catálogo...');
             await supabase.from('productos_system').delete().neq('variante', '');
             const data = await leerExcel(file);
             const items = data.map(r => ({ 
-                variante: String(r.variante || r.Variante || '').trim().toUpperCase(), 
-                descripcion: String(r.descripcion || r.Descripcion || '').trim(),
-                kardex: parseFloat(r.kardex || r.Kardex || 0), 
+                variante: String(r.variante || r.Variante || r.VARIANTE || '').trim().toUpperCase(), 
+                descripcion: String(r.descripcion || r.Descripcion || r.DESCRIPCION || '').trim(),
+                kardex: parseFloat(r.kardex || r.Kardex || r.KARDEX || 0), 
                 pvp: parseFloat(r.pvp || r.PVP || 0), 
-                genero: String(r.genero || r.Genero || '').trim(), 
-                linea: String(r.linea || r.Linea || '').trim(), 
-                marca: String(r.marca || r.Marca || '').trim(), 
-                talla: String(r.talla || r.Talla || '').trim() 
+                genero: String(r.genero || r.Genero || r.GENERO || '').trim(), 
+                linea: String(r.linea || r.Linea || r.LINEA || '').trim(), 
+                marca: String(r.marca || r.Marca || r.MARCA || '').trim(), 
+                talla: String(r.talla || r.Talla || r.TALLA || '').trim() 
             })).filter(i => i.variante);
             for (let i = 0; i < items.length; i += BATCH_SIZE) {
                 await supabase.from('productos_system').insert(items.slice(i, i + BATCH_SIZE));
                 actualizarProgreso((i / items.length) * 100);
-                document.getElementById('loadingSubtext').textContent = `${i + BATCH_SIZE} de ${items.length}`;
+                document.getElementById('loadingSubtext').textContent = `${Math.min(i + BATCH_SIZE, items.length)} de ${items.length}`;
             }
             ocultarLoading();
-            toast(`${items.length} productos cargados`, 'success');
+            toast(`✅ ${items.length} productos cargados`, 'success');
             cerrarModal('modalSubirProductos');
+            limpiarArchivo('fileProductos', 'fileProductosInfo');
             await cargarDatos();
         }
 
@@ -1232,7 +1342,7 @@
         }
 
         // ============================================
-        // ÓRDENES
+        // ÓRDENES - CORREGIDO
         // ============================================
         function renderizarOrdenes() {
             const tbody = document.getElementById('tablaOrdenes');
@@ -1272,43 +1382,210 @@
             lucide.createIcons();
         }
 
-        async function procesarOrden() {
-            const file = document.getElementById('fileOrden').files[0];
-            if (!file) { toast('Selecciona archivo', 'error'); return; }
-            mostrarLoading('Creando orden...');
-            const data = await leerExcel(file);
-            const items = [];
-            data.forEach(r => {
-                const v = String(r.Variante || '').trim().toUpperCase();
-                const u = String(r.Ubicacion || '').trim().toUpperCase();
-                if (!v || !u) return;
-                let cant = 0;
-                const dist = {};
-                TIENDAS.forEach(t => { const c = parseInt(r[t]) || 0; dist[t] = c; cant += c; });
-                if (cant > 0) items.push({ variante: v, ubicacion: u, cantidad: cant, distribucion: dist });
-            });
+        // Función para obtener valor de columna ignorando mayúsculas/minúsculas
+        function getColumnValue(row, possibleNames) {
+            for (const name of possibleNames) {
+                if (row[name] !== undefined) return row[name];
+            }
+            return null;
+        }
 
-            for (const item of items) {
-                const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
-                const disp = inv ? (inv.stock_fisico || 0) - (inv.stock_bloqueado || 0) : 0;
-                if (disp < item.cantidad) {
-                    ocultarLoading();
-                    toast(`Stock insuficiente: ${item.variante} en ${item.ubicacion}`, 'error');
+        async function previsualizarOrden() {
+            const file = document.getElementById('fileOrden').files[0];
+            if (!file) { toast('Selecciona un archivo primero', 'error'); return; }
+            
+            try {
+                const data = await leerExcel(file);
+                if (data.length === 0) {
+                    toast('El archivo está vacío', 'error');
                     return;
                 }
+                
+                // Mostrar columnas encontradas
+                const columnas = Object.keys(data[0]);
+                console.log('Columnas encontradas:', columnas);
+                
+                const items = [];
+                let tiendasEncontradas = new Set();
+                
+                data.forEach((r, idx) => {
+                    const v = String(getColumnValue(r, ['Variante', 'variante', 'VARIANTE']) || '').trim().toUpperCase();
+                    const u = String(getColumnValue(r, ['Ubicacion', 'ubicacion', 'UBICACION', 'Ubicación']) || '').trim().toUpperCase();
+                    
+                    if (!v || !u) return;
+                    
+                    let cant = 0;
+                    const dist = {};
+                    
+                    // Buscar columnas de tiendas
+                    TIENDAS.forEach(t => {
+                        // Buscar la tienda en diferentes formatos
+                        let val = r[t] || r[t.toUpperCase()] || r[t.toLowerCase()];
+                        if (val === undefined) {
+                            // Buscar parcialmente
+                            const tiendaCorta = t.replace('LUKERS ', '');
+                            Object.keys(r).forEach(col => {
+                                if (col.toUpperCase().includes(tiendaCorta.toUpperCase())) {
+                                    val = r[col];
+                                }
+                            });
+                        }
+                        const c = parseInt(val) || 0;
+                        if (c > 0) {
+                            dist[t] = c;
+                            cant += c;
+                            tiendasEncontradas.add(t);
+                        }
+                    });
+                    
+                    if (cant > 0) {
+                        items.push({ variante: v, ubicacion: u, cantidad: cant, distribucion: dist });
+                    }
+                });
+                
+                ordenPreviewData = items;
+                
+                const previewDiv = document.getElementById('previewOrden');
+                const contentDiv = document.getElementById('previewOrdenContent');
+                
+                if (items.length === 0) {
+                    contentDiv.innerHTML = `
+                        <div style="color:var(--danger)">
+                            <strong>⚠️ No se encontraron items válidos</strong><br><br>
+                            <strong>Columnas en tu archivo:</strong> ${columnas.join(', ')}<br><br>
+                            <strong>Verifica que:</strong><br>
+                            - Exista columna "Variante" o "variante"<br>
+                            - Exista columna "Ubicacion" o "ubicacion"<br>
+                            - Las columnas de tiendas coincidan con: ${TIENDAS.slice(0,3).join(', ')}...
+                        </div>
+                    `;
+                } else {
+                    const totalUnidades = items.reduce((s, i) => s + i.cantidad, 0);
+                    contentDiv.innerHTML = `
+                        <div style="color:var(--success)">
+                            <strong>✅ Vista previa exitosa</strong><br><br>
+                            <strong>Variantes:</strong> ${items.length}<br>
+                            <strong>Unidades totales:</strong> ${totalUnidades.toLocaleString()}<br>
+                            <strong>Tiendas detectadas:</strong> ${Array.from(tiendasEncontradas).map(t => t.replace('LUKERS ', '')).join(', ')}<br><br>
+                            <strong>Primeros 5 items:</strong>
+                            <table style="width:100%;margin-top:0.5rem;font-size:0.75rem">
+                                <tr><th>Variante</th><th>Ubicación</th><th>Cantidad</th></tr>
+                                ${items.slice(0, 5).map(i => `<tr><td>${i.variante}</td><td>${i.ubicacion}</td><td>${i.cantidad}</td></tr>`).join('')}
+                            </table>
+                        </div>
+                    `;
+                }
+                
+                previewDiv.style.display = 'block';
+                
+            } catch (e) {
+                toast('Error leyendo archivo: ' + e.message, 'error');
+                console.error(e);
             }
+        }
 
-            for (const item of items) {
-                const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
-                if (inv) await supabase.from('inventario').update({ stock_bloqueado: (inv.stock_bloqueado || 0) + item.cantidad }).eq('variante', item.variante).eq('ubicacion', item.ubicacion);
+        async function procesarOrden() {
+            const file = document.getElementById('fileOrden').files[0];
+            if (!file) { toast('Selecciona un archivo primero', 'error'); return; }
+            
+            mostrarLoading('Procesando orden...');
+            
+            try {
+                const data = await leerExcel(file);
+                const items = [];
+                
+                data.forEach(r => {
+                    const v = String(getColumnValue(r, ['Variante', 'variante', 'VARIANTE']) || '').trim().toUpperCase();
+                    const u = String(getColumnValue(r, ['Ubicacion', 'ubicacion', 'UBICACION', 'Ubicación']) || '').trim().toUpperCase();
+                    
+                    if (!v || !u) return;
+                    
+                    let cant = 0;
+                    const dist = {};
+                    
+                    TIENDAS.forEach(t => {
+                        let val = r[t] || r[t.toUpperCase()] || r[t.toLowerCase()];
+                        if (val === undefined) {
+                            const tiendaCorta = t.replace('LUKERS ', '');
+                            Object.keys(r).forEach(col => {
+                                if (col.toUpperCase().includes(tiendaCorta.toUpperCase())) {
+                                    val = r[col];
+                                }
+                            });
+                        }
+                        const c = parseInt(val) || 0;
+                        dist[t] = c;
+                        cant += c;
+                    });
+                    
+                    if (cant > 0) {
+                        items.push({ variante: v, ubicacion: u, cantidad: cant, distribucion: dist });
+                    }
+                });
+
+                if (items.length === 0) {
+                    ocultarLoading();
+                    toast('No se encontraron items válidos. Usa "Vista Previa" para diagnosticar.', 'error');
+                    return;
+                }
+
+                // Validar stock
+                let erroresStock = [];
+                for (const item of items) {
+                    const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
+                    const disp = inv ? (parseInt(inv.stock_fisico) || 0) - (parseInt(inv.stock_bloqueado) || 0) : 0;
+                    if (disp < item.cantidad) {
+                        erroresStock.push(`${item.variante} en ${item.ubicacion}: necesita ${item.cantidad}, disponible ${disp}`);
+                    }
+                }
+                
+                if (erroresStock.length > 0) {
+                    ocultarLoading();
+                    toast(`Stock insuficiente en ${erroresStock.length} items. Ver consola.`, 'error');
+                    console.log('Errores de stock:', erroresStock);
+                    return;
+                }
+
+                // Bloquear stock
+                for (const item of items) {
+                    const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
+                    if (inv) {
+                        await supabase.from('inventario').update({ 
+                            stock_bloqueado: (parseInt(inv.stock_bloqueado) || 0) + item.cantidad 
+                        }).eq('variante', item.variante).eq('ubicacion', item.ubicacion);
+                    }
+                }
+
+                const orden = { 
+                    id: 'ORD-' + Date.now().toString(36).toUpperCase(), 
+                    fecha: new Date().toISOString(), 
+                    estado: 'Pendiente Picking', 
+                    items, 
+                    cantidadesEncontradas: {}, 
+                    hojaPacking: [], 
+                    prendasRechazadas: 0 
+                };
+                
+                const { error } = await supabase.from('ordenes').insert(orden);
+                
+                if (error) {
+                    ocultarLoading();
+                    toast('Error al crear orden: ' + error.message, 'error');
+                    return;
+                }
+                
+                ocultarLoading();
+                toast(`✅ Orden ${orden.id} creada con ${items.length} variantes`, 'success');
+                cerrarModal('modalCrearOrden');
+                limpiarArchivo('fileOrden', 'fileOrdenInfo');
+                document.getElementById('previewOrden').style.display = 'none';
+                await cargarDatos();
+                
+            } catch (e) {
+                ocultarLoading();
+                toast('Error: ' + e.message, 'error');
+                console.error(e);
             }
-
-            const orden = { id: 'ORD-' + Date.now().toString(36).toUpperCase(), fecha: new Date().toISOString(), estado: 'Pendiente Picking', items, cantidadesEncontradas: {}, hojaPacking: [], prendasRechazadas: 0 };
-            await supabase.from('ordenes').insert(orden);
-            ocultarLoading();
-            toast('Orden creada', 'success');
-            cerrarModal('modalCrearOrden');
-            await cargarDatos();
         }
 
         function verOrden(id) {
@@ -1333,7 +1610,7 @@
             if (o?.items) {
                 for (const item of o.items) {
                     const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
-                    if (inv) await supabase.from('inventario').update({ stock_bloqueado: Math.max(0, (inv.stock_bloqueado || 0) - item.cantidad) }).eq('variante', item.variante).eq('ubicacion', item.ubicacion);
+                    if (inv) await supabase.from('inventario').update({ stock_bloqueado: Math.max(0, (parseInt(inv.stock_bloqueado) || 0) - item.cantidad) }).eq('variante', item.variante).eq('ubicacion', item.ubicacion);
                 }
             }
             await supabase.from('ordenes').delete().eq('id', id);
@@ -1373,7 +1650,7 @@
 
         async function confirmarSubirCantidades() {
             const file = document.getElementById('fileCantidades').files[0];
-            if (!file) { toast('Selecciona archivo', 'error'); return; }
+            if (!file) { toast('Selecciona un archivo', 'error'); return; }
             mostrarLoading('Procesando...');
             const data = await leerExcel(file);
             const o = ordenes.find(x => x.id === ordenActualPicking);
@@ -1381,9 +1658,9 @@
 
             const cantidades = {};
             data.forEach(r => {
-                const v = String(r.Variante || '').trim().toUpperCase();
-                const u = String(r.Ubicacion || '').trim().toUpperCase();
-                const e = parseInt(r.Encontrado || 0);
+                const v = String(getColumnValue(r, ['Variante', 'variante', 'VARIANTE']) || '').trim().toUpperCase();
+                const u = String(getColumnValue(r, ['Ubicacion', 'ubicacion', 'UBICACION']) || '').trim().toUpperCase();
+                const e = parseInt(getColumnValue(r, ['Encontrado', 'encontrado', 'ENCONTRADO']) || 0);
                 if (v && u) cantidades[`${v}|${u}`] = e;
             });
 
@@ -1401,6 +1678,7 @@
             ocultarLoading();
             toast('Cantidades procesadas', 'success');
             cerrarModal('modalSubirCantidades');
+            limpiarArchivo('fileCantidades', 'fileCantidadesInfo');
             await cargarDatos();
         }
 
@@ -1426,7 +1704,7 @@
 
         async function confirmarSubirPacking() {
             const file = document.getElementById('filePackingReal').files[0];
-            if (!file) { toast('Selecciona archivo', 'error'); return; }
+            if (!file) { toast('Selecciona un archivo', 'error'); return; }
             mostrarLoading('Procesando...');
             const data = await leerExcel(file);
             const o = ordenActualPacking;
@@ -1435,13 +1713,18 @@
             const empaquetadas = new Set();
             const hojaFinal = [];
             data.forEach(r => {
-                const v = String(r.Variante || '').trim().toUpperCase();
-                const u = String(r.Ubicacion || '').trim().toUpperCase();
+                const v = String(getColumnValue(r, ['Variante', 'variante', 'VARIANTE']) || '').trim().toUpperCase();
+                const u = String(getColumnValue(r, ['Ubicacion', 'ubicacion', 'UBICACION']) || '').trim().toUpperCase();
                 if (!v || !u) return;
                 empaquetadas.add(v);
                 let total = 0;
                 const dist = {};
-                TIENDAS.forEach(t => { const c = parseInt(r[t]) || 0; dist[t] = c; total += c; });
+                TIENDAS.forEach(t => { 
+                    let val = r[t] || r[t.toUpperCase()] || r[t.toLowerCase()];
+                    const c = parseInt(val) || 0; 
+                    dist[t] = c; 
+                    total += c; 
+                });
                 const prod = productos.find(p => p.variante === v);
                 hojaFinal.push({ variante: v, ubicacion: u, kardex: prod?.kardex || 0, encontrado: total, ...dist });
             });
@@ -1466,6 +1749,7 @@
             } else {
                 await cerrarOrden(o);
                 cerrarModal('modalSubirPacking');
+                limpiarArchivo('filePackingReal', 'filePackingRealInfo');
             }
         }
 
@@ -1477,8 +1761,8 @@
                 const inv = inventario.find(x => x.variante === i.variante && x.ubicacion === i.ubicacion);
                 if (inv) {
                     await supabase.from('inventario').update({
-                        stock_fisico: Math.max(0, (inv.stock_fisico || 0) - enc),
-                        stock_bloqueado: Math.max(0, (inv.stock_bloqueado || 0) - i.cantidad)
+                        stock_fisico: Math.max(0, (parseInt(inv.stock_fisico) || 0) - enc),
+                        stock_bloqueado: Math.max(0, (parseInt(inv.stock_bloqueado) || 0) - i.cantidad)
                     }).eq('variante', i.variante).eq('ubicacion', i.ubicacion);
                 }
             }
@@ -1547,7 +1831,7 @@
             await supabase.from('reclasificacion').insert({ varianteOriginal: item.variante, nuevaVariante: nuevaVar, ubicacion: nuevaUbi, cantidad: item.cantidad, motivo, comentario, estado: 'Pendiente', fecha: new Date().toISOString(), ordenId: ordenActualPacking.id });
 
             const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
-            if (inv) await supabase.from('inventario').update({ stock_fisico: Math.max(0, (inv.stock_fisico || 0) - item.cantidad) }).eq('variante', item.variante).eq('ubicacion', item.ubicacion);
+            if (inv) await supabase.from('inventario').update({ stock_fisico: Math.max(0, (parseInt(inv.stock_fisico) || 0) - item.cantidad) }).eq('variante', item.variante).eq('ubicacion', item.ubicacion);
 
             ordenActualPacking.prendasRechazadas = (ordenActualPacking.prendasRechazadas || 0) + item.cantidad;
             ocultarLoading();
@@ -1577,7 +1861,7 @@
             mostrarLoading('Completando...');
             await supabase.from('inventario').delete().eq('variante', reclasActual.nuevaVariante).eq('ubicacion', reclasActual.ubicacion);
             const inv = inventario.find(i => i.variante === reclasActual.nuevaVariante && i.ubicacion === ubi);
-            if (inv) await supabase.from('inventario').update({ stock_fisico: (inv.stock_fisico || 0) + reclasActual.cantidad }).eq('variante', reclasActual.nuevaVariante).eq('ubicacion', ubi);
+            if (inv) await supabase.from('inventario').update({ stock_fisico: (parseInt(inv.stock_fisico) || 0) + reclasActual.cantidad }).eq('variante', reclasActual.nuevaVariante).eq('ubicacion', ubi);
             else await supabase.from('inventario').insert({ variante: reclasActual.nuevaVariante, ubicacion: ubi, stock_fisico: reclasActual.cantidad, stock_bloqueado: 0 });
             await supabase.from('reclasificacion').update({ estado: 'Completada', ubicacion: ubi, fechaCompletado: new Date().toISOString() }).eq('id', reclasActual.id);
             ocultarLoading();
@@ -1603,12 +1887,18 @@
         }
 
         async function leerExcel(file) {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-                    resolve(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+                    try {
+                        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                        const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                        resolve(data);
+                    } catch (err) {
+                        reject(err);
+                    }
                 };
+                reader.onerror = () => reject(new Error('Error leyendo archivo'));
                 reader.readAsArrayBuffer(file);
             });
         }
@@ -1631,8 +1921,17 @@
         // ============================================
         // MODALES & UI
         // ============================================
-        function abrirModal(id) { document.getElementById(id).classList.add('active'); lucide.createIcons(); }
-        function cerrarModal(id) { document.getElementById(id).classList.remove('active'); }
+        function abrirModal(id) { 
+            document.getElementById(id).classList.add('active'); 
+            lucide.createIcons(); 
+        }
+        function cerrarModal(id) { 
+            document.getElementById(id).classList.remove('active'); 
+            // Limpiar preview si es modal de orden
+            if (id === 'modalCrearOrden') {
+                document.getElementById('previewOrden').style.display = 'none';
+            }
+        }
         document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) cerrarModal(m.id); }));
 
         function toggleDropdown(id) { document.getElementById(id).classList.toggle('active'); }
@@ -1663,7 +1962,7 @@
             document.getElementById('loginPassword')?.addEventListener('keypress', e => { if (e.key === 'Enter') iniciarSesion(); });
         });
 
-        console.log('✅ MAWI v6.0 FIXED - Carga completa de datos');
+        console.log('✅ MAWI v6.0 - Versión corregida con feedback de archivos y órdenes mejoradas');
     </script>
 </body>
 </html>
