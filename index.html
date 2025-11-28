@@ -387,6 +387,7 @@
                                     <div class="dropdown-menu" id="dropdownInventario">
                                         <div class="dropdown-item" onclick="abrirModal('modalModificarMasivo')"><i data-lucide="edit" style="width:14px;height:14px"></i> Modificar Masivo</div>
                                         <div class="dropdown-item" onclick="abrirModal('modalEliminarMasivo')"><i data-lucide="trash-2" style="width:14px;height:14px"></i> Eliminar Masivo</div>
+                                        <div class="dropdown-item" onclick="desbloquearTodoStock()" style="color:var(--warning)"><i data-lucide="unlock" style="width:14px;height:14px"></i> Desbloquear Todo</div>
                                     </div>
                                 </div>
                             </div>
@@ -816,7 +817,7 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6eGp6bWxtbW13c3BlbWloaGx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NjI5MjAsImV4cCI6MjA3OTEzODkyMH0.uLXtsONi_c4myPbsvTIqV51pldRv6Wuff4adYWgVR6Q';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const TIENDAS = ['LUKERS EL SOL','LUKERS JR UNION','LUKERS TRU PIZARRO','LUKERS LA MARINA','LUKERS PROLONGACIÓN IQUITOS','LUKERS CHI P. RUIZ','LUKERS TARAPOTO','LUKERS MENDIOLA','LUKERS ALFONSO UGARTE','LUKERS IQT LORES','LUKERS JIRON'];
+        const TIENDAS = ['LUKERS EL SOL','LUKERS TRU PIZARRO','LUKERS LA MARINA','LUKERS PROLONGACIÓN IQUITOS','LUKERS CHI P. RUIZ','LUKERS TARAPOTO','LUKERS MENDIOLA','LUKERS ALFONSO UGARTE','LUKERS IQT LORES','LUKERS JIRON'];
         const DIAS_EXPIRACION = 7;
         const DIAS_ALERTA = 3;
         const ITEMS_POR_PAGINA = 100;
@@ -1074,15 +1075,17 @@
             const tbody = document.getElementById('tablaInventario');
             tbody.innerHTML = items.length === 0 ? '<tr><td colspan="6" class="empty-state">No hay datos</td></tr>' :
                 items.map(i => {
-                    const disp = (parseInt(i.stock_fisico) || 0) - (parseInt(i.stock_bloqueado) || 0);
+                    const bloq = parseInt(i.stock_bloqueado) || 0;
+                    const disp = (parseInt(i.stock_fisico) || 0) - bloq;
                     return `<tr>
                         <td><strong>${i.variante}</strong></td>
                         <td><span class="badge badge-info">${i.ubicacion}</span></td>
                         <td>${i.stock_fisico || 0}</td>
-                        <td>${i.stock_bloqueado || 0}</td>
-                        <td><strong style="color:var(--success)">${disp}</strong></td>
+                        <td>${bloq > 0 ? `<strong style="color:var(--warning)">${bloq}</strong>` : '0'}</td>
+                        <td><strong style="color:${disp > 0 ? 'var(--success)' : 'var(--danger)'}">${disp}</strong></td>
                         <td>
                             <button class="btn btn-info btn-icon" onclick="verVariante('${i.variante}','${i.ubicacion}')" title="Ver Info"><i data-lucide="eye" style="width:14px;height:14px"></i></button>
+                            ${bloq > 0 ? `<button class="btn btn-warning btn-icon" onclick="desbloquearItem('${i.variante}','${i.ubicacion}')" title="Desbloquear"><i data-lucide="unlock" style="width:14px;height:14px"></i></button>` : ''}
                             <button class="btn btn-danger btn-icon" onclick="eliminarItem('${i.variante}','${i.ubicacion}')" title="Eliminar"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
                         </td>
                     </tr>`;
@@ -1155,6 +1158,60 @@
             ocultarLoading();
             toast('Eliminado', 'success');
             await cargarDatos();
+        }
+
+        // ============================================
+        // FUNCIONES DE DESBLOQUEO DE STOCK (EMERGENCIA)
+        // ============================================
+        async function desbloquearTodoStock() {
+            if (!confirm('⚠️ ATENCIÓN: Esto desbloqueará TODO el stock bloqueado.\n\nSolo usar si hay stock bloqueado sin órdenes asociadas.\n\n¿Continuar?')) return;
+            
+            mostrarLoading('Desbloqueando stock...');
+            
+            try {
+                const bloqueados = inventario.filter(i => (parseInt(i.stock_bloqueado) || 0) > 0);
+                
+                if (bloqueados.length === 0) {
+                    ocultarLoading();
+                    toast('No hay stock bloqueado', 'info');
+                    return;
+                }
+                
+                let count = 0;
+                for (const item of bloqueados) {
+                    const { error } = await supabase
+                        .from('inventario')
+                        .update({ stock_bloqueado: 0 })
+                        .eq('variante', item.variante)
+                        .eq('ubicacion', item.ubicacion);
+                    
+                    if (!error) count++;
+                }
+                
+                ocultarLoading();
+                toast(`✅ ${count} items desbloqueados`, 'success');
+                await cargarDatos();
+            } catch (e) {
+                ocultarLoading();
+                toast('Error: ' + e.message, 'error');
+            }
+        }
+
+        async function desbloquearItem(variante, ubicacion) {
+            if (!confirm(`¿Desbloquear stock de ${variante} en ${ubicacion}?`)) return;
+            mostrarLoading('Desbloqueando...');
+            const { error } = await supabase
+                .from('inventario')
+                .update({ stock_bloqueado: 0 })
+                .eq('variante', variante)
+                .eq('ubicacion', ubicacion);
+            ocultarLoading();
+            if (error) {
+                toast('Error: ' + error.message, 'error');
+            } else {
+                toast('Stock desbloqueado', 'success');
+                await cargarDatos();
+            }
         }
 
         async function procesarInventario() {
@@ -1546,18 +1603,12 @@
                     return;
                 }
 
-                // Bloquear stock
-                for (const item of items) {
-                    const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
-                    if (inv) {
-                        await supabase.from('inventario').update({ 
-                            stock_bloqueado: (parseInt(inv.stock_bloqueado) || 0) + item.cantidad 
-                        }).eq('variante', item.variante).eq('ubicacion', item.ubicacion);
-                    }
-                }
-
+                // ⚠️ LÓGICA CORREGIDA: Crear orden PRIMERO, luego bloquear stock
+                // Esto evita que el stock quede bloqueado si falla la creación de la orden
+                
+                const ordenId = 'ORD-' + Date.now().toString(36).toUpperCase();
                 const orden = { 
-                    id: 'ORD-' + Date.now().toString(36).toUpperCase(), 
+                    id: ordenId, 
                     fecha: new Date().toISOString(), 
                     estado: 'Pendiente Picking', 
                     items, 
@@ -1566,16 +1617,38 @@
                     prendasRechazadas: 0 
                 };
                 
-                const { error } = await supabase.from('ordenes').insert(orden);
+                // PASO 1: Crear la orden PRIMERO
+                const { error: ordenError } = await supabase.from('ordenes').insert(orden);
                 
-                if (error) {
+                if (ordenError) {
                     ocultarLoading();
-                    toast('Error al crear orden: ' + error.message, 'error');
-                    return;
+                    toast('Error al crear orden: ' + ordenError.message, 'error');
+                    console.error('Error creando orden:', ordenError);
+                    return; // SALIR sin bloquear nada
+                }
+
+                // PASO 2: Solo si la orden se creó exitosamente, bloquear stock
+                let bloqueoExitoso = true;
+                for (const item of items) {
+                    const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
+                    if (inv) {
+                        const { error: updateError } = await supabase.from('inventario').update({ 
+                            stock_bloqueado: (parseInt(inv.stock_bloqueado) || 0) + item.cantidad 
+                        }).eq('variante', item.variante).eq('ubicacion', item.ubicacion);
+                        
+                        if (updateError) {
+                            console.error('Error bloqueando stock:', updateError);
+                            bloqueoExitoso = false;
+                        }
+                    }
                 }
                 
                 ocultarLoading();
-                toast(`✅ Orden ${orden.id} creada con ${items.length} variantes`, 'success');
+                if (bloqueoExitoso) {
+                    toast(`✅ Orden ${ordenId} creada con ${items.length} variantes`, 'success');
+                } else {
+                    toast(`⚠️ Orden ${ordenId} creada pero hubo errores bloqueando stock`, 'warning');
+                }
                 cerrarModal('modalCrearOrden');
                 limpiarArchivo('fileOrden', 'fileOrdenInfo');
                 document.getElementById('previewOrden').style.display = 'none';
@@ -1962,7 +2035,7 @@
             document.getElementById('loginPassword')?.addEventListener('keypress', e => { if (e.key === 'Enter') iniciarSesion(); });
         });
 
-        console.log('✅ MAWI v6.0 - Versión corregida con feedback de archivos y órdenes mejoradas');
+        console.log('✅ MAWI v6.0 COMPLETO CORREGIDO - Lógica de órdenes arreglada + Desbloqueo de stock');
     </script>
 </body>
 </html>
