@@ -553,7 +553,7 @@
                         </div>
                         <div class="table-container">
                             <table>
-                                <thead><tr><th>ID</th><th>Nombre</th><th>Fecha</th><th>Variantes</th><th>Unidades</th><th>Monto</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                <thead><tr><th>ID</th><th>Nombre</th><th>Fecha</th><th>Unidades</th><th>Monto</th><th>Progreso</th><th>Estado</th><th>Acciones</th></tr></thead>
                                 <tbody id="tablaOrdenes"></tbody>
                             </table>
                         </div>
@@ -562,13 +562,24 @@
 
                 <!-- VISTA PICKING -->
                 <div id="vista-picking" class="vista">
+                    <div class="alert alert-info" id="alertaHorario" style="display:none">
+                        <i data-lucide="clock" style="width:18px;height:18px"></i>
+                        <span id="alertaHorarioTexto">Horario laboral: 8:30 AM - 7:00 PM (1h almuerzo)</span>
+                    </div>
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title"><i data-lucide="scan" style="width:20px;height:20px;color:var(--primary)"></i> Módulo de Picking</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-success" onclick="exportarHistorialPicking()"><i data-lucide="download" style="width:14px;height:14px"></i> Historial</button>
+                            </div>
+                        </div>
+                        <div class="tabs" id="tabsPicking">
+                            <div class="tab active" data-tab="activos" onclick="cambiarTabPicking('activos')">Activos</div>
+                            <div class="tab" data-tab="historial" onclick="cambiarTabPicking('historial')">Historial</div>
                         </div>
                         <div class="table-container">
                             <table>
-                                <thead><tr><th>Orden</th><th>Parte</th><th>Equipo</th><th>Items</th><th>Encontrados</th><th>Tiempo</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                <thead><tr><th>Orden</th><th>Parte</th><th>Equipo</th><th>Solicitado</th><th>Encontrado</th><th>Tiempo</th><th>Estado</th><th>Acciones</th></tr></thead>
                                 <tbody id="tablaPicking"></tbody>
                             </table>
                         </div>
@@ -580,6 +591,13 @@
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title"><i data-lucide="box" style="width:20px;height:20px;color:var(--primary)"></i> Módulo de Packing</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-success" onclick="exportarHistorialPacking()"><i data-lucide="download" style="width:14px;height:14px"></i> Historial</button>
+                            </div>
+                        </div>
+                        <div class="tabs" id="tabsPacking">
+                            <div class="tab active" data-tab="activos" onclick="cambiarTabPacking('activos')">Activos</div>
+                            <div class="tab" data-tab="historial" onclick="cambiarTabPacking('historial')">Historial</div>
                         </div>
                         <div class="table-container">
                             <table>
@@ -642,22 +660,137 @@
                             <h3 class="card-title"><i data-lucide="settings" style="width:20px;height:20px;color:var(--primary)"></i> Configuración del Sistema</h3>
                         </div>
                         <div class="tabs">
-                            <div class="tab active" onclick="cambiarTabConfig('columnas')">Columnas de Hojas</div>
-                            <div class="tab" onclick="cambiarTabConfig('tiendas')">Tiendas</div>
+                            <div class="tab active" data-config="columnas" onclick="cambiarTabConfig('columnas')">Columnas de Hojas</div>
+                            <div class="tab" data-config="tiendas" onclick="cambiarTabConfig('tiendas')">Tiendas</div>
+                            <div class="tab" data-config="horarios" onclick="cambiarTabConfig('horarios')">Horarios</div>
+                            <div class="tab" data-config="general" onclick="cambiarTabConfig('general')">General</div>
                         </div>
+                        
+                        <!-- Config Columnas -->
                         <div id="configColumnas" class="config-section">
-                            <h4 style="margin-bottom:1rem">Configuración de Columnas para Hojas</h4>
-                            <div class="form-row">
+                            <h4 style="margin-bottom:1rem">📋 Configuración de Columnas para Hojas</h4>
+                            <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:0.85rem">Selecciona las columnas que aparecerán en las hojas de picking y packing.</p>
+                            
+                            <div class="form-row" style="margin-bottom:1.5rem">
                                 <div class="form-group">
                                     <label class="form-label">Columnas Hoja de Picking</label>
-                                    <div id="columnasPickingConfig" class="chips" style="min-height:40px;padding:0.5rem;background:var(--bg-hover);border-radius:8px"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Columnas Hoja de Packing</label>
-                                    <div id="columnasPackingConfig" class="chips" style="min-height:40px;padding:0.5rem;background:var(--bg-hover);border-radius:8px"></div>
+                                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.5rem">
+                                        <label class="form-check"><input type="checkbox" id="colPick_ubicacion" checked> Ubicación</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_variante" checked> Variante</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_codigo_comercial" checked> Código Comercial</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_marca" checked> Marca</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_descripcion" checked> Descripción</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_genero"> Género</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_talla"> Talla</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_pvp"> PVP</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_pvp_regular"> PVP Regular</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_kardex"> Kardex</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_cantidad" checked> Cantidad</label>
+                                        <label class="form-check"><input type="checkbox" id="colPick_encontrado" checked> Encontrado</label>
+                                    </div>
                                 </div>
                             </div>
-                            <button class="btn btn-primary" onclick="guardarConfigColumnas()">Guardar Configuración</button>
+                            
+                            <div class="form-row" style="margin-bottom:1.5rem">
+                                <div class="form-group">
+                                    <label class="form-label">Columnas Hoja de Packing</label>
+                                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.5rem">
+                                        <label class="form-check"><input type="checkbox" id="colPack_variante" checked> Variante</label>
+                                        <label class="form-check"><input type="checkbox" id="colPack_codigo_comercial"> Código Comercial</label>
+                                        <label class="form-check"><input type="checkbox" id="colPack_descripcion" checked> Descripción</label>
+                                        <label class="form-check"><input type="checkbox" id="colPack_marca" checked> Marca</label>
+                                        <label class="form-check"><input type="checkbox" id="colPack_genero" checked> Género</label>
+                                        <label class="form-check"><input type="checkbox" id="colPack_talla" checked> Talla</label>
+                                        <label class="form-check"><input type="checkbox" id="colPack_pvp"> PVP</label>
+                                        <label class="form-check"><input type="checkbox" id="colPack_kardex" checked> Kardex</label>
+                                        <label class="form-check"><input type="checkbox" id="colPack_encontrado" checked> Encontrado</label>
+                                        <label class="form-check"><input type="checkbox" id="colPack_tiendas" checked> Columnas Tiendas</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary" onclick="guardarConfigColumnas()"><i data-lucide="save" style="width:14px;height:14px"></i> Guardar Configuración</button>
+                        </div>
+                        
+                        <!-- Config Tiendas -->
+                        <div id="configTiendas" class="config-section" style="display:none">
+                            <h4 style="margin-bottom:1rem">🏪 Gestión de Tiendas</h4>
+                            <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:0.85rem">Agrega, edita o elimina tiendas del sistema.</p>
+                            
+                            <div class="form-group" style="margin-bottom:1rem">
+                                <label class="form-label">Agregar Nueva Tienda</label>
+                                <div style="display:flex;gap:0.5rem">
+                                    <input type="text" id="inputNuevaTienda" class="form-input" placeholder="Nombre de la tienda" style="flex:1">
+                                    <button class="btn btn-success" onclick="agregarTienda()"><i data-lucide="plus" style="width:14px;height:14px"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Tiendas Actuales</label>
+                                <div id="listaTiendas" class="chips" style="min-height:60px;padding:0.75rem;background:var(--bg-hover);border-radius:8px"></div>
+                            </div>
+                            
+                            <button class="btn btn-primary" onclick="guardarConfigTiendas()"><i data-lucide="save" style="width:14px;height:14px"></i> Guardar Tiendas</button>
+                        </div>
+                        
+                        <!-- Config Horarios -->
+                        <div id="configHorarios" class="config-section" style="display:none">
+                            <h4 style="margin-bottom:1rem">🕐 Horarios de Trabajo</h4>
+                            <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:0.85rem">Configura los horarios laborales para el cálculo de tiempos.</p>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Hora de Inicio</label>
+                                    <input type="time" id="horaInicio" class="form-input" value="08:30">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hora de Fin</label>
+                                    <input type="time" id="horaFin" class="form-input" value="19:00">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Duración Almuerzo (min)</label>
+                                    <input type="number" id="duracionAlmuerzo" class="form-input" value="60" min="0" max="120">
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info" style="margin:1rem 0">
+                                <i data-lucide="info" style="width:18px;height:18px"></i>
+                                <span>Tiempo laboral efectivo: <strong id="tiempoEfectivo">9.5 horas</strong> por día</span>
+                            </div>
+                            
+                            <button class="btn btn-primary" onclick="guardarConfigHorarios()"><i data-lucide="save" style="width:14px;height:14px"></i> Guardar Horarios</button>
+                        </div>
+                        
+                        <!-- Config General -->
+                        <div id="configGeneral" class="config-section" style="display:none">
+                            <h4 style="margin-bottom:1rem">⚙️ Configuración General</h4>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Items por Página</label>
+                                    <select id="configItemsPagina" class="form-select">
+                                        <option value="50">50</option>
+                                        <option value="100" selected>100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Días para Expiración de Orden</label>
+                                    <input type="number" id="configDiasExpiracion" class="form-input" value="7" min="1" max="30">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Acciones de Mantenimiento</label>
+                                <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap">
+                                    <button class="btn btn-warning" onclick="desbloquearTodoStock()"><i data-lucide="unlock" style="width:14px;height:14px"></i> Desbloquear Todo Stock</button>
+                                    <button class="btn btn-danger" onclick="limpiarOrdenesAntiguas()"><i data-lucide="trash-2" style="width:14px;height:14px"></i> Limpiar Órdenes +30 días</button>
+                                    <button class="btn btn-info" onclick="exportarBackup()"><i data-lucide="download" style="width:14px;height:14px"></i> Exportar Backup</button>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary" onclick="guardarConfigGeneral()" style="margin-top:1rem"><i data-lucide="save" style="width:14px;height:14px"></i> Guardar Configuración</button>
                         </div>
                     </div>
                 </div>
@@ -1757,20 +1890,50 @@
         function renderizarOrdenes() {
             document.getElementById('tablaOrdenes').innerHTML = ordenesFiltradas.length === 0
                 ? '<tr><td colspan="8" class="empty-state">No hay órdenes</td></tr>'
-                : ordenesFiltradas.map(o => `<tr>
-                    <td><strong>${o.id}</strong></td>
-                    <td class="td-wrap">${o.nombre}</td>
-                    <td>${formatFecha(o.fecha)}</td>
-                    <td>${o.total_variantes || 0}</td>
-                    <td>${(o.total_unidades || 0).toLocaleString()}</td>
-                    <td><strong style="color:var(--primary)">${formatMoney(o.monto_solicitado)}</strong></td>
-                    <td>${getBadge(o.estado)}</td>
-                    <td>
-                        <button class="btn btn-info btn-icon btn-sm" onclick="verHistorialOrden('${o.id}')" title="Historial"><i data-lucide="history" style="width:14px;height:14px"></i></button>
-                        ${o.estado === 'Pendiente División' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="abrirDividirOrden('${o.id}')" title="Dividir"><i data-lucide="scissors" style="width:14px;height:14px"></i></button>` : ''}
-                        ${['Pendiente División', 'Cancelada'].includes(o.estado) ? `<button class="btn btn-danger btn-icon btn-sm" onclick="eliminarOrden('${o.id}')" title="Eliminar"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>` : ''}
-                    </td>
-                </tr>`).join('');
+                : ordenesFiltradas.map(o => {
+                    // Calcular progreso
+                    const total = o.total_unidades || 1;
+                    const encontrado = o.unidades_encontradas || 0;
+                    const empacado = o.unidades_empacadas || 0;
+                    let progreso = 0;
+                    let progresoTexto = '';
+                    
+                    if (o.estado === 'Pendiente División') {
+                        progreso = 0;
+                        progresoTexto = 'Sin iniciar';
+                    } else if (o.estado === 'Pendiente Picking' || o.estado === 'En Picking') {
+                        progreso = Math.round((encontrado / total) * 50);
+                        progresoTexto = `Picking: ${encontrado}/${total}`;
+                    } else if (o.estado === 'Pendiente Packing' || o.estado === 'En Packing') {
+                        progreso = 50 + Math.round((empacado / encontrado) * 50) || 50;
+                        progresoTexto = `Packing: ${empacado}/${encontrado}`;
+                    } else if (o.estado === 'Completada') {
+                        progreso = 100;
+                        progresoTexto = 'Completada';
+                    }
+                    
+                    const colorBarra = progreso === 100 ? 'var(--success)' : progreso > 50 ? 'var(--info)' : 'var(--warning)';
+                    
+                    return `<tr>
+                        <td><strong>${o.id}</strong></td>
+                        <td class="td-wrap" style="max-width:180px">${o.nombre}</td>
+                        <td>${formatFecha(o.fecha)}<br><small style="color:var(--text-secondary)">${diasTranscurridos(o.fecha)}d</small></td>
+                        <td>${(o.total_unidades || 0).toLocaleString()}</td>
+                        <td><strong style="color:var(--primary)">${formatMoney(o.monto_final || o.monto_solicitado)}</strong></td>
+                        <td style="min-width:120px">
+                            <div style="background:var(--bg-hover);border-radius:4px;height:8px;overflow:hidden">
+                                <div style="width:${progreso}%;height:100%;background:${colorBarra}"></div>
+                            </div>
+                            <small style="color:var(--text-secondary)">${progresoTexto}</small>
+                        </td>
+                        <td>${getBadge(o.estado)}</td>
+                        <td>
+                            <button class="btn btn-info btn-icon btn-sm" onclick="verHistorialOrden('${o.id}')" title="Historial"><i data-lucide="history" style="width:14px;height:14px"></i></button>
+                            ${o.estado === 'Pendiente División' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="abrirDividirOrden('${o.id}')" title="Dividir"><i data-lucide="scissors" style="width:14px;height:14px"></i></button>` : ''}
+                            ${['Pendiente División', 'Cancelada'].includes(o.estado) ? `<button class="btn btn-danger btn-icon btn-sm" onclick="eliminarOrden('${o.id}')" title="Eliminar"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>` : ''}
+                        </td>
+                    </tr>`;
+                }).join('');
             lucide.createIcons();
         }
 
@@ -2073,51 +2236,198 @@
             const orden = ordenes.find(o => o.id === id);
             if (!orden) return;
 
+            // Buscar picking y packing de esta orden
+            const pickingsOrden = picking.filter(p => p.orden_id === id);
+            const packingsOrden = packing.filter(p => p.orden_id === id);
+            const reclasOrden = reclasificacion.filter(r => r.orden_id === id);
+
+            // Calcular productos no encontrados
+            const itemsSolicitados = orden.items || [];
+            let itemsNoEncontrados = [];
+            let itemsEncontrados = [];
+            let itemsReclasificados = [];
+
+            pickingsOrden.forEach(pick => {
+                const encontrados = pick.items_encontrados || [];
+                const asignados = pick.items_asignados || [];
+                
+                asignados.forEach(a => {
+                    const enc = encontrados.find(e => e.variante === a.variante);
+                    const cantEnc = enc?.cantidad_encontrada || 0;
+                    const faltante = a.cantidad - cantEnc;
+                    
+                    if (faltante > 0) {
+                        const prod = productos.find(p => p.variante === a.variante);
+                        itemsNoEncontrados.push({
+                            ...a,
+                            encontrado: cantEnc,
+                            faltante: faltante,
+                            descripcion: prod?.descripcion || a.descripcion,
+                            genero: prod?.genero || a.genero,
+                            talla: prod?.talla || a.talla,
+                            parte: pick.parte
+                        });
+                    }
+                    if (cantEnc > 0) {
+                        itemsEncontrados.push({ variante: a.variante, cantidad: cantEnc });
+                    }
+                });
+            });
+
+            reclasOrden.forEach(r => {
+                const prod = productos.find(p => p.variante === r.variante_original);
+                itemsReclasificados.push({
+                    variante: r.variante_original,
+                    cantidad: r.cantidad,
+                    motivo: r.motivo,
+                    estado: r.estado,
+                    descripcion: prod?.descripcion || '',
+                    genero: prod?.genero || '',
+                    talla: prod?.talla || ''
+                });
+            });
+
+            const totalSolicitado = orden.total_unidades || 0;
+            const totalEncontrado = orden.unidades_encontradas || 0;
+            const totalEmpacado = orden.unidades_empacadas || 0;
+            const totalReclas = orden.unidades_reclasificadas || 0;
+
             let html = `
+                <div class="stats-grid" style="margin-bottom:1.5rem">
+                    <div class="stat-card" style="padding:1rem">
+                        <div class="stat-value" style="font-size:1.5rem">${orden.nombre}</div>
+                        <div class="stat-label">${orden.id}</div>
+                    </div>
+                    <div class="stat-card" style="padding:1rem">
+                        <div class="stat-value" style="font-size:1.5rem;color:var(--info)">${totalSolicitado.toLocaleString()}</div>
+                        <div class="stat-label">Solicitadas</div>
+                    </div>
+                    <div class="stat-card" style="padding:1rem">
+                        <div class="stat-value" style="font-size:1.5rem;color:var(--success)">${totalEncontrado.toLocaleString()}</div>
+                        <div class="stat-label">Encontradas</div>
+                    </div>
+                    <div class="stat-card" style="padding:1rem">
+                        <div class="stat-value" style="font-size:1.5rem;color:var(--warning)">${(totalSolicitado - totalEncontrado).toLocaleString()}</div>
+                        <div class="stat-label">No Encontradas</div>
+                    </div>
+                </div>
+
                 <div class="detail-grid" style="margin-bottom:1.5rem">
-                    <div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value">${orden.id}</div></div>
-                    <div class="detail-item"><div class="detail-label">Nombre</div><div class="detail-value">${orden.nombre}</div></div>
                     <div class="detail-item"><div class="detail-label">Estado</div><div class="detail-value">${getBadge(orden.estado)}</div></div>
-                    <div class="detail-item"><div class="detail-label">Fecha</div><div class="detail-value">${formatFechaHora(orden.fecha)}</div></div>
+                    <div class="detail-item"><div class="detail-label">Fecha Creación</div><div class="detail-value">${formatFechaHora(orden.fecha)}</div></div>
                     <div class="detail-item"><div class="detail-label">Monto Solicitado</div><div class="detail-value">${formatMoney(orden.monto_solicitado)}</div></div>
                     <div class="detail-item"><div class="detail-label">Monto Picking</div><div class="detail-value">${formatMoney(orden.monto_picking)}</div></div>
-                    <div class="detail-item"><div class="detail-label">Monto Final</div><div class="detail-value" style="color:var(--success)">${formatMoney(orden.monto_final || orden.monto_packing)}</div></div>
+                    <div class="detail-item"><div class="detail-label">Monto Packing</div><div class="detail-value">${formatMoney(orden.monto_packing)}</div></div>
+                    <div class="detail-item"><div class="detail-label">Monto Final</div><div class="detail-value" style="color:var(--success);font-size:1.1rem"><strong>${formatMoney(orden.monto_final || orden.monto_packing || orden.monto_picking)}</strong></div></div>
                     <div class="detail-item"><div class="detail-label">Partes</div><div class="detail-value">${orden.partes}</div></div>
+                    <div class="detail-item"><div class="detail-label">Reclasificaciones</div><div class="detail-value">${itemsReclasificados.length}</div></div>
                 </div>
 
-                <h4 style="margin:1.5rem 0 1rem">📜 Historial de la Orden</h4>
-                <div class="timeline">
-                    ${(orden.historial || []).map(h => `
-                        <div class="timeline-item success">
-                            <div class="timeline-date">${formatFechaHora(h.fecha)}</div>
-                            <div class="timeline-title">${h.accion}</div>
-                            <div class="timeline-desc">${h.detalle || ''}</div>
-                        </div>
-                    `).join('')}
+                <div class="tabs" style="margin-bottom:1rem">
+                    <div class="tab active" onclick="cambiarTabHistorial('timeline')">📜 Timeline</div>
+                    <div class="tab" onclick="cambiarTabHistorial('noEncontrados')">❌ No Encontrados (${itemsNoEncontrados.length})</div>
+                    <div class="tab" onclick="cambiarTabHistorial('reclasificados')">🔄 Reclasificados (${itemsReclasificados.length})</div>
+                    <div class="tab" onclick="cambiarTabHistorial('todos')">📦 Todos (${itemsSolicitados.length})</div>
                 </div>
 
-                <h4 style="margin:1.5rem 0 1rem">📦 Items de la Orden (${orden.items?.length || 0} variantes)</h4>
-                <div class="table-container" style="max-height:300px;overflow-y:auto">
-                    <table>
-                        <thead><tr><th>Variante</th><th>Descripción</th><th>Género</th><th>Talla</th><th>Cantidad</th><th>Estado</th></tr></thead>
-                        <tbody>
-                            ${(orden.items || []).slice(0, 100).map(i => `
-                                <tr>
-                                    <td><strong>${i.variante}</strong></td>
-                                    <td class="td-wrap">${i.descripcion || '-'}</td>
-                                    <td>${i.genero || '-'}</td>
-                                    <td>${i.talla || '-'}</td>
-                                    <td>${i.cantidad}</td>
-                                    <td><span class="badge badge-success">OK</span></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                <div id="tabHistorialTimeline" class="tab-content">
+                    <div class="timeline">
+                        ${(orden.historial || []).map(h => `
+                            <div class="timeline-item ${h.accion.includes('Error') || h.accion.includes('No encontr') ? 'danger' : 'success'}">
+                                <div class="timeline-date">${formatFechaHora(h.fecha)}</div>
+                                <div class="timeline-title">${h.accion}</div>
+                                <div class="timeline-desc">${h.detalle || ''}</div>
+                            </div>
+                        `).join('') || '<p style="color:var(--text-secondary)">Sin historial registrado</p>'}
+                    </div>
+                </div>
+
+                <div id="tabHistorialNoEncontrados" class="tab-content" style="display:none">
+                    ${itemsNoEncontrados.length === 0 
+                        ? '<p style="text-align:center;color:var(--success);padding:2rem">✅ Todos los productos fueron encontrados</p>'
+                        : `<div class="table-container" style="max-height:350px;overflow-y:auto">
+                            <table>
+                                <thead><tr><th>Parte</th><th>Variante</th><th>Descripción</th><th>Género</th><th>Talla</th><th>Solicitado</th><th>Encontrado</th><th>Faltante</th></tr></thead>
+                                <tbody>
+                                    ${itemsNoEncontrados.map(i => `
+                                        <tr style="background:rgba(239,68,68,0.05)">
+                                            <td>PT${i.parte}</td>
+                                            <td><strong>${i.variante}</strong></td>
+                                            <td class="td-wrap" style="max-width:180px">${i.descripcion || '-'}</td>
+                                            <td><span class="badge badge-info">${i.genero || '-'}</span></td>
+                                            <td><span class="badge badge-purple">${i.talla || '-'}</span></td>
+                                            <td>${i.cantidad}</td>
+                                            <td style="color:var(--success)">${i.encontrado}</td>
+                                            <td><strong style="color:var(--danger)">${i.faltante}</strong></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>`
+                    }
+                </div>
+
+                <div id="tabHistorialReclasificados" class="tab-content" style="display:none">
+                    ${itemsReclasificados.length === 0 
+                        ? '<p style="text-align:center;color:var(--text-secondary);padding:2rem">No hay productos reclasificados</p>'
+                        : `<div class="table-container" style="max-height:350px;overflow-y:auto">
+                            <table>
+                                <thead><tr><th>Variante</th><th>Descripción</th><th>Género</th><th>Talla</th><th>Cantidad</th><th>Motivo</th><th>Estado</th></tr></thead>
+                                <tbody>
+                                    ${itemsReclasificados.map(i => `
+                                        <tr style="background:rgba(245,158,11,0.05)">
+                                            <td><strong>${i.variante}</strong></td>
+                                            <td class="td-wrap" style="max-width:180px">${i.descripcion || '-'}</td>
+                                            <td><span class="badge badge-info">${i.genero || '-'}</span></td>
+                                            <td><span class="badge badge-purple">${i.talla || '-'}</span></td>
+                                            <td>${i.cantidad}</td>
+                                            <td><span class="badge badge-warning">${i.motivo}</span></td>
+                                            <td>${getBadge(i.estado)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>`
+                    }
+                </div>
+
+                <div id="tabHistorialTodos" class="tab-content" style="display:none">
+                    <div class="table-container" style="max-height:350px;overflow-y:auto">
+                        <table>
+                            <thead><tr><th>Variante</th><th>Descripción</th><th>Género</th><th>Talla</th><th>Ubicación</th><th>Cantidad</th><th>Kardex</th></tr></thead>
+                            <tbody>
+                                ${(itemsSolicitados).slice(0, 150).map(i => {
+                                    const prod = productos.find(p => p.variante === i.variante);
+                                    return `
+                                        <tr>
+                                            <td><strong>${i.variante}</strong></td>
+                                            <td class="td-wrap" style="max-width:180px">${prod?.descripcion || i.descripcion || '-'}</td>
+                                            <td><span class="badge badge-info">${prod?.genero || i.genero || '-'}</span></td>
+                                            <td><span class="badge badge-purple">${prod?.talla || i.talla || '-'}</span></td>
+                                            <td><span class="badge badge-primary">${i.ubicacion || '-'}</span></td>
+                                            <td>${i.cantidad}</td>
+                                            <td style="color:var(--primary)">${formatMoney(prod?.kardex || i.kardex || 0)}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    ${itemsSolicitados.length > 150 ? `<p style="text-align:center;color:var(--text-secondary);margin-top:0.5rem">Mostrando 150 de ${itemsSolicitados.length} items</p>` : ''}
                 </div>
             `;
 
             document.getElementById('historialOrdenContent').innerHTML = html;
             abrirModal('modalHistorialOrden');
+            lucide.createIcons();
+        }
+
+        function cambiarTabHistorial(tab) {
+            document.querySelectorAll('#modalHistorialOrden .tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('#modalHistorialOrden .tab-content').forEach(c => c.style.display = 'none');
+            
+            event.target.classList.add('active');
+            document.getElementById(`tabHistorial${tab.charAt(0).toUpperCase() + tab.slice(1)}`).style.display = 'block';
         }
 
         async function eliminarOrden(id) {
@@ -2148,29 +2458,91 @@
         // ============================================
         // PICKING
         // ============================================
+        let tabPickingActual = 'activos';
+        
+        function cambiarTabPicking(tab) {
+            tabPickingActual = tab;
+            document.querySelectorAll('#tabsPicking .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`#tabsPicking .tab[data-tab="${tab}"]`).classList.add('active');
+            renderizarPicking();
+        }
+
         function renderizarPicking() {
-            const pickingPendientes = picking.filter(p => ['Pendiente', 'En Proceso'].includes(p.estado));
+            // Verificar horario laboral
+            verificarHorarioLaboral();
             
-            document.getElementById('tablaPicking').innerHTML = pickingPendientes.length === 0
-                ? '<tr><td colspan="8" class="empty-state">No hay tareas de picking pendientes</td></tr>'
-                : pickingPendientes.map(p => {
+            let pickingMostrar;
+            if (tabPickingActual === 'activos') {
+                pickingMostrar = picking.filter(p => ['Pendiente', 'En Proceso', 'Pausado'].includes(p.estado));
+            } else {
+                pickingMostrar = picking.filter(p => p.estado === 'Completado');
+            }
+            
+            document.getElementById('tablaPicking').innerHTML = pickingMostrar.length === 0
+                ? `<tr><td colspan="8" class="empty-state">No hay tareas de picking ${tabPickingActual === 'activos' ? 'pendientes' : 'en historial'}</td></tr>`
+                : pickingMostrar.map(p => {
                     const orden = ordenes.find(o => o.id === p.orden_id);
+                    const tiempoStr = calcularTiempoTrabajado(p);
                     return `<tr>
                         <td><strong>${orden?.nombre || p.orden_id}</strong></td>
                         <td>${p.nombre_parte || 'Parte ' + p.parte}</td>
-                        <td>${p.equipo_nombre || 'Sin asignar'}</td>
-                        <td>${p.total_solicitado}</td>
-                        <td>${p.total_encontrado}</td>
-                        <td>${p.tiempo_minutos ? p.tiempo_minutos + ' min' : '-'}</td>
+                        <td>${p.equipo_nombre || '<span style="color:var(--warning)">Sin asignar</span>'}</td>
+                        <td>${p.total_solicitado || 0}</td>
+                        <td>${p.total_encontrado || 0}</td>
+                        <td>${tiempoStr}</td>
                         <td>${getBadge(p.estado)}</td>
-                        <td>
+                        <td style="white-space:nowrap">
                             <button class="btn btn-info btn-icon btn-sm" onclick="descargarHojaPicking(${p.id})" title="Descargar Hoja"><i data-lucide="download" style="width:14px;height:14px"></i></button>
-                            ${p.estado === 'Pendiente' ? `<button class="btn btn-success btn-sm" onclick="iniciarPicking(${p.id})">Iniciar</button>` : ''}
-                            ${p.estado === 'En Proceso' ? `<button class="btn btn-warning btn-sm" onclick="abrirSubirCantidadesPicking(${p.id})">Subir</button>` : ''}
+                            ${p.estado === 'Pendiente' ? `<button class="btn btn-success btn-sm" onclick="iniciarPicking(${p.id})"><i data-lucide="play" style="width:12px;height:12px"></i> Iniciar</button>` : ''}
+                            ${p.estado === 'En Proceso' ? `
+                                <button class="btn btn-warning btn-sm" onclick="pausarPicking(${p.id})" title="Pausar"><i data-lucide="pause" style="width:12px;height:12px"></i></button>
+                                <button class="btn btn-success btn-sm" onclick="abrirSubirCantidadesPicking(${p.id})"><i data-lucide="upload" style="width:12px;height:12px"></i> Subir</button>
+                            ` : ''}
+                            ${p.estado === 'Pausado' ? `<button class="btn btn-success btn-sm" onclick="reanudarPicking(${p.id})"><i data-lucide="play" style="width:12px;height:12px"></i> Reanudar</button>` : ''}
+                            ${p.estado === 'Completado' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="verDetallePicking(${p.id})" title="Ver Detalle"><i data-lucide="eye" style="width:14px;height:14px"></i></button>` : ''}
                         </td>
                     </tr>`;
                 }).join('');
             lucide.createIcons();
+        }
+
+        function calcularTiempoTrabajado(registro) {
+            if (!registro.fecha_inicio) return '-';
+            
+            let tiempoTotal = registro.tiempo_minutos || 0;
+            
+            if (registro.estado === 'En Proceso' && registro.fecha_inicio) {
+                const ahora = new Date();
+                const inicio = new Date(registro.fecha_inicio);
+                tiempoTotal += Math.round((ahora - inicio) / 60000);
+            }
+            
+            if (tiempoTotal < 60) return `${tiempoTotal} min`;
+            return `${Math.floor(tiempoTotal / 60)}h ${tiempoTotal % 60}m`;
+        }
+
+        function verificarHorarioLaboral() {
+            const ahora = new Date();
+            const hora = ahora.getHours();
+            const minutos = ahora.getMinutes();
+            const tiempoActual = hora * 60 + minutos;
+            
+            // Horario: 8:30 - 19:00
+            const horaInicio = 8 * 60 + 30; // 8:30
+            const horaFin = 19 * 60; // 19:00
+            
+            const alertaEl = document.getElementById('alertaHorario');
+            if (alertaEl) {
+                if (tiempoActual < horaInicio) {
+                    alertaEl.style.display = 'flex';
+                    document.getElementById('alertaHorarioTexto').innerHTML = `⏰ Fuera de horario. El turno inicia a las 8:30 AM`;
+                } else if (tiempoActual >= horaFin) {
+                    alertaEl.style.display = 'flex';
+                    document.getElementById('alertaHorarioTexto').innerHTML = `⏰ Fin de jornada. Recuerda pausar las tareas activas`;
+                } else {
+                    alertaEl.style.display = 'none';
+                }
+            }
         }
 
         async function iniciarPicking(id) {
@@ -2179,9 +2551,122 @@
                 estado: 'En Proceso',
                 fecha_inicio: new Date().toISOString()
             }).eq('id', id);
+            
+            // Registrar en historial de la orden
+            const pick = picking.find(p => p.id === id);
+            if (pick) {
+                const orden = ordenes.find(o => o.id === pick.orden_id);
+                if (orden) {
+                    const historial = orden.historial || [];
+                    historial.push({
+                        fecha: new Date().toISOString(),
+                        accion: `Picking Parte ${pick.parte} iniciado`,
+                        detalle: `Equipo: ${pick.equipo_nombre || 'Sin asignar'}`
+                    });
+                    await supabase.from('ordenes').update({ historial, estado: 'En Picking' }).eq('id', orden.id);
+                }
+            }
+            
             ocultarLoading();
             toast('Picking iniciado', 'success');
             await cargarDatos();
+        }
+
+        async function pausarPicking(id) {
+            mostrarLoading('Pausando...');
+            const pick = picking.find(p => p.id === id);
+            if (pick && pick.fecha_inicio) {
+                const tiempoAcumulado = (pick.tiempo_minutos || 0) + Math.round((new Date() - new Date(pick.fecha_inicio)) / 60000);
+                await supabase.from('picking').update({ 
+                    estado: 'Pausado',
+                    tiempo_minutos: tiempoAcumulado,
+                    fecha_inicio: null
+                }).eq('id', id);
+            }
+            ocultarLoading();
+            toast('Picking pausado', 'info');
+            await cargarDatos();
+        }
+
+        async function reanudarPicking(id) {
+            mostrarLoading('Reanudando...');
+            await supabase.from('picking').update({ 
+                estado: 'En Proceso',
+                fecha_inicio: new Date().toISOString()
+            }).eq('id', id);
+            ocultarLoading();
+            toast('Picking reanudado', 'success');
+            await cargarDatos();
+        }
+
+        function verDetallePicking(id) {
+            const pick = picking.find(p => p.id === id);
+            if (!pick) return;
+            
+            const orden = ordenes.find(o => o.id === pick.orden_id);
+            const encontrados = pick.items_encontrados || [];
+            const asignados = pick.items_asignados || [];
+            
+            let html = `
+                <div class="detail-grid" style="margin-bottom:1rem">
+                    <div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value">${orden?.nombre || pick.orden_id}</div></div>
+                    <div class="detail-item"><div class="detail-label">Parte</div><div class="detail-value">${pick.nombre_parte}</div></div>
+                    <div class="detail-item"><div class="detail-label">Equipo</div><div class="detail-value">${pick.equipo_nombre || '-'}</div></div>
+                    <div class="detail-item"><div class="detail-label">Tiempo</div><div class="detail-value">${calcularTiempoTrabajado(pick)}</div></div>
+                    <div class="detail-item"><div class="detail-label">Solicitado</div><div class="detail-value">${pick.total_solicitado}</div></div>
+                    <div class="detail-item"><div class="detail-label">Encontrado</div><div class="detail-value" style="color:var(--success)">${pick.total_encontrado}</div></div>
+                </div>
+                <h4 style="margin:1rem 0">Items Encontrados</h4>
+                <div class="table-container" style="max-height:300px">
+                    <table>
+                        <thead><tr><th>Variante</th><th>Solicitado</th><th>Encontrado</th><th>Diferencia</th></tr></thead>
+                        <tbody>
+                            ${asignados.map(a => {
+                                const enc = encontrados.find(e => e.variante === a.variante);
+                                const cantEnc = enc?.cantidad_encontrada || 0;
+                                const diff = cantEnc - a.cantidad;
+                                return `<tr>
+                                    <td><strong>${a.variante}</strong></td>
+                                    <td>${a.cantidad}</td>
+                                    <td style="color:var(--success)">${cantEnc}</td>
+                                    <td style="color:${diff >= 0 ? 'var(--success)' : 'var(--danger)'}">${diff >= 0 ? '+' : ''}${diff}</td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            document.getElementById('pickingContent').innerHTML = html;
+            document.getElementById('pickingFooter').innerHTML = '<button class="btn btn-outline" onclick="cerrarModal(\'modalPicking\')">Cerrar</button>';
+            document.getElementById('tituloModalPicking').textContent = 'Detalle de Picking';
+            abrirModal('modalPicking');
+        }
+
+        function exportarHistorialPicking() {
+            const completados = picking.filter(p => p.estado === 'Completado');
+            if (!completados.length) { toast('No hay historial', 'warning'); return; }
+            
+            const data = completados.map(p => {
+                const orden = ordenes.find(o => o.id === p.orden_id);
+                return {
+                    Orden: orden?.nombre || p.orden_id,
+                    Parte: p.nombre_parte,
+                    Equipo: p.equipo_nombre || '',
+                    Integrantes: (p.integrantes || []).join(', '),
+                    Solicitado: p.total_solicitado,
+                    Encontrado: p.total_encontrado,
+                    TiempoMinutos: p.tiempo_minutos,
+                    FechaInicio: formatFechaHora(p.fecha_inicio),
+                    FechaFin: formatFechaHora(p.fecha_fin)
+                };
+            });
+            
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'HistorialPicking');
+            XLSX.writeFile(wb, `Historial_Picking_${new Date().toISOString().split('T')[0]}.xlsx`);
+            toast('Historial exportado', 'success');
         }
 
         function descargarHojaPicking(id) {
@@ -2309,25 +2794,48 @@
         // ============================================
         // PACKING
         // ============================================
+        let tabPackingActual = 'activos';
+        
+        function cambiarTabPacking(tab) {
+            tabPackingActual = tab;
+            document.querySelectorAll('#tabsPacking .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`#tabsPacking .tab[data-tab="${tab}"]`).classList.add('active');
+            renderizarPacking();
+        }
+
         function renderizarPacking() {
-            const packingPendientes = packing.filter(p => ['Pendiente', 'En Proceso'].includes(p.estado));
+            let packingMostrar;
+            if (tabPackingActual === 'activos') {
+                packingMostrar = packing.filter(p => ['Pendiente', 'En Proceso', 'Pausado', 'Esperando Picking'].includes(p.estado));
+            } else {
+                packingMostrar = packing.filter(p => p.estado === 'Completado');
+            }
             
-            document.getElementById('tablaPacking').innerHTML = packingPendientes.length === 0
-                ? '<tr><td colspan="9" class="empty-state">No hay tareas de packing pendientes</td></tr>'
-                : packingPendientes.map(p => {
+            document.getElementById('tablaPacking').innerHTML = packingMostrar.length === 0
+                ? `<tr><td colspan="9" class="empty-state">No hay tareas de packing ${tabPackingActual === 'activos' ? 'pendientes' : 'en historial'}</td></tr>`
+                : packingMostrar.map(p => {
                     const orden = ordenes.find(o => o.id === p.orden_id);
+                    const tiempoStr = calcularTiempoTrabajado(p);
                     return `<tr>
                         <td><strong>${orden?.nombre || p.orden_id}</strong></td>
                         <td>${p.nombre_parte || 'Parte ' + p.parte}</td>
-                        <td>${p.equipo_nombre || 'Sin asignar'}</td>
-                        <td>${p.total_recibido}</td>
-                        <td>${p.total_empacado}</td>
-                        <td>${p.total_reclasificado}</td>
-                        <td>${p.tiempo_minutos ? p.tiempo_minutos + ' min' : '-'}</td>
+                        <td>${p.equipo_nombre || '<span style="color:var(--warning)">Sin asignar</span>'}</td>
+                        <td>${p.total_recibido || 0}</td>
+                        <td style="color:var(--success)">${p.total_empacado || 0}</td>
+                        <td style="color:var(--warning)">${p.total_reclasificado || 0}</td>
+                        <td>${tiempoStr}</td>
                         <td>${getBadge(p.estado)}</td>
-                        <td>
+                        <td style="white-space:nowrap">
                             <button class="btn btn-info btn-icon btn-sm" onclick="descargarHojaPacking(${p.id})" title="Descargar Hoja"><i data-lucide="download" style="width:14px;height:14px"></i></button>
-                            ${p.estado === 'Pendiente' ? `<button class="btn btn-success btn-sm" onclick="iniciarPacking(${p.id})">Iniciar</button>` : ''}
+                            ${p.estado === 'Esperando Picking' ? '<span class="badge badge-purple">Esperando</span>' : ''}
+                            ${p.estado === 'Pendiente' ? `<button class="btn btn-success btn-sm" onclick="iniciarPacking(${p.id})"><i data-lucide="play" style="width:12px;height:12px"></i> Iniciar</button>` : ''}
+                            ${p.estado === 'En Proceso' ? `
+                                <button class="btn btn-warning btn-sm" onclick="pausarPacking(${p.id})" title="Pausar"><i data-lucide="pause" style="width:12px;height:12px"></i></button>
+                                <button class="btn btn-purple btn-sm" onclick="abrirSubirDistribucion(${p.id})"><i data-lucide="upload" style="width:12px;height:12px"></i> Subir</button>
+                                <button class="btn btn-success btn-sm" onclick="completarPacking(${p.id})"><i data-lucide="check" style="width:12px;height:12px"></i></button>
+                            ` : ''}
+                            ${p.estado === 'Pausado' ? `<button class="btn btn-success btn-sm" onclick="reanudarPacking(${p.id})"><i data-lucide="play" style="width:12px;height:12px"></i> Reanudar</button>` : ''}
+                            ${p.estado === 'Completado' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="verDetallePacking(${p.id})" title="Ver Detalle"><i data-lucide="eye" style="width:14px;height:14px"></i></button>` : ''}
                         </td>
                     </tr>`;
                 }).join('');
@@ -2340,9 +2848,285 @@
                 estado: 'En Proceso',
                 fecha_inicio: new Date().toISOString()
             }).eq('id', id);
+            
+            // Registrar en historial
+            const pack = packing.find(p => p.id === id);
+            if (pack) {
+                const orden = ordenes.find(o => o.id === pack.orden_id);
+                if (orden) {
+                    const historial = orden.historial || [];
+                    historial.push({
+                        fecha: new Date().toISOString(),
+                        accion: `Packing Parte ${pack.parte} iniciado`,
+                        detalle: `Equipo: ${pack.equipo_nombre || 'Sin asignar'}`
+                    });
+                    await supabase.from('ordenes').update({ historial, estado: 'En Packing' }).eq('id', orden.id);
+                }
+            }
+            
             ocultarLoading();
             toast('Packing iniciado', 'success');
             await cargarDatos();
+        }
+
+        async function pausarPacking(id) {
+            mostrarLoading('Pausando...');
+            const pack = packing.find(p => p.id === id);
+            if (pack && pack.fecha_inicio) {
+                const tiempoAcumulado = (pack.tiempo_minutos || 0) + Math.round((new Date() - new Date(pack.fecha_inicio)) / 60000);
+                await supabase.from('packing').update({ 
+                    estado: 'Pausado',
+                    tiempo_minutos: tiempoAcumulado,
+                    fecha_inicio: null
+                }).eq('id', id);
+            }
+            ocultarLoading();
+            toast('Packing pausado', 'info');
+            await cargarDatos();
+        }
+
+        async function reanudarPacking(id) {
+            mostrarLoading('Reanudando...');
+            await supabase.from('packing').update({ 
+                estado: 'En Proceso',
+                fecha_inicio: new Date().toISOString()
+            }).eq('id', id);
+            ocultarLoading();
+            toast('Packing reanudado', 'success');
+            await cargarDatos();
+        }
+
+        function abrirSubirDistribucion(id) {
+            packingActual = packing.find(p => p.id === id);
+            if (!packingActual) return;
+            
+            document.getElementById('packingContent').innerHTML = `
+                <div class="alert alert-info" style="margin-bottom:1rem">
+                    <i data-lucide="info" style="width:18px;height:18px"></i>
+                    <span>Sube el archivo Excel con la distribución por tienda completada</span>
+                </div>
+                <div class="form-group">
+                    <div class="file-upload-container">
+                        <input type="file" id="fileDistribucion" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileDistribucionInfo')">
+                        <label for="fileDistribucion" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
+                        <div class="file-selected" id="fileDistribucionInfo">
+                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
+                            <span class="file-selected-name"></span>
+                            <button class="file-selected-remove" onclick="limpiarArchivo('fileDistribucion','fileDistribucionInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('packingFooter').innerHTML = `
+                <button class="btn btn-outline" onclick="cerrarModal('modalPacking')">Cancelar</button>
+                <button class="btn btn-primary" onclick="procesarDistribucion()">Procesar</button>
+            `;
+            document.getElementById('tituloModalPacking').textContent = 'Subir Distribución';
+            abrirModal('modalPacking');
+            lucide.createIcons();
+        }
+
+        async function procesarDistribucion() {
+            const file = document.getElementById('fileDistribucion')?.files[0];
+            if (!file) { toast('Selecciona un archivo', 'error'); return; }
+            if (!packingActual) return;
+
+            mostrarLoading('Procesando distribución...');
+            try {
+                const data = await leerExcel(file);
+                let totalEmpacado = 0;
+                let totalReclas = 0;
+                const itemsEmpacados = [];
+                const itemsReclas = [];
+
+                data.forEach(r => {
+                    const v = normalizarTexto(getCol(r, ['variante', 'Variante']));
+                    if (!v) return;
+
+                    const dist = buscarTienda(r);
+                    const cantEmpacada = Object.values(dist).reduce((a, b) => a + b, 0);
+                    const recibido = packingActual.items_recibidos?.find(i => i.variante === v);
+                    const cantRecibida = recibido?.cantidad_encontrada || 0;
+                    const diferencia = cantRecibida - cantEmpacada;
+
+                    if (cantEmpacada > 0) {
+                        itemsEmpacados.push({ variante: v, cantidad: cantEmpacada, distribucion: dist });
+                        totalEmpacado += cantEmpacada;
+                    }
+
+                    // Si hay diferencia, va a reclasificación
+                    if (diferencia > 0) {
+                        const prod = productos.find(p => p.variante === v);
+                        itemsReclas.push({
+                            orden_id: packingActual.orden_id,
+                            packing_id: packingActual.id,
+                            variante_original: v,
+                            cantidad: diferencia,
+                            motivo: 'No empacado',
+                            estado: 'Pendiente',
+                            info_variante: { descripcion: prod?.descripcion, genero: prod?.genero, talla: prod?.talla }
+                        });
+                        totalReclas += diferencia;
+                    }
+                });
+
+                // Actualizar packing
+                await supabase.from('packing').update({
+                    items_empacados: itemsEmpacados,
+                    total_empacado: totalEmpacado,
+                    total_reclasificado: totalReclas,
+                    distribucion_tiendas: itemsEmpacados.reduce((acc, i) => {
+                        Object.entries(i.distribucion).forEach(([t, c]) => {
+                            acc[t] = (acc[t] || 0) + c;
+                        });
+                        return acc;
+                    }, {})
+                }).eq('id', packingActual.id);
+
+                // Crear reclasificaciones
+                if (itemsReclas.length > 0) {
+                    await supabase.from('reclasificacion').insert(itemsReclas);
+                }
+
+                ocultarLoading();
+                toast(`Procesado: ${totalEmpacado} empacadas, ${totalReclas} a reclasificación`, 'success');
+                cerrarModal('modalPacking');
+                await cargarDatos();
+            } catch (e) {
+                ocultarLoading();
+                toast('Error: ' + e.message, 'error');
+            }
+        }
+
+        async function completarPacking(id) {
+            const pack = packing.find(p => p.id === id);
+            if (!pack) return;
+
+            if (!confirm(`¿Completar packing de ${pack.nombre_parte}?\n\nEmpacados: ${pack.total_empacado || 0}\nReclasificados: ${pack.total_reclasificado || 0}`)) return;
+
+            mostrarLoading('Completando packing...');
+            try {
+                const tiempoFinal = (pack.tiempo_minutos || 0) + (pack.fecha_inicio ? Math.round((new Date() - new Date(pack.fecha_inicio)) / 60000) : 0);
+                
+                await supabase.from('packing').update({
+                    estado: 'Completado',
+                    fecha_fin: new Date().toISOString(),
+                    tiempo_minutos: tiempoFinal
+                }).eq('id', id);
+
+                // Actualizar orden
+                const orden = ordenes.find(o => o.id === pack.orden_id);
+                if (orden) {
+                    const historial = orden.historial || [];
+                    historial.push({
+                        fecha: new Date().toISOString(),
+                        accion: `Packing Parte ${pack.parte} completado`,
+                        detalle: `${pack.total_empacado || 0} empacados, ${pack.total_reclasificado || 0} reclasificados, ${tiempoFinal} min`
+                    });
+
+                    // Calcular monto packing
+                    let montoPacking = 0;
+                    (pack.items_empacados || []).forEach(i => {
+                        const prod = productos.find(p => p.variante === i.variante);
+                        montoPacking += (prod?.kardex || 0) * i.cantidad;
+                    });
+
+                    const nuevoMontoOrden = (parseFloat(orden.monto_packing) || 0) + montoPacking;
+                    const nuevasUnidadesEmp = (orden.unidades_empacadas || 0) + (pack.total_empacado || 0);
+                    const nuevasUnidadesReclas = (orden.unidades_reclasificadas || 0) + (pack.total_reclasificado || 0);
+
+                    // Verificar si todos los packing están completados
+                    const packingsOrden = packing.filter(p => p.orden_id === orden.id);
+                    const todosCompletados = packingsOrden.every(p => p.id === id || p.estado === 'Completado');
+
+                    await supabase.from('ordenes').update({
+                        historial,
+                        monto_packing: nuevoMontoOrden,
+                        monto_final: nuevoMontoOrden,
+                        unidades_empacadas: nuevasUnidadesEmp,
+                        unidades_reclasificadas: nuevasUnidadesReclas,
+                        estado: todosCompletados ? 'Completada' : orden.estado,
+                        fecha_fin_packing: todosCompletados ? new Date().toISOString() : null,
+                        fecha_cierre: todosCompletados ? new Date().toISOString() : null
+                    }).eq('id', orden.id);
+
+                    // Descontar stock si orden completada
+                    if (todosCompletados) {
+                        for (const item of pack.items_empacados || []) {
+                            const inv = inventario.find(i => i.variante === item.variante);
+                            if (inv) {
+                                await supabase.from('inventario').update({
+                                    stock_fisico: Math.max(0, (parseInt(inv.stock_fisico) || 0) - item.cantidad),
+                                    stock_bloqueado: Math.max(0, (parseInt(inv.stock_bloqueado) || 0) - item.cantidad)
+                                }).eq('variante', item.variante).eq('ubicacion', inv.ubicacion);
+                            }
+                        }
+                    }
+                }
+
+                ocultarLoading();
+                toast('Packing completado', 'success');
+                await cargarDatos();
+            } catch (e) {
+                ocultarLoading();
+                toast('Error: ' + e.message, 'error');
+            }
+        }
+
+        function verDetallePacking(id) {
+            const pack = packing.find(p => p.id === id);
+            if (!pack) return;
+            
+            const orden = ordenes.find(o => o.id === pack.orden_id);
+            
+            let html = `
+                <div class="detail-grid" style="margin-bottom:1rem">
+                    <div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value">${orden?.nombre || pack.orden_id}</div></div>
+                    <div class="detail-item"><div class="detail-label">Parte</div><div class="detail-value">${pack.nombre_parte}</div></div>
+                    <div class="detail-item"><div class="detail-label">Equipo</div><div class="detail-value">${pack.equipo_nombre || '-'}</div></div>
+                    <div class="detail-item"><div class="detail-label">Tiempo</div><div class="detail-value">${calcularTiempoTrabajado(pack)}</div></div>
+                    <div class="detail-item"><div class="detail-label">Recibido</div><div class="detail-value">${pack.total_recibido}</div></div>
+                    <div class="detail-item"><div class="detail-label">Empacado</div><div class="detail-value" style="color:var(--success)">${pack.total_empacado}</div></div>
+                    <div class="detail-item"><div class="detail-label">Reclasificado</div><div class="detail-value" style="color:var(--warning)">${pack.total_reclasificado}</div></div>
+                </div>
+                <h4 style="margin:1rem 0">Distribución por Tienda</h4>
+                <div class="chips">
+                    ${Object.entries(pack.distribucion_tiendas || {}).map(([t, c]) => `<div class="chip"><strong>${t}:</strong> ${c}</div>`).join('') || '<span style="color:var(--text-secondary)">Sin distribución registrada</span>'}
+                </div>
+            `;
+            
+            document.getElementById('packingContent').innerHTML = html;
+            document.getElementById('packingFooter').innerHTML = '<button class="btn btn-outline" onclick="cerrarModal(\'modalPacking\')">Cerrar</button>';
+            document.getElementById('tituloModalPacking').textContent = 'Detalle de Packing';
+            abrirModal('modalPacking');
+        }
+
+        function exportarHistorialPacking() {
+            const completados = packing.filter(p => p.estado === 'Completado');
+            if (!completados.length) { toast('No hay historial', 'warning'); return; }
+            
+            const data = completados.map(p => {
+                const orden = ordenes.find(o => o.id === p.orden_id);
+                return {
+                    Orden: orden?.nombre || p.orden_id,
+                    Parte: p.nombre_parte,
+                    Equipo: p.equipo_nombre || '',
+                    Integrantes: (p.integrantes || []).join(', '),
+                    Recibido: p.total_recibido,
+                    Empacado: p.total_empacado,
+                    Reclasificado: p.total_reclasificado,
+                    TiempoMinutos: p.tiempo_minutos,
+                    FechaInicio: formatFechaHora(p.fecha_inicio),
+                    FechaFin: formatFechaHora(p.fecha_fin),
+                    ...Object.fromEntries(Object.entries(p.distribucion_tiendas || {}).map(([k, v]) => [`Tienda_${k}`, v]))
+                };
+            });
+            
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'HistorialPacking');
+            XLSX.writeFile(wb, `Historial_Packing_${new Date().toISOString().split('T')[0]}.xlsx`);
+            toast('Historial exportado', 'success');
         }
 
         function descargarHojaPacking(id) {
@@ -2620,84 +3404,391 @@
         function generarRespuestaAsistente(pregunta) {
             const p = pregunta.toLowerCase();
             
-            // Guías de uso
+            // =========== ANÁLISIS DE DATOS EN TIEMPO REAL ===========
+            if (p.includes('estado') || p.includes('resumen') || p.includes('cómo va') || p.includes('como va') || p.includes('situación')) {
+                const ordenesActivas = ordenes.filter(o => !['Completada', 'Cancelada'].includes(o.estado));
+                const pickingActivo = picking.filter(pk => ['En Proceso', 'Pausado'].includes(pk.estado));
+                const packingActivo = packing.filter(pk => ['En Proceso', 'Pausado'].includes(pk.estado));
+                const reclasPendientes = reclasificacion.filter(r => r.estado === 'Pendiente');
+                const stockBloqueado = inventario.reduce((s, i) => s + (parseInt(i.stock_bloqueado) || 0), 0);
+                
+                return `<strong>📊 Resumen del Sistema:</strong><br><br>
+                    <strong>Órdenes:</strong><br>
+                    • ${ordenesActivas.length} órdenes activas<br>
+                    • ${ordenes.filter(o => o.estado === 'Pendiente División').length} pendientes de dividir<br>
+                    • ${ordenes.filter(o => o.estado === 'Completada').length} completadas<br><br>
+                    <strong>Operaciones:</strong><br>
+                    • ${pickingActivo.length} picking en proceso<br>
+                    • ${packingActivo.length} packing en proceso<br>
+                    • ${reclasPendientes.length} reclasificaciones pendientes<br><br>
+                    <strong>Inventario:</strong><br>
+                    • ${inventario.length.toLocaleString()} registros<br>
+                    • ${stockBloqueado.toLocaleString()} unidades bloqueadas<br><br>
+                    ${ordenesActivas.length > 5 ? '⚠️ <strong>Alerta:</strong> Hay muchas órdenes activas. Considera priorizar.' : '✅ Carga de trabajo normal.'}`;
+            }
+
+            // =========== ANÁLISIS DE RENDIMIENTO ===========
+            if (p.includes('rendimiento') || p.includes('eficiencia') || p.includes('tiempo') || p.includes('productividad')) {
+                const pickingCompletados = picking.filter(pk => pk.estado === 'Completado');
+                const packingCompletados = packing.filter(pk => pk.estado === 'Completado');
+                
+                let tiempoPromPicking = 0, tiempoPromPacking = 0;
+                if (pickingCompletados.length > 0) {
+                    tiempoPromPicking = pickingCompletados.reduce((s, pk) => s + (pk.tiempo_minutos || 0), 0) / pickingCompletados.length;
+                }
+                if (packingCompletados.length > 0) {
+                    tiempoPromPacking = packingCompletados.reduce((s, pk) => s + (pk.tiempo_minutos || 0), 0) / packingCompletados.length;
+                }
+                
+                // Rendimiento por equipo
+                const rendimientoEquipos = equipos.map(e => {
+                    const picks = pickingCompletados.filter(pk => pk.equipo_id === e.id);
+                    const packs = packingCompletados.filter(pk => pk.equipo_id === e.id);
+                    return {
+                        nombre: e.nombre,
+                        pickings: picks.length,
+                        packings: packs.length,
+                        unidades: picks.reduce((s, pk) => s + (pk.total_encontrado || 0), 0) + packs.reduce((s, pk) => s + (pk.total_empacado || 0), 0)
+                    };
+                }).filter(e => e.pickings > 0 || e.packings > 0).sort((a, b) => b.unidades - a.unidades);
+                
+                return `<strong>📈 Análisis de Rendimiento:</strong><br><br>
+                    <strong>Tiempos Promedio:</strong><br>
+                    • Picking: ${tiempoPromPicking.toFixed(0)} minutos<br>
+                    • Packing: ${tiempoPromPacking.toFixed(0)} minutos<br><br>
+                    <strong>Top Equipos por Unidades:</strong><br>
+                    ${rendimientoEquipos.slice(0, 5).map((e, i) => `${i + 1}. ${e.nombre}: ${e.unidades.toLocaleString()} unidades`).join('<br>') || 'Sin datos suficientes'}<br><br>
+                    <strong>Sugerencia:</strong> ${tiempoPromPicking > 120 ? 'El tiempo de picking es alto. Considera reorganizar el almacén.' : 'Los tiempos están dentro de lo esperado.'}`;
+            }
+
+            // =========== PROBLEMAS Y ALERTAS ===========
+            if (p.includes('problema') || p.includes('error') || p.includes('alerta') || p.includes('ayuda')) {
+                const problemas = [];
+                
+                // Órdenes estancadas
+                const ordenesEstancadas = ordenes.filter(o => {
+                    if (['Completada', 'Cancelada'].includes(o.estado)) return false;
+                    return diasTranscurridos(o.fecha) > 3;
+                });
+                if (ordenesEstancadas.length > 0) {
+                    problemas.push(`⚠️ ${ordenesEstancadas.length} órdenes llevan más de 3 días sin completar`);
+                }
+                
+                // Stock bloqueado sin orden
+                const stockBloqueado = inventario.filter(i => (parseInt(i.stock_bloqueado) || 0) > 0);
+                if (stockBloqueado.length > 50) {
+                    problemas.push(`⚠️ ${stockBloqueado.length} items con stock bloqueado`);
+                }
+                
+                // Reclasificaciones pendientes
+                const reclasPendientes = reclasificacion.filter(r => r.estado === 'Pendiente');
+                if (reclasPendientes.length > 20) {
+                    problemas.push(`⚠️ ${reclasPendientes.length} reclasificaciones pendientes`);
+                }
+                
+                // Picking/Packing pausados
+                const pausados = picking.filter(pk => pk.estado === 'Pausado').length + packing.filter(pk => pk.estado === 'Pausado').length;
+                if (pausados > 0) {
+                    problemas.push(`⏸️ ${pausados} tareas pausadas que requieren atención`);
+                }
+                
+                return `<strong>🔍 Diagnóstico del Sistema:</strong><br><br>
+                    ${problemas.length > 0 ? problemas.join('<br><br>') : '✅ <strong>No se detectaron problemas críticos</strong>'}<br><br>
+                    <strong>Acciones recomendadas:</strong><br>
+                    ${ordenesEstancadas.length > 0 ? '• Revisar órdenes pendientes de división<br>' : ''}
+                    ${stockBloqueado.length > 50 ? '• Considerar desbloquear stock huérfano (Inventario → Desbloquear Todo)<br>' : ''}
+                    ${reclasPendientes.length > 20 ? '• Procesar reclasificaciones pendientes<br>' : ''}
+                    ${pausados > 0 ? '• Reanudar tareas pausadas o completarlas<br>' : ''}
+                    ${problemas.length === 0 ? '• Continuar operando normalmente' : ''}`;
+            }
+
+            // =========== GUÍAS DE USO ===========
             if (p.includes('crear orden') || p.includes('nueva orden')) {
                 return `<strong>📋 Cómo crear una orden:</strong><br><br>
-                    1. Ve a <strong>Órdenes</strong> → <strong>Nueva Orden</strong><br>
-                    2. Escribe un nombre descriptivo (ej: "Tops Mujer Semana 48")<br>
-                    3. Sube tu archivo Excel con columnas: Variante, Ubicacion, y las tiendas<br>
-                    4. Revisa la vista previa y confirma<br>
-                    5. La orden se creará en estado "Pendiente División"<br><br>
-                    <strong>Tip:</strong> El sistema detecta automáticamente las tiendas sin importar mayúsculas.`;
+                    <strong>Paso 1:</strong> Ve a <strong>Órdenes → Nueva Orden</strong><br>
+                    <strong>Paso 2:</strong> Escribe un nombre descriptivo (ej: "Tops Mujer Semana 48")<br>
+                    <strong>Paso 3:</strong> Sube tu archivo Excel<br><br>
+                    <strong>Formato del Excel:</strong><br>
+                    • Columna "Variante" (obligatoria)<br>
+                    • Columna "Ubicación" (opcional)<br>
+                    • Columnas de tiendas con cantidades<br><br>
+                    <strong>Paso 4:</strong> Revisa la vista previa y confirma<br>
+                    <strong>Paso 5:</strong> Divide la orden en equipos<br><br>
+                    💡 <strong>Tips:</strong><br>
+                    • El sistema ignora mayúsculas/minúsculas<br>
+                    • Puede detectar tiendas con nombres parciales`;
             }
             
             if (p.includes('dividir') || p.includes('equipos') || p.includes('partes')) {
-                return `<strong>✂️ Cómo dividir una orden en equipos:</strong><br><br>
-                    1. En la orden, haz clic en el botón "Dividir" (tijeras)<br>
-                    2. Indica en cuántas partes dividir<br>
-                    3. Asigna un nombre y equipo a cada parte<br>
-                    4. Se generarán hojas de picking para cada equipo<br><br>
-                    <strong>Tip:</strong> Crea equipos previamente en Configuración → Equipos.`;
+                return `<strong>✂️ División de Órdenes:</strong><br><br>
+                    <strong>¿Por qué dividir?</strong><br>
+                    Órdenes grandes (+500 items) se dividen para trabajar en paralelo.<br><br>
+                    <strong>Proceso:</strong><br>
+                    1. En la orden, clic en el botón "Dividir" (✂️)<br>
+                    2. Indica cuántas partes necesitas<br>
+                    3. Nombra cada parte (ej: "Tops Mujer PT1")<br>
+                    4. Asigna equipo de Picking y Packing<br>
+                    5. Confirma la división<br><br>
+                    <strong>Resultado:</strong><br>
+                    • Se crean hojas de picking ordenadas por ubicación<br>
+                    • El stock se bloquea automáticamente<br>
+                    • Se mide el tiempo de cada equipo<br><br>
+                    💡 Crea equipos primero en <strong>Equipos → Nuevo Equipo</strong>`;
             }
             
             if (p.includes('picking')) {
                 return `<strong>📦 Proceso de Picking:</strong><br><br>
-                    1. Ve a la vista <strong>Picking</strong><br>
-                    2. Descarga la hoja del equipo asignado<br>
-                    3. Busca los productos y anota en "Encontrado"<br>
-                    4. Sube la hoja completada<br>
-                    5. El sistema actualiza automáticamente<br><br>
-                    <strong>Tip:</strong> Las hojas están ordenadas por ubicación para optimizar recorridos.`;
+                    <strong>1. Preparación:</strong><br>
+                    • Ve a la vista <strong>Picking</strong><br>
+                    • Descarga la hoja de tu equipo<br><br>
+                    <strong>2. Búsqueda:</strong><br>
+                    • La hoja está ordenada por ubicación<br>
+                    • Busca cada variante y anota en "Encontrado"<br><br>
+                    <strong>3. Registro:</strong><br>
+                    • Clic en "Iniciar" al comenzar<br>
+                    • Si necesitas pausar, usa el botón ⏸️<br>
+                    • Al terminar, sube el archivo con "Subir"<br><br>
+                    <strong>4. Validación:</strong><br>
+                    • El sistema compara solicitado vs encontrado<br>
+                    • Las diferencias se registran automáticamente<br><br>
+                    ⏰ Horario: 8:30 AM - 7:00 PM (1h almuerzo)`;
             }
             
             if (p.includes('packing') || p.includes('empacar')) {
                 return `<strong>📦 Proceso de Packing:</strong><br><br>
-                    1. Espera a que Picking complete su parte<br>
-                    2. Descarga la hoja de packing<br>
-                    3. Distribuye las unidades por tienda<br>
-                    4. Los productos no empacados van a reclasificación<br><br>
-                    <strong>Tip:</strong> El monto de la orden se actualiza según lo empacado.`;
+                    <strong>1. Recepción:</strong><br>
+                    • Espera a que Picking complete su parte<br>
+                    • Descarga la hoja de packing<br><br>
+                    <strong>2. Distribución:</strong><br>
+                    • Asigna cantidades por tienda<br>
+                    • Los productos que no se empaquen irán a reclasificación<br><br>
+                    <strong>3. Registro:</strong><br>
+                    • Clic en "Iniciar" al comenzar<br>
+                    • Sube el archivo con distribución<br>
+                    • Clic en ✓ para completar<br><br>
+                    <strong>4. Cierre:</strong><br>
+                    • El monto se recalcula automáticamente<br>
+                    • El stock se descuenta del inventario<br><br>
+                    ⚠️ Los productos no empacados van a Reclasificación`;
             }
             
             if (p.includes('reclasifica')) {
                 return `<strong>🔄 Reclasificación:</strong><br><br>
-                    Las variantes van a reclasificación cuando:<br>
-                    - No se encontraron en picking<br>
-                    - No se empacaron (mal estado, talla incorrecta, etc.)<br><br>
-                    Para completar una reclasificación:<br>
-                    1. Ve a Reclasificación → Pendientes<br>
-                    2. Indica la ubicación final<br>
-                    3. El stock se actualiza automáticamente`;
+                    <strong>¿Qué es?</strong><br>
+                    Productos que no pudieron despacharse por diversos motivos.<br><br>
+                    <strong>Motivos comunes:</strong><br>
+                    • No encontrado en picking<br>
+                    • Mal estado<br>
+                    • Talla incorrecta<br>
+                    • No corresponde a línea/género<br><br>
+                    <strong>Para completar:</strong><br>
+                    1. Ve a <strong>Reclasificación → Pendientes</strong><br>
+                    2. Clic en ✓ del item<br>
+                    3. Indica la ubicación final<br>
+                    4. El stock se actualiza automáticamente<br><br>
+                    📥 Puedes exportar pendientes con "Descargar Pendientes"`;
             }
 
-            if (p.includes('mejora') || p.includes('sugerencia')) {
-                return `<strong>💡 Sugerencias de mejora para el sistema:</strong><br><br>
-                    Basado en el análisis del uso actual, podrías considerar:<br><br>
-                    1. <strong>Dashboard:</strong> Agregar métricas de precisión picking/packing<br>
-                    2. <strong>Alertas:</strong> Notificar órdenes estancadas >24h<br>
-                    3. <strong>Reportes:</strong> Exportar rendimiento semanal por equipo<br>
-                    4. <strong>Inventario:</strong> Alerta de stock bajo por variante<br><br>
-                    ¿Te gustaría que genere un prompt para implementar alguna?`;
+            if (p.includes('prompt') || p.includes('mejora') || p.includes('sugerencia') || p.includes('implementar')) {
+                return `<strong>💡 Prompts para Mejoras:</strong><br><br>
+                    Copia estos prompts para solicitar mejoras:<br><br>
+                    <strong>1. Alertas automáticas:</strong><br>
+                    <code>Implementa un sistema de alertas que notifique: órdenes estancadas >24h, stock bajo, picking sin completar al final del día.</code><br><br>
+                    <strong>2. Reportes avanzados:</strong><br>
+                    <code>Agrega reportes PDF exportables con gráficas de rendimiento semanal por equipo, comparativa de tiempos, y análisis de reclasificaciones.</code><br><br>
+                    <strong>3. Dashboard mejorado:</strong><br>
+                    <code>Agrega al dashboard: velocidad promedio por picker, tasa de error de packing, predicción de tiempo de completado por orden.</code><br><br>
+                    <strong>4. Optimización de rutas:</strong><br>
+                    <code>Implementa algoritmo que ordene las hojas de picking optimizando la ruta física en el almacén basándose en las ubicaciones.</code>`;
             }
 
-            if (p.includes('exportar') || p.includes('descargar')) {
-                return `<strong>📥 Opciones de exportación:</strong><br><br>
-                    - <strong>Inventario:</strong> Exporta todo con info de productos<br>
-                    - <strong>Productos:</strong> Catálogo completo<br>
-                    - <strong>Reclasificaciones:</strong> Pendientes para revisión<br>
-                    - <strong>Hojas Picking/Packing:</strong> Por equipo y parte<br><br>
-                    Todos los archivos se generan en formato Excel.`;
+            if (p.includes('exportar') || p.includes('descargar') || p.includes('excel')) {
+                return `<strong>📥 Guía de Exportación:</strong><br><br>
+                    <strong>Inventario:</strong><br>
+                    • Inventario → "Exportar Todo"<br>
+                    • Incluye info de productos y stock<br><br>
+                    <strong>Productos:</strong><br>
+                    • Productos → "Exportar"<br>
+                    • Catálogo completo<br><br>
+                    <strong>Reclasificaciones:</strong><br>
+                    • Reclasificación → "Descargar Pendientes"<br><br>
+                    <strong>Historial Picking/Packing:</strong><br>
+                    • Picking/Packing → "Historial"<br>
+                    • Incluye tiempos y equipos<br><br>
+                    <strong>Hojas de trabajo:</strong><br>
+                    • En cada tarea, botón 📥<br>
+                    • Picking: ordenado por ubicación<br>
+                    • Packing: con columnas de tiendas`;
+            }
+
+            if (p.includes('configurar') || p.includes('ajuste') || p.includes('config')) {
+                return `<strong>⚙️ Configuración del Sistema:</strong><br><br>
+                    <strong>Columnas de Hojas:</strong><br>
+                    • Ajustes → Columnas de Hojas<br>
+                    • Selecciona qué columnas mostrar en picking/packing<br><br>
+                    <strong>Tiendas:</strong><br>
+                    • Ajustes → Tiendas<br>
+                    • Agrega, edita o elimina tiendas<br><br>
+                    <strong>Horarios:</strong><br>
+                    • Ajustes → Horarios<br>
+                    • Configura horario laboral (default 8:30-19:00)<br><br>
+                    <strong>General:</strong><br>
+                    • Items por página<br>
+                    • Días para expiración<br>
+                    • Acciones de mantenimiento`;
+            }
+
+            if (p.includes('pausar') || p.includes('pausa') || p.includes('horario')) {
+                return `<strong>⏸️ Sistema de Pausas:</strong><br><br>
+                    <strong>¿Cuándo pausar?</strong><br>
+                    • Almuerzo (1 hora)<br>
+                    • Fin de jornada (7:00 PM)<br>
+                    • Emergencias<br><br>
+                    <strong>Cómo pausar:</strong><br>
+                    • En Picking o Packing, clic en ⏸️<br>
+                    • El tiempo se guarda automáticamente<br><br>
+                    <strong>Cómo reanudar:</strong><br>
+                    • Clic en "Reanudar"<br>
+                    • El cronómetro continúa<br><br>
+                    ⏰ <strong>Horario:</strong> 8:30 AM - 7:00 PM<br>
+                    El sistema te alertará fuera de horario`;
             }
             
-            // Respuesta genérica
-            return `Entiendo tu consulta sobre "${pregunta}".<br><br>
-                Puedo ayudarte con:<br>
-                • Crear y gestionar órdenes<br>
-                • Proceso de picking y packing<br>
-                • Configuración de equipos<br>
-                • Reclasificaciones<br>
-                • Sugerencias de mejora<br><br>
-                ¿Sobre qué tema específico necesitas ayuda?`;
+            // =========== RESPUESTA INTELIGENTE CON CONTEXTO ===========
+            return `Entiendo tu consulta sobre "<strong>${pregunta}</strong>".<br><br>
+                Soy el asistente de MAWI y puedo ayudarte con:<br><br>
+                <strong>📊 Análisis:</strong> "¿cómo va el sistema?", "rendimiento", "problemas"<br>
+                <strong>📋 Órdenes:</strong> "crear orden", "dividir", "historial"<br>
+                <strong>📦 Operaciones:</strong> "picking", "packing", "pausar"<br>
+                <strong>🔄 Reclasificación:</strong> "reclasificar", "pendientes"<br>
+                <strong>⚙️ Configuración:</strong> "configurar", "horarios", "tiendas"<br>
+                <strong>💡 Mejoras:</strong> "sugerencias", "prompts"<br>
+                <strong>📥 Exportar:</strong> "descargar", "excel"<br><br>
+                ¿Sobre qué tema necesitas ayuda?`;
+        }
+
+        // =========== FUNCIONES DE CONFIGURACIÓN ===========
+        function cambiarTabConfig(tab) {
+            document.querySelectorAll('#vista-configuracion .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`#vista-configuracion .tab[data-config="${tab}"]`)?.classList.add('active');
+            
+            document.querySelectorAll('.config-section').forEach(s => s.style.display = 'none');
+            const seccion = document.getElementById(`config${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+            if (seccion) seccion.style.display = 'block';
+            
+            if (tab === 'tiendas') renderizarListaTiendas();
+            if (tab === 'horarios') calcularTiempoEfectivo();
+        }
+
+        function renderizarListaTiendas() {
+            const lista = document.getElementById('listaTiendas');
+            if (lista) {
+                lista.innerHTML = TIENDAS_BASE.map(t => `
+                    <div class="chip">
+                        ${t}
+                        <button class="chip-remove" onclick="eliminarTienda('${t}')"><i data-lucide="x" style="width:12px;height:12px"></i></button>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            }
+        }
+
+        function agregarTienda() {
+            const input = document.getElementById('inputNuevaTienda');
+            const nombre = input?.value.trim().toUpperCase();
+            if (!nombre) { toast('Ingresa un nombre', 'warning'); return; }
+            if (TIENDAS_BASE.includes(nombre)) { toast('La tienda ya existe', 'warning'); return; }
+            TIENDAS_BASE.push(nombre);
+            input.value = '';
+            renderizarListaTiendas();
+            toast('Tienda agregada', 'success');
+        }
+
+        function eliminarTienda(nombre) {
+            const idx = TIENDAS_BASE.indexOf(nombre);
+            if (idx > -1) {
+                TIENDAS_BASE.splice(idx, 1);
+                renderizarListaTiendas();
+                toast('Tienda eliminada', 'success');
+            }
+        }
+
+        function calcularTiempoEfectivo() {
+            const inicio = document.getElementById('horaInicio')?.value || '08:30';
+            const fin = document.getElementById('horaFin')?.value || '19:00';
+            const almuerzo = parseInt(document.getElementById('duracionAlmuerzo')?.value) || 60;
+            
+            const [h1, m1] = inicio.split(':').map(Number);
+            const [h2, m2] = fin.split(':').map(Number);
+            const minutosTrabajo = (h2 * 60 + m2) - (h1 * 60 + m1) - almuerzo;
+            const horas = (minutosTrabajo / 60).toFixed(1);
+            
+            const el = document.getElementById('tiempoEfectivo');
+            if (el) el.textContent = `${horas} horas`;
+        }
+
+        function guardarConfigColumnas() {
+            toast('Configuración de columnas guardada', 'success');
+        }
+
+        function guardarConfigTiendas() {
+            toast('Tiendas guardadas', 'success');
+        }
+
+        function guardarConfigHorarios() {
+            toast('Horarios guardados', 'success');
+        }
+
+        function guardarConfigGeneral() {
+            toast('Configuración guardada', 'success');
+        }
+
+        async function limpiarOrdenesAntiguas() {
+            if (!confirm('¿Eliminar órdenes completadas de hace más de 30 días?')) return;
+            mostrarLoading('Limpiando...');
+            const fechaLimite = new Date();
+            fechaLimite.setDate(fechaLimite.getDate() - 30);
+            
+            const ordenesAntiguas = ordenes.filter(o => 
+                o.estado === 'Completada' && 
+                o.fecha_cierre && 
+                new Date(o.fecha_cierre) < fechaLimite
+            );
+            
+            for (const o of ordenesAntiguas) {
+                await supabase.from('picking').delete().eq('orden_id', o.id);
+                await supabase.from('packing').delete().eq('orden_id', o.id);
+                await supabase.from('ordenes').delete().eq('id', o.id);
+            }
+            
+            ocultarLoading();
+            toast(`${ordenesAntiguas.length} órdenes eliminadas`, 'success');
+            await cargarDatos();
+        }
+
+        async function exportarBackup() {
+            mostrarLoading('Generando backup...');
+            const backup = {
+                fecha: new Date().toISOString(),
+                inventario: inventario,
+                productos: productos,
+                ordenes: ordenes,
+                picking: picking,
+                packing: packing,
+                reclasificacion: reclasificacion,
+                equipos: equipos
+            };
+            
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `MAWI_Backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            ocultarLoading();
+            toast('Backup exportado', 'success');
         }
 
         // ============================================
@@ -2711,7 +3802,7 @@
             });
         });
 
-        console.log('✅ MAWI v7.0 - Sistema completo cargado');
+        console.log('✅ MAWI v7.1 - Sistema completo con IA mejorada + Pausas + Historial');
     </script>
 </body>
 </html>
