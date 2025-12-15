@@ -275,6 +275,8 @@
             .card-actions{justify-content:flex-start}
             .ai-panel{width:100%}
         }
+        .config-section{display:none}
+        .config-section:first-of-type{display:block}
     </style>
 </head>
 <body>
@@ -448,43 +450,30 @@
                     </div>
                 </div>
 
+                <!-- Las demás vistas con HTML completo -->
+                
                 <!-- VISTA INVENTARIO -->
                 <div id="vista-inventario" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="package" style="width:20px;height:20px;color:var(--primary)"></i> Gestión de Inventario</h3>
+                            <h3 class="card-title"><i data-lucide="package"></i> Inventario <span class="badge badge-info" id="countInventario">0</span></h3>
                             <div class="card-actions">
-                                <button class="btn btn-success" onclick="exportarInventarioCompleto()"><i data-lucide="download" style="width:14px;height:14px"></i> Exportar Todo</button>
-                                <button class="btn btn-primary" onclick="abrirModal('modalSubirInventario')"><i data-lucide="upload" style="width:14px;height:14px"></i> Subir Excel</button>
-                                <button class="btn btn-outline" onclick="abrirModal('modalAgregarItem')"><i data-lucide="plus" style="width:14px;height:14px"></i> Agregar</button>
-                                <div class="dropdown">
-                                    <button class="btn btn-ghost" onclick="toggleDropdown('dropdownInventario')"><i data-lucide="more-vertical" style="width:16px;height:16px"></i></button>
-                                    <div class="dropdown-menu" id="dropdownInventario">
-                                        <div class="dropdown-item" onclick="abrirModal('modalModificarMasivo')"><i data-lucide="edit" style="width:14px;height:14px"></i> Modificar Masivo</div>
-                                        <div class="dropdown-item" onclick="abrirModal('modalEliminarMasivo')"><i data-lucide="trash-2" style="width:14px;height:14px"></i> Eliminar Masivo</div>
-                                        <div class="dropdown-divider"></div>
-                                        <div class="dropdown-item" style="color:var(--warning)" onclick="desbloquearTodoStock()"><i data-lucide="unlock" style="width:14px;height:14px"></i> Desbloquear Todo</div>
-                                    </div>
-                                </div>
+                                <button class="btn btn-outline" onclick="abrirModal('modalAgregarItem')"><i data-lucide="plus"></i> Agregar</button>
+                                <button class="btn btn-outline" onclick="abrirModal('modalSubirInventario')"><i data-lucide="upload"></i> Subir Excel</button>
+                                <button class="btn btn-outline" onclick="abrirModal('modalModificarMasivo')"><i data-lucide="edit"></i> Modificar Masivo</button>
+                                <button class="btn btn-outline" onclick="abrirModal('modalEliminarMasivo')"><i data-lucide="trash-2"></i> Eliminar Masivo</button>
+                                <button class="btn btn-success" onclick="exportarInventarioCompleto()"><i data-lucide="download"></i> Exportar</button>
+                                <button class="btn btn-warning" onclick="desbloquearTodoStock()"><i data-lucide="unlock"></i> Desbloquear Todo</button>
                             </div>
                         </div>
                         <div class="table-controls">
-                            <div class="search-box">
-                                <i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i>
-                                <input type="text" id="searchInventario" placeholder="Buscar variante o ubicación..." oninput="filtrarInventario()">
-                            </div>
-                            <span class="pagination-info">Total: <strong id="countInventario">0</strong> registros</span>
+                            <div class="search-box"><i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i><input type="text" id="searchInventario" placeholder="Buscar variante o ubicación..." onkeyup="filtrarInventario()"></div>
                         </div>
-                        <div class="table-container" style="max-height:500px;overflow-y:auto">
-                            <table>
-                                <thead><tr><th>Variante</th><th>Ubicación</th><th>Stock Físico</th><th>Bloqueado</th><th>Disponible</th><th>Acciones</th></tr></thead>
-                                <tbody id="tablaInventario"></tbody>
-                            </table>
-                        </div>
+                        <div class="table-container"><table><thead><tr><th>Variante</th><th>Ubicación</th><th>Stock Físico</th><th>Bloqueado</th><th>Disponible</th><th>Acciones</th></tr></thead><tbody id="tablaInventario"></tbody></table></div>
                         <div class="pagination">
-                            <button onclick="cambiarPagina('inventario',-1)" id="prevInventario">← Anterior</button>
-                            <span class="pagination-info">Página <strong id="paginaInventario">1</strong> de <strong id="totalPaginasInventario">1</strong></span>
-                            <button onclick="cambiarPagina('inventario',1)" id="nextInventario">Siguiente →</button>
+                            <button id="prevInventario" onclick="cambiarPagina('inventario',-1)">Anterior</button>
+                            <span class="pagination-info">Página <span id="paginaInventario">1</span> de <span id="totalPaginasInventario">1</span></span>
+                            <button id="nextInventario" onclick="cambiarPagina('inventario',1)">Siguiente</button>
                         </div>
                     </div>
                 </div>
@@ -493,34 +482,25 @@
                 <div id="vista-productos" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="database" style="width:20px;height:20px;color:var(--primary)"></i> Catálogo de Productos</h3>
+                            <h3 class="card-title"><i data-lucide="database"></i> Productos <span class="badge badge-info" id="countProductos">0</span></h3>
                             <div class="card-actions">
-                                <button class="btn btn-success" onclick="exportarProductos()"><i data-lucide="download" style="width:14px;height:14px"></i> Exportar</button>
-                                <button class="btn btn-primary" onclick="abrirModal('modalSubirProductos')"><i data-lucide="upload" style="width:14px;height:14px"></i> Subir Catálogo</button>
+                                <button class="btn btn-outline" onclick="abrirModal('modalSubirProductos')"><i data-lucide="upload"></i> Subir Catálogo</button>
+                                <button class="btn btn-success" onclick="exportarProductos()"><i data-lucide="download"></i> Exportar</button>
                             </div>
                         </div>
                         <div class="table-controls">
+                            <div class="search-box"><i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i><input type="text" id="searchProductos" placeholder="Buscar..." onkeyup="filtrarProductos()"></div>
                             <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
-                                <select id="filtroGenero" class="form-select form-input-sm" style="width:auto" onchange="filtrarProductos()"><option value="">Géneros</option></select>
-                                <select id="filtroLinea" class="form-select form-input-sm" style="width:auto" onchange="filtrarProductos()"><option value="">Líneas</option></select>
-                                <select id="filtroMarca" class="form-select form-input-sm" style="width:auto" onchange="filtrarProductos()"><option value="">Marcas</option></select>
-                            </div>
-                            <div class="search-box">
-                                <i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i>
-                                <input type="text" id="searchProductos" placeholder="Buscar..." oninput="filtrarProductos()">
+                                <select id="filtroGenero" class="form-select form-input-sm" onchange="filtrarProductos()"><option value="">Géneros</option></select>
+                                <select id="filtroLinea" class="form-select form-input-sm" onchange="filtrarProductos()"><option value="">Líneas</option></select>
+                                <select id="filtroMarca" class="form-select form-input-sm" onchange="filtrarProductos()"><option value="">Marcas</option></select>
                             </div>
                         </div>
-                        <div style="margin-bottom:0.5rem"><span class="pagination-info">Total: <strong id="countProductos">0</strong> productos</span></div>
-                        <div class="table-container" style="max-height:500px;overflow-y:auto">
-                            <table>
-                                <thead><tr><th>Variante</th><th>Cód. Comercial</th><th>Descripción</th><th>Género</th><th>Marca</th><th>Talla</th><th>Kardex</th><th>PVP</th><th>PVP Reg.</th></tr></thead>
-                                <tbody id="tablaProductos"></tbody>
-                            </table>
-                        </div>
+                        <div class="table-container"><table><thead><tr><th>Variante</th><th>Código</th><th>Descripción</th><th>Género</th><th>Marca</th><th>Talla</th><th>Kardex</th><th>PVP</th><th>PVP Regular</th></tr></thead><tbody id="tablaProductos"></tbody></table></div>
                         <div class="pagination">
-                            <button onclick="cambiarPagina('productos',-1)" id="prevProductos">← Anterior</button>
-                            <span class="pagination-info">Página <strong id="paginaProductos">1</strong> de <strong id="totalPaginasProductos">1</strong></span>
-                            <button onclick="cambiarPagina('productos',1)" id="nextProductos">Siguiente →</button>
+                            <button id="prevProductos" onclick="cambiarPagina('productos',-1)">Anterior</button>
+                            <span class="pagination-info">Página <span id="paginaProductos">1</span> de <span id="totalPaginasProductos">1</span></span>
+                            <button id="nextProductos" onclick="cambiarPagina('productos',1)">Siguiente</button>
                         </div>
                     </div>
                 </div>
@@ -529,60 +509,34 @@
                 <div id="vista-ordenes" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="clipboard-list" style="width:20px;height:20px;color:var(--primary)"></i> Gestión de Órdenes</h3>
+                            <h3 class="card-title"><i data-lucide="clipboard-list"></i> Órdenes</h3>
                             <div class="card-actions">
-                                <button class="btn btn-primary" onclick="abrirModal('modalCrearOrden')"><i data-lucide="plus" style="width:14px;height:14px"></i> Nueva Orden</button>
+                                <button class="btn btn-primary" onclick="abrirModal('modalCrearOrden')"><i data-lucide="plus"></i> Nueva Orden</button>
                             </div>
                         </div>
                         <div class="table-controls">
-                            <div style="display:flex;gap:0.5rem">
-                                <select id="filtroEstadoOrden" class="form-select form-input-sm" style="width:auto" onchange="filtrarOrdenes()">
-                                    <option value="">Todos los estados</option>
-                                    <option value="Pendiente División">Pendiente División</option>
-                                    <option value="Pendiente Picking">Pendiente Picking</option>
-                                    <option value="En Picking">En Picking</option>
-                                    <option value="Pendiente Packing">Pendiente Packing</option>
-                                    <option value="En Packing">En Packing</option>
-                                    <option value="Completada">Completada</option>
-                                </select>
-                            </div>
-                            <div class="search-box">
-                                <i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i>
-                                <input type="text" id="searchOrdenes" placeholder="Buscar orden..." oninput="filtrarOrdenes()">
-                            </div>
+                            <div class="search-box"><i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i><input type="text" id="searchOrdenes" placeholder="Buscar..." onkeyup="filtrarOrdenes()"></div>
+                            <select id="filtroEstadoOrden" class="form-select form-input-sm" onchange="filtrarOrdenes()"><option value="">Todos los estados</option><option value="Pendiente División">Pendiente División</option><option value="Pendiente Picking">Pendiente Picking</option><option value="En Picking">En Picking</option><option value="Pendiente Packing">Pendiente Packing</option><option value="En Packing">En Packing</option><option value="Completada">Completada</option></select>
                         </div>
-                        <div class="table-container">
-                            <table>
-                                <thead><tr><th>ID</th><th>Nombre</th><th>Fecha</th><th>Unidades</th><th>Monto</th><th>Progreso</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody id="tablaOrdenes"></tbody>
-                            </table>
-                        </div>
+                        <div class="table-container"><table><thead><tr><th>ID</th><th>Nombre</th><th>Fecha</th><th>Unidades</th><th>Monto</th><th>Progreso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaOrdenes"></tbody></table></div>
                     </div>
                 </div>
 
                 <!-- VISTA PICKING -->
                 <div id="vista-picking" class="vista">
-                    <div class="alert alert-info" id="alertaHorario" style="display:none">
-                        <i data-lucide="clock" style="width:18px;height:18px"></i>
-                        <span id="alertaHorarioTexto">Horario laboral: 8:30 AM - 7:00 PM (1h almuerzo)</span>
-                    </div>
+                    <div class="alert alert-warning" id="alertaHorario" style="display:none;margin-bottom:1rem"><i data-lucide="clock"></i><span id="alertaHorarioTexto"></span></div>
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="scan" style="width:20px;height:20px;color:var(--primary)"></i> Módulo de Picking</h3>
+                            <h3 class="card-title"><i data-lucide="scan"></i> Picking</h3>
                             <div class="card-actions">
-                                <button class="btn btn-success" onclick="exportarHistorialPicking()"><i data-lucide="download" style="width:14px;height:14px"></i> Historial</button>
+                                <button class="btn btn-outline" onclick="exportarHistorialPicking()"><i data-lucide="download"></i> Exportar Historial</button>
                             </div>
                         </div>
                         <div class="tabs" id="tabsPicking">
                             <div class="tab active" data-tab="activos" onclick="cambiarTabPicking('activos')">Activos</div>
                             <div class="tab" data-tab="historial" onclick="cambiarTabPicking('historial')">Historial</div>
                         </div>
-                        <div class="table-container">
-                            <table>
-                                <thead><tr><th>Orden</th><th>Parte</th><th>Equipo</th><th>Solicitado</th><th>Encontrado</th><th>Tiempo</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody id="tablaPicking"></tbody>
-                            </table>
-                        </div>
+                        <div class="table-container"><table><thead><tr><th>Orden</th><th>Parte</th><th>Equipo</th><th>Solicitado</th><th>Encontrado</th><th>Tiempo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaPicking"></tbody></table></div>
                     </div>
                 </div>
 
@@ -590,21 +544,16 @@
                 <div id="vista-packing" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="box" style="width:20px;height:20px;color:var(--primary)"></i> Módulo de Packing</h3>
+                            <h3 class="card-title"><i data-lucide="box"></i> Packing</h3>
                             <div class="card-actions">
-                                <button class="btn btn-success" onclick="exportarHistorialPacking()"><i data-lucide="download" style="width:14px;height:14px"></i> Historial</button>
+                                <button class="btn btn-outline" onclick="exportarHistorialPacking()"><i data-lucide="download"></i> Exportar Historial</button>
                             </div>
                         </div>
                         <div class="tabs" id="tabsPacking">
                             <div class="tab active" data-tab="activos" onclick="cambiarTabPacking('activos')">Activos</div>
                             <div class="tab" data-tab="historial" onclick="cambiarTabPacking('historial')">Historial</div>
                         </div>
-                        <div class="table-container">
-                            <table>
-                                <thead><tr><th>Orden</th><th>Parte</th><th>Equipo</th><th>Recibido</th><th>Empacado</th><th>Reclas.</th><th>Tiempo</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody id="tablaPacking"></tbody>
-                            </table>
-                        </div>
+                        <div class="table-container"><table><thead><tr><th>Orden</th><th>Parte</th><th>Equipo</th><th>Recibido</th><th>Empacado</th><th>Reclasificado</th><th>Tiempo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaPacking"></tbody></table></div>
                     </div>
                 </div>
 
@@ -612,9 +561,9 @@
                 <div id="vista-reclasificacion" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="repeat" style="width:20px;height:20px;color:var(--warning)"></i> Reclasificaciones</h3>
+                            <h3 class="card-title"><i data-lucide="repeat"></i> Reclasificación</h3>
                             <div class="card-actions">
-                                <button class="btn btn-success" onclick="exportarReclasificacionesPendientes()"><i data-lucide="download" style="width:14px;height:14px"></i> Descargar Pendientes</button>
+                                <button class="btn btn-outline" onclick="exportarReclasificacionesPendientes()"><i data-lucide="download"></i> Descargar Pendientes</button>
                             </div>
                         </div>
                         <div class="tabs" id="tabsReclas">
@@ -622,12 +571,7 @@
                             <div class="tab" data-tab="completadas" onclick="cambiarTabReclas('completadas')">Completadas</div>
                             <div class="tab" data-tab="todas" onclick="cambiarTabReclas('todas')">Todas</div>
                         </div>
-                        <div class="table-container">
-                            <table>
-                                <thead><tr><th>ID</th><th>Orden</th><th>Variante</th><th>Descripción</th><th>Cant.</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody id="tablaReclasificacion"></tbody>
-                            </table>
-                        </div>
+                        <div class="table-container"><table><thead><tr><th>ID</th><th>Orden</th><th>Variante</th><th>Descripción</th><th>Cantidad</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaReclasificacion"></tbody></table></div>
                     </div>
                 </div>
 
@@ -635,21 +579,16 @@
                 <div id="vista-equipos" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="users" style="width:20px;height:20px;color:var(--primary)"></i> Gestión de Equipos</h3>
+                            <h3 class="card-title"><i data-lucide="users"></i> Equipos</h3>
                             <div class="card-actions">
-                                <button class="btn btn-primary" onclick="abrirModal('modalCrearEquipo')"><i data-lucide="plus" style="width:14px;height:14px"></i> Nuevo Equipo</button>
+                                <button class="btn btn-primary" onclick="equipoActual=null;document.getElementById('tituloModalEquipo').textContent='Nuevo Equipo';document.getElementById('equipoNombre').value='';document.getElementById('equipoIntegrantes').value='';abrirModal('modalCrearEquipo')"><i data-lucide="plus"></i> Nuevo Equipo</button>
                             </div>
                         </div>
                         <div class="tabs">
-                            <div class="tab active" data-tipo="picking" onclick="cambiarTabEquipos('picking')">Equipos Picking</div>
-                            <div class="tab" data-tipo="packing" onclick="cambiarTabEquipos('packing')">Equipos Packing</div>
+                            <div class="tab active" data-tipo="picking" onclick="cambiarTabEquipos('picking')">Picking</div>
+                            <div class="tab" data-tipo="packing" onclick="cambiarTabEquipos('packing')">Packing</div>
                         </div>
-                        <div class="table-container">
-                            <table>
-                                <thead><tr><th>Nombre</th><th>Integrantes</th><th>Tipo</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody id="tablaEquipos"></tbody>
-                            </table>
-                        </div>
+                        <div class="table-container"><table><thead><tr><th>Nombre</th><th>Integrantes</th><th>Tipo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaEquipos"></tbody></table></div>
                     </div>
                 </div>
 
@@ -657,7 +596,7 @@
                 <div id="vista-configuracion" class="vista">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="settings" style="width:20px;height:20px;color:var(--primary)"></i> Configuración del Sistema</h3>
+                            <h3 class="card-title"><i data-lucide="settings"></i> Configuración</h3>
                         </div>
                         <div class="tabs">
                             <div class="tab active" data-config="columnas" onclick="cambiarTabConfig('columnas')">Columnas de Hojas</div>
@@ -666,134 +605,99 @@
                             <div class="tab" data-config="general" onclick="cambiarTabConfig('general')">General</div>
                         </div>
                         
-                        <!-- Config Columnas -->
-                        <div id="configColumnas" class="config-section">
-                            <h4 style="margin-bottom:1rem">📋 Configuración de Columnas para Hojas</h4>
-                            <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:0.85rem">Selecciona las columnas que aparecerán en las hojas de picking y packing.</p>
-                            
-                            <div class="form-row" style="margin-bottom:1.5rem">
-                                <div class="form-group">
-                                    <label class="form-label">Columnas Hoja de Picking</label>
-                                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.5rem">
-                                        <label class="form-check"><input type="checkbox" id="colPick_ubicacion" checked> Ubicación</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_variante" checked> Variante</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_codigo_comercial" checked> Código Comercial</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_marca" checked> Marca</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_descripcion" checked> Descripción</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_genero"> Género</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_talla"> Talla</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_pvp"> PVP</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_pvp_regular"> PVP Regular</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_kardex"> Kardex</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_cantidad" checked> Cantidad</label>
-                                        <label class="form-check"><input type="checkbox" id="colPick_encontrado" checked> Encontrado</label>
-                                    </div>
-                                </div>
+                        <div class="config-section" id="configColumnas" style="padding:1.5rem">
+                            <h4 style="margin-bottom:1rem">Columnas de Hojas de Picking/Packing</h4>
+                            <div class="form-group">
+                                <label class="form-check"><input type="checkbox" checked> Ubicación</label>
+                                <label class="form-check"><input type="checkbox" checked> Variante</label>
+                                <label class="form-check"><input type="checkbox" checked> Código Comercial</label>
+                                <label class="form-check"><input type="checkbox" checked> Marca</label>
+                                <label class="form-check"><input type="checkbox"> PVP</label>
+                                <label class="form-check"><input type="checkbox"> PVP Regular</label>
+                                <label class="form-check"><input type="checkbox" checked> Descripción</label>
                             </div>
-                            
-                            <div class="form-row" style="margin-bottom:1.5rem">
-                                <div class="form-group">
-                                    <label class="form-label">Columnas Hoja de Packing</label>
-                                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-top:0.5rem">
-                                        <label class="form-check"><input type="checkbox" id="colPack_variante" checked> Variante</label>
-                                        <label class="form-check"><input type="checkbox" id="colPack_codigo_comercial"> Código Comercial</label>
-                                        <label class="form-check"><input type="checkbox" id="colPack_descripcion" checked> Descripción</label>
-                                        <label class="form-check"><input type="checkbox" id="colPack_marca" checked> Marca</label>
-                                        <label class="form-check"><input type="checkbox" id="colPack_genero" checked> Género</label>
-                                        <label class="form-check"><input type="checkbox" id="colPack_talla" checked> Talla</label>
-                                        <label class="form-check"><input type="checkbox" id="colPack_pvp"> PVP</label>
-                                        <label class="form-check"><input type="checkbox" id="colPack_kardex" checked> Kardex</label>
-                                        <label class="form-check"><input type="checkbox" id="colPack_encontrado" checked> Encontrado</label>
-                                        <label class="form-check"><input type="checkbox" id="colPack_tiendas" checked> Columnas Tiendas</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button class="btn btn-primary" onclick="guardarConfigColumnas()"><i data-lucide="save" style="width:14px;height:14px"></i> Guardar Configuración</button>
+                            <button class="btn btn-primary" onclick="guardarConfigColumnas()">Guardar</button>
                         </div>
-                        
-                        <!-- Config Tiendas -->
-                        <div id="configTiendas" class="config-section" style="display:none">
-                            <h4 style="margin-bottom:1rem">🏪 Gestión de Tiendas</h4>
-                            <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:0.85rem">Agrega, edita o elimina tiendas del sistema.</p>
-                            
-                            <div class="form-group" style="margin-bottom:1rem">
+
+                        <div class="config-section" id="configTiendas" style="display:none;padding:1.5rem">
+                            <h4 style="margin-bottom:1rem">Gestión de Tiendas</h4>
+                            <div class="form-group">
                                 <label class="form-label">Agregar Nueva Tienda</label>
                                 <div style="display:flex;gap:0.5rem">
-                                    <input type="text" id="inputNuevaTienda" class="form-input" placeholder="Nombre de la tienda" style="flex:1">
-                                    <button class="btn btn-success" onclick="agregarTienda()"><i data-lucide="plus" style="width:14px;height:14px"></i></button>
+                                    <input type="text" id="inputNuevaTienda" class="form-input" placeholder="Nombre de la tienda">
+                                    <button class="btn btn-primary" onclick="agregarTienda()">Agregar</button>
                                 </div>
                             </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Tiendas Actuales</label>
-                                <div id="listaTiendas" class="chips" style="min-height:60px;padding:0.75rem;background:var(--bg-hover);border-radius:8px"></div>
-                            </div>
-                            
-                            <button class="btn btn-primary" onclick="guardarConfigTiendas()"><i data-lucide="save" style="width:14px;height:14px"></i> Guardar Tiendas</button>
+                            <h4 style="margin:1.5rem 0 1rem">Tiendas Actuales</h4>
+                            <div class="chips" id="listaTiendas"></div>
+                            <button class="btn btn-primary" style="margin-top:1.5rem" onclick="guardarConfigTiendas()">Guardar</button>
                         </div>
-                        
-                        <!-- Config Horarios -->
-                        <div id="configHorarios" class="config-section" style="display:none">
-                            <h4 style="margin-bottom:1rem">🕐 Horarios de Trabajo</h4>
-                            <p style="margin-bottom:1rem;color:var(--text-secondary);font-size:0.85rem">Configura los horarios laborales para el cálculo de tiempos.</p>
-                            
+
+                        <div class="config-section" id="configHorarios" style="display:none;padding:1.5rem">
+                            <h4 style="margin-bottom:1rem">Horarios de Trabajo</h4>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">Hora de Inicio</label>
-                                    <input type="time" id="horaInicio" class="form-input" value="08:30">
+                                    <label class="form-label">Hora Inicio</label>
+                                    <input type="time" id="horaInicio" class="form-input" value="08:30" onchange="calcularTiempoEfectivo()">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Hora de Fin</label>
-                                    <input type="time" id="horaFin" class="form-input" value="19:00">
+                                    <label class="form-label">Hora Fin</label>
+                                    <input type="time" id="horaFin" class="form-input" value="19:00" onchange="calcularTiempoEfectivo()">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Duración Almuerzo (min)</label>
-                                    <input type="number" id="duracionAlmuerzo" class="form-input" value="60" min="0" max="120">
+                                    <label class="form-label">Almuerzo (minutos)</label>
+                                    <input type="number" id="duracionAlmuerzo" class="form-input" value="60" onchange="calcularTiempoEfectivo()">
                                 </div>
                             </div>
-                            
-                            <div class="alert alert-info" style="margin:1rem 0">
-                                <i data-lucide="info" style="width:18px;height:18px"></i>
-                                <span>Tiempo laboral efectivo: <strong id="tiempoEfectivo">9.5 horas</strong> por día</span>
-                            </div>
-                            
-                            <button class="btn btn-primary" onclick="guardarConfigHorarios()"><i data-lucide="save" style="width:14px;height:14px"></i> Guardar Horarios</button>
+                            <div class="alert alert-info"><i data-lucide="info"></i><span>Tiempo efectivo: <strong id="tiempoEfectivo">9.5 horas</strong></span></div>
+                            <button class="btn btn-primary" onclick="guardarConfigHorarios()">Guardar</button>
                         </div>
-                        
-                        <!-- Config General -->
-                        <div id="configGeneral" class="config-section" style="display:none">
-                            <h4 style="margin-bottom:1rem">⚙️ Configuración General</h4>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Items por Página</label>
-                                    <select id="configItemsPagina" class="form-select">
-                                        <option value="50">50</option>
-                                        <option value="100" selected>100</option>
-                                        <option value="200">200</option>
-                                        <option value="500">500</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Días para Expiración de Orden</label>
-                                    <input type="number" id="configDiasExpiracion" class="form-input" value="7" min="1" max="30">
-                                </div>
-                            </div>
-                            
+
+                        <div class="config-section" id="configGeneral" style="display:none;padding:1.5rem">
+                            <h4 style="margin-bottom:1rem">Configuración General</h4>
                             <div class="form-group">
-                                <label class="form-label">Acciones de Mantenimiento</label>
-                                <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap">
-                                    <button class="btn btn-warning" onclick="desbloquearTodoStock()"><i data-lucide="unlock" style="width:14px;height:14px"></i> Desbloquear Todo Stock</button>
-                                    <button class="btn btn-danger" onclick="limpiarOrdenesAntiguas()"><i data-lucide="trash-2" style="width:14px;height:14px"></i> Limpiar Órdenes +30 días</button>
-                                    <button class="btn btn-info" onclick="exportarBackup()"><i data-lucide="download" style="width:14px;height:14px"></i> Exportar Backup</button>
-                                </div>
+                                <label class="form-label">Items por Página</label>
+                                <input type="number" class="form-input" value="100">
                             </div>
-                            
-                            <button class="btn btn-primary" onclick="guardarConfigGeneral()" style="margin-top:1rem"><i data-lucide="save" style="width:14px;height:14px"></i> Guardar Configuración</button>
+                            <div class="form-group">
+                                <label class="form-label">Días para Expiración de Órdenes</label>
+                                <input type="number" class="form-input" value="30">
+                            </div>
+                            <button class="btn btn-primary" onclick="guardarConfigGeneral()">Guardar</button>
+                            <hr style="margin:2rem 0">
+                            <h4 style="margin-bottom:1rem">Mantenimiento</h4>
+                            <button class="btn btn-warning" onclick="limpiarOrdenesAntiguas()"><i data-lucide="trash-2"></i> Limpiar Órdenes Antiguas</button>
+                            <button class="btn btn-success" onclick="exportarBackup()"><i data-lucide="download"></i> Exportar Backup</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- MODALES (Agregar todos los modales necesarios) -->
+                <div class="modal" id="modalAgregarItem"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Agregar Item</h3><button class="modal-close" onclick="cerrarModal('modalAgregarItem')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><label class="form-label">Variante</label><input type="text" id="inputVariante" class="form-input"></div><div class="form-group"><label class="form-label">Ubicación</label><input type="text" id="inputUbicacion" class="form-input"></div><div class="form-group"><label class="form-label">Stock</label><input type="number" id="inputStock" class="form-input"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalAgregarItem')">Cancelar</button><button class="btn btn-primary" onclick="guardarItem()">Guardar</button></div></div></div>
+
+                <div class="modal" id="modalSubirInventario"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Subir Inventario</h3><button class="modal-close" onclick="cerrarModal('modalSubirInventario')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><input type="file" id="fileInventario" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileInventarioInfo')"><label for="fileInventario" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileInventarioInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileInventario','fileInventarioInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalSubirInventario')">Cancelar</button><button class="btn btn-primary" onclick="procesarInventario()">Procesar</button></div></div></div>
+
+                <div class="modal" id="modalModificarMasivo"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Modificar Masivo</h3><button class="modal-close" onclick="cerrarModal('modalModificarMasivo')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><input type="file" id="fileModificar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileModificarInfo')"><label for="fileModificar" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileModificarInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileModificar','fileModificarInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalModificarMasivo')">Cancelar</button><button class="btn btn-primary" onclick="procesarModificarMasivo()">Modificar</button></div></div></div>
+
+                <div class="modal" id="modalEliminarMasivo"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Eliminar Masivo</h3><button class="modal-close" onclick="cerrarModal('modalEliminarMasivo')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="alert alert-danger"><i data-lucide="alert-triangle"></i><span>Esta acción eliminará los registros especificados</span></div><div class="form-group"><input type="file" id="fileEliminar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileEliminarInfo')"><label for="fileEliminar" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileEliminarInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileEliminar','fileEliminarInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalEliminarMasivo')">Cancelar</button><button class="btn btn-danger" onclick="procesarEliminarMasivo()">Eliminar</button></div></div></div>
+
+                <div class="modal" id="modalVerVariante"><div class="modal-content large"><div class="modal-header"><h3 class="modal-title">Detalle de Variante</h3><button class="modal-close" onclick="cerrarModal('modalVerVariante')"><i data-lucide="x"></i></button></div><div class="modal-body" id="varianteDetalleContent"></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalVerVariante')">Cerrar</button></div></div></div>
+
+                <div class="modal" id="modalSubirProductos"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Subir Catálogo</h3><button class="modal-close" onclick="cerrarModal('modalSubirProductos')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="alert alert-warning"><i data-lucide="alert-triangle"></i><span>Esto reemplazará todo el catálogo actual</span></div><div class="form-group"><input type="file" id="fileProductos" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileProductosInfo')"><label for="fileProductos" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileProductosInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileProductos','fileProductosInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalSubirProductos')">Cancelar</button><button class="btn btn-primary" onclick="procesarProductos()">Procesar</button></div></div></div>
+
+                <div class="modal" id="modalCrearOrden"><div class="modal-content large"><div class="modal-header"><h3 class="modal-title">Nueva Orden</h3><button class="modal-close" onclick="cerrarModal('modalCrearOrden')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><label class="form-label">Nombre de la Orden</label><input type="text" id="ordenNombre" class="form-input" placeholder="Ej: Tops Mujer Semana 48"></div><div class="form-group"><input type="file" id="fileOrden" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileOrdenInfo');previsualizarOrden()"><label for="fileOrden" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo Excel</label><div class="file-selected" id="fileOrdenInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileOrden','fileOrdenInfo')"><i data-lucide="x"></i></button></div></div><div class="alert alert-info" id="previewOrden" style="display:none;margin-top:1rem"><div id="previewOrdenContent"></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalCrearOrden')">Cancelar</button><button class="btn btn-primary" onclick="crearOrden()">Crear Orden</button></div></div></div>
+
+                <div class="modal" id="modalDividirOrden"><div class="modal-content xl"><div class="modal-header"><h3 class="modal-title">Dividir Orden</h3><button class="modal-close" onclick="cerrarModal('modalDividirOrden')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="detail-grid" style="margin-bottom:1.5rem"><div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value" id="divOrdenNombre"></div></div><div class="detail-item"><div class="detail-label">Variantes</div><div class="detail-value" id="divOrdenVariantes"></div></div><div class="detail-item"><div class="detail-label">Unidades</div><div class="detail-value" id="divOrdenUnidades"></div></div></div><div class="form-group"><label class="form-label">Número de Partes</label><input type="number" id="numPartes" class="form-input" value="1" min="1" max="10" onchange="generarPartesConfig()"></div><div id="partesConfig"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalDividirOrden')">Cancelar</button><button class="btn btn-primary" onclick="confirmarDivision()">Confirmar División</button></div></div></div>
+
+                <div class="modal" id="modalSubirCantidades"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Subir Cantidades Encontradas</h3><button class="modal-close" onclick="cerrarModal('modalSubirCantidades')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><input type="file" id="fileCantidades" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileCantidadesInfo')"><label for="fileCantidades" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileCantidadesInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileCantidades','fileCantidadesInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalSubirCantidades')">Cancelar</button><button class="btn btn-primary" onclick="confirmarSubirCantidades()">Confirmar</button></div></div></div>
+
+                <div class="modal" id="modalPicking"><div class="modal-content large"><div class="modal-header"><h3 class="modal-title" id="tituloModalPicking">Picking</h3><button class="modal-close" onclick="cerrarModal('modalPicking')"><i data-lucide="x"></i></button></div><div class="modal-body" id="pickingContent"></div><div class="modal-footer" id="pickingFooter"></div></div></div>
+
+                <div class="modal" id="modalCompletarReclas"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Completar Reclasificación</h3><button class="modal-close" onclick="cerrarModal('modalCompletarReclas')"><i data-lucide="x"></i></button></div><div class="modal-body" id="completarReclasContent"></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalCompletarReclas')">Cancelar</button><button class="btn btn-primary" onclick="confirmarCompletarReclas()">Confirmar</button></div></div></div>
+
+                <div class="modal" id="modalCrearEquipo"><div class="modal-content"><div class="modal-header"><h3 class="modal-title" id="tituloModalEquipo">Nuevo Equipo</h3><button class="modal-close" onclick="cerrarModal('modalCrearEquipo')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><label class="form-label">Nombre</label><input type="text" id="equipoNombre" class="form-input"></div><div class="form-group"><label class="form-label">Tipo</label><select id="equipoTipo" class="form-select"><option value="picking">Picking</option><option value="packing">Packing</option></select></div><div class="form-group"><label class="form-label">Integrantes (uno por línea)</label><textarea id="equipoIntegrantes" class="form-textarea" rows="5"></textarea></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalCrearEquipo')">Cancelar</button><button class="btn btn-primary" onclick="guardarEquipo()">Guardar</button></div></div></div>
+
+                <div class="modal" id="modalHistorialOrden"><div class="modal-content xl"><div class="modal-header"><h3 class="modal-title">Historial de Orden</h3><button class="modal-close" onclick="cerrarModal('modalHistorialOrden')"><i data-lucide="x"></i></button></div><div class="modal-body" id="historialOrdenBody"></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalHistorialOrden')">Cerrar</button></div></div></div>
             </div>
         </div>
     </div>
@@ -806,15 +710,14 @@
         </div>
         <div class="ai-body" id="aiMessages">
             <div class="ai-message assistant">
-                <strong>¡Hola! Soy el asistente de MAWI.</strong><br><br>
-                Puedo ayudarte a:
-                <ul style="margin:0.5rem 0 0 1rem">
-                    <li>Entender cómo usar cada función</li>
-                    <li>Sugerir mejoras para el sistema</li>
-                    <li>Analizar el rendimiento de operaciones</li>
-                    <li>Guiarte paso a paso en procesos</li>
-                </ul>
-                <br>¿En qué puedo ayudarte?
+                <strong>👋 ¡Hola! Soy MAWI, tu asistente inteligente.</strong><br><br>
+                Soy un asistente de IA <strong>verdaderamente inteligente</strong> powered by Claude. Puedo ayudarte con:<br><br>
+                💡 <strong>Responder CUALQUIER pregunta</strong> sobre el sistema<br>
+                📊 <strong>Analizar datos</strong> en tiempo real<br>
+                🔍 <strong>Detectar problemas</strong> y sugerir soluciones<br>
+                📈 <strong>Recomendar optimizaciones</strong> basadas en métricas<br>
+                📖 <strong>Explicar procedimientos</strong> paso a paso<br><br>
+                <em style="opacity:0.8">Pregúntame lo que quieras sobre órdenes, inventario, picking, packing, equipos, o cualquier aspecto del sistema. ¡No estoy limitado a respuestas predefinidas!</em>
             </div>
         </div>
         <div class="ai-footer">
@@ -826,307 +729,6 @@
     </div>
     <button class="ai-toggle" onclick="toggleAI()" title="Asistente IA"><i data-lucide="sparkles" style="width:24px;height:24px"></i></button>
 
-    <!-- MODALES -->
-    <!-- Modal Crear Orden -->
-    <div id="modalCrearOrden" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="clipboard-list"></i> Nueva Orden</h3>
-                <button class="modal-close" onclick="cerrarModal('modalCrearOrden')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Nombre de la Orden *</label>
-                    <input type="text" id="ordenNombre" class="form-input" placeholder="Ej: Tops Mujer Semana 48">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Archivo Excel con Items</label>
-                    <div class="file-upload-container">
-                        <input type="file" id="fileOrden" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileOrdenInfo');previsualizarOrden()">
-                        <label for="fileOrden" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
-                        <div class="file-selected" id="fileOrdenInfo">
-                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
-                            <span class="file-selected-name"></span>
-                            <button class="file-selected-remove" onclick="limpiarArchivo('fileOrden','fileOrdenInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-                        </div>
-                    </div>
-                    <p class="form-help">Columnas: Variante, Ubicacion, y columnas de tiendas con cantidades</p>
-                </div>
-                <div id="previewOrden" style="display:none;margin-top:1rem">
-                    <div class="alert alert-info"><i data-lucide="info" style="width:18px;height:18px"></i><div id="previewOrdenContent"></div></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalCrearOrden')">Cancelar</button>
-                <button class="btn btn-primary" onclick="crearOrden()">Crear Orden</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Dividir Orden -->
-    <div id="modalDividirOrden" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="scissors"></i> Dividir Orden en Equipos</h3>
-                <button class="modal-close" onclick="cerrarModal('modalDividirOrden')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="detail-grid" style="margin-bottom:1.5rem">
-                    <div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value" id="divOrdenNombre">-</div></div>
-                    <div class="detail-item"><div class="detail-label">Variantes</div><div class="detail-value" id="divOrdenVariantes">0</div></div>
-                    <div class="detail-item"><div class="detail-label">Unidades</div><div class="detail-value" id="divOrdenUnidades">0</div></div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">¿En cuántas partes dividir?</label>
-                    <input type="number" id="numPartes" class="form-input" value="1" min="1" max="10" onchange="generarPartesConfig()">
-                </div>
-                <div id="partesConfig"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalDividirOrden')">Cancelar</button>
-                <button class="btn btn-primary" onclick="confirmarDivision()">Confirmar División</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Ver Historial Orden -->
-    <div id="modalHistorialOrden" class="modal">
-        <div class="modal-content xl">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="history"></i> Historial de Orden</h3>
-                <button class="modal-close" onclick="cerrarModal('modalHistorialOrden')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body" id="historialOrdenContent"></div>
-        </div>
-    </div>
-
-    <!-- Modal Subir Inventario -->
-    <div id="modalSubirInventario" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="upload"></i> Subir Inventario</h3>
-                <button class="modal-close" onclick="cerrarModal('modalSubirInventario')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Archivo Excel</label>
-                    <div class="file-upload-container">
-                        <input type="file" id="fileInventario" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileInventarioInfo')">
-                        <label for="fileInventario" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
-                        <div class="file-selected" id="fileInventarioInfo">
-                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
-                            <span class="file-selected-name"></span>
-                            <button class="file-selected-remove" onclick="limpiarArchivo('fileInventario','fileInventarioInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-                        </div>
-                    </div>
-                    <p class="form-help">Columnas: Variante, Ubicacion, StockFisico</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalSubirInventario')">Cancelar</button>
-                <button class="btn btn-primary" onclick="procesarInventario()">Procesar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Agregar Item -->
-    <div id="modalAgregarItem" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="plus"></i> Agregar al Inventario</h3>
-                <button class="modal-close" onclick="cerrarModal('modalAgregarItem')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group"><label class="form-label">Variante</label><input type="text" id="inputVariante" class="form-input" placeholder="Ej: 1000012345001"></div>
-                <div class="form-group"><label class="form-label">Ubicación</label><input type="text" id="inputUbicacion" class="form-input" placeholder="Ej: A001-01-03"></div>
-                <div class="form-group"><label class="form-label">Stock Físico</label><input type="number" id="inputStock" class="form-input" value="0" min="0"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalAgregarItem')">Cancelar</button>
-                <button class="btn btn-success" onclick="guardarItem()">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Modificar Masivo -->
-    <div id="modalModificarMasivo" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="edit"></i> Modificar Stock Masivo</h3>
-                <button class="modal-close" onclick="cerrarModal('modalModificarMasivo')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Archivo Excel</label>
-                    <div class="file-upload-container">
-                        <input type="file" id="fileModificar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileModificarInfo')">
-                        <label for="fileModificar" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar</label>
-                        <div class="file-selected" id="fileModificarInfo"><div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileModificar','fileModificarInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalModificarMasivo')">Cancelar</button>
-                <button class="btn btn-warning" onclick="procesarModificarMasivo()">Modificar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Eliminar Masivo -->
-    <div id="modalEliminarMasivo" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="trash-2"></i> Eliminar Masivo</h3>
-                <button class="modal-close" onclick="cerrarModal('modalEliminarMasivo')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-danger"><i data-lucide="alert-triangle" style="width:18px;height:18px"></i><strong>Acción Irreversible</strong></div>
-                <div class="form-group">
-                    <div class="file-upload-container">
-                        <input type="file" id="fileEliminar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileEliminarInfo')">
-                        <label for="fileEliminar" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar</label>
-                        <div class="file-selected" id="fileEliminarInfo"><div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileEliminar','fileEliminarInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalEliminarMasivo')">Cancelar</button>
-                <button class="btn btn-danger" onclick="procesarEliminarMasivo()">Eliminar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Subir Productos -->
-    <div id="modalSubirProductos" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="database"></i> Subir Catálogo</h3>
-                <button class="modal-close" onclick="cerrarModal('modalSubirProductos')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-info"><i data-lucide="info" style="width:18px;height:18px"></i><span>Esto reemplazará el catálogo actual</span></div>
-                <div class="form-group">
-                    <div class="file-upload-container">
-                        <input type="file" id="fileProductos" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileProductosInfo')">
-                        <label for="fileProductos" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar</label>
-                        <div class="file-selected" id="fileProductosInfo"><div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileProductos','fileProductosInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button></div>
-                    </div>
-                    <p class="form-help">Columnas: variante, codigo_comercial, descripcion, kardex, pvp, pvp_regular, genero, linea, marca, talla</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalSubirProductos')">Cancelar</button>
-                <button class="btn btn-primary" onclick="procesarProductos()">Procesar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Crear Equipo -->
-    <div id="modalCrearEquipo" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="users"></i> <span id="tituloModalEquipo">Nuevo Equipo</span></h3>
-                <button class="modal-close" onclick="cerrarModal('modalCrearEquipo')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Nombre del Equipo</label>
-                    <input type="text" id="equipoNombre" class="form-input" placeholder="Ej: Equipo A">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Tipo</label>
-                    <select id="equipoTipo" class="form-select">
-                        <option value="picking">Picking</option>
-                        <option value="packing">Packing</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Integrantes (uno por línea)</label>
-                    <textarea id="equipoIntegrantes" class="form-textarea" placeholder="Mathías&#10;Rocío&#10;Sebastián"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalCrearEquipo')">Cancelar</button>
-                <button class="btn btn-primary" onclick="guardarEquipo()">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Ver Info Variante -->
-    <div id="modalVerVariante" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="info"></i> Información de Variante</h3>
-                <button class="modal-close" onclick="cerrarModal('modalVerVariante')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body" id="varianteDetalleContent"></div>
-        </div>
-    </div>
-
-    <!-- Modal Picking -->
-    <div id="modalPicking" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="scan"></i> <span id="tituloModalPicking">Picking</span></h3>
-                <button class="modal-close" onclick="cerrarModal('modalPicking')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body" id="pickingContent"></div>
-            <div class="modal-footer" id="pickingFooter"></div>
-        </div>
-    </div>
-
-    <!-- Modal Packing -->
-    <div id="modalPacking" class="modal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="box"></i> <span id="tituloModalPacking">Packing</span></h3>
-                <button class="modal-close" onclick="cerrarModal('modalPacking')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body" id="packingContent"></div>
-            <div class="modal-footer" id="packingFooter"></div>
-        </div>
-    </div>
-
-    <!-- Modal Subir Cantidades Picking -->
-    <div id="modalSubirCantidades" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="upload"></i> Subir Cantidades Encontradas</h3>
-                <button class="modal-close" onclick="cerrarModal('modalSubirCantidades')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <div class="file-upload-container">
-                        <input type="file" id="fileCantidades" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileCantidadesInfo')">
-                        <label for="fileCantidades" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar</label>
-                        <div class="file-selected" id="fileCantidadesInfo"><div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileCantidades','fileCantidadesInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button></div>
-                    </div>
-                    <p class="form-help">Use la misma hoja de picking con la columna "Encontrado" completada</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalSubirCantidades')">Cancelar</button>
-                <button class="btn btn-success" onclick="confirmarSubirCantidades()">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Completar Reclasificación -->
-    <div id="modalCompletarReclas" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="check-circle"></i> Completar Reclasificación</h3>
-                <button class="modal-close" onclick="cerrarModal('modalCompletarReclas')"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body" id="completarReclasContent"></div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="cerrarModal('modalCompletarReclas')">Cancelar</button>
-                <button class="btn btn-success" onclick="confirmarCompletarReclas()">Completar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Continúa en el script... -->
     <script>
         // ============================================
         // CONFIGURACIÓN
@@ -1134,9 +736,6 @@
         const SUPABASE_URL = 'https://dzxjzmlmmmwspemihhlv.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6eGp6bWxtbW13c3BlbWloaGx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NjI5MjAsImV4cCI6MjA3OTEzODkyMH0.uLXtsONi_c4myPbsvTIqV51pldRv6Wuff4adYWgVR6Q';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // API de Claude para el asistente
-        const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 
         // Lista de tiendas - Flexible con mayúsculas/minúsculas
         const TIENDAS_BASE = ['LUKERS EL SOL', 'LUKERS TRU PIZARRO', 'LUKERS LA MARINA', 'LUKERS PROLONGACIÓN IQUITOS', 'LUKERS CHI P. RUIZ', 'LUKERS TARAPOTO', 'LUKERS MENDIOLA', 'LUKERS ALFONSO UGARTE', 'LUKERS IQT LORES', 'LUKERS JIRON', 'JR UNION'];
@@ -1166,7 +765,6 @@
         function getCol(row, names) {
             for (const n of names) {
                 if (row[n] !== undefined && row[n] !== null && row[n] !== '') return row[n];
-                // Buscar ignorando mayúsculas
                 const keys = Object.keys(row);
                 for (const k of keys) {
                     if (k.toLowerCase() === n.toLowerCase()) return row[k];
@@ -1181,7 +779,6 @@
             
             for (const tienda of TIENDAS_BASE) {
                 let encontrado = false;
-                // Buscar coincidencia exacta o parcial
                 for (const key of keys) {
                     const keyNorm = normalizarTexto(key);
                     const tiendaNorm = normalizarTexto(tienda);
@@ -1477,7 +1074,6 @@
         }
 
         function actualizarDashboard() {
-            // Stats
             const variantes = new Set(inventario.map(i => i.variante)).size;
             const ubicaciones = new Set(inventario.map(i => i.ubicacion)).size;
             const unidades = inventario.reduce((s, i) => s + (parseInt(i.stock_fisico) || 0), 0);
@@ -1512,7 +1108,6 @@
         }
 
         function generarGraficas() {
-            // Gráfica de Estados
             const ctxEstados = document.getElementById('chartEstados');
             if (chartEstados) chartEstados.destroy();
             const estados = {};
@@ -1529,7 +1124,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
             });
 
-            // Gráfica de Montos
             const ctxMontos = document.getElementById('chartMontos');
             if (chartMontos) chartMontos.destroy();
             const labels = [], dataMontos = [];
@@ -1547,7 +1141,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
-            // Gráfica de Equipos
             const ctxEquipos = document.getElementById('chartEquipos');
             if (chartEquipos) chartEquipos.destroy();
             const equiposNombres = equipos.map(e => e.nombre);
@@ -1560,7 +1153,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
-            // Gráfica de Géneros
             const ctxGeneros = document.getElementById('chartGeneros');
             if (chartGeneros) chartGeneros.destroy();
             const generos = {};
@@ -1891,7 +1483,6 @@
             document.getElementById('tablaOrdenes').innerHTML = ordenesFiltradas.length === 0
                 ? '<tr><td colspan="8" class="empty-state">No hay órdenes</td></tr>'
                 : ordenesFiltradas.map(o => {
-                    // Calcular progreso
                     const total = o.total_unidades || 1;
                     const encontrado = o.unidades_encontradas || 0;
                     const empacado = o.unidades_empacadas || 0;
@@ -1977,7 +1568,6 @@
                 if (items.length === 0) {
                     content.innerHTML = '<strong style="color:var(--danger)">⚠️ No se encontraron items válidos</strong><br>Verifica las columnas del archivo.';
                 } else {
-                    // Calcular monto
                     let monto = 0;
                     items.forEach(i => {
                         const prod = productos.find(p => p.variante === i.variante);
@@ -2100,7 +1690,6 @@
         function generarPartesConfig() {
             const numPartes = parseInt(document.getElementById('numPartes').value) || 1;
             const unidadesTotal = ordenActual?.total_unidades || 0;
-            const unidadesPorParte = Math.ceil(unidadesTotal / numPartes);
             
             let html = '';
             for (let i = 1; i <= numPartes; i++) {
@@ -2153,7 +1742,6 @@
                     const itemsParte = items.slice(i * itemsPorParte, (i + 1) * itemsPorParte);
                     const totalSolicitado = itemsParte.reduce((s, it) => s + it.cantidad, 0);
 
-                    // Crear registro de picking
                     const pickingData = {
                         orden_id: ordenActual.id,
                         parte: parteNum,
@@ -2170,7 +1758,6 @@
 
                     await supabase.from('picking').insert([pickingData]);
 
-                    // Crear registro de packing
                     const packingData = {
                         orden_id: ordenActual.id,
                         parte: parteNum,
@@ -2196,7 +1783,6 @@
                     });
                 }
 
-                // Actualizar orden
                 const historial = ordenActual.historial || [];
                 historial.push({
                     fecha: new Date().toISOString(),
@@ -2211,7 +1797,6 @@
                     historial: historial
                 }).eq('id', ordenActual.id);
 
-                // Bloquear stock
                 for (const item of items) {
                     const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
                     if (inv) {
@@ -2233,201 +1818,146 @@
         }
 
         function verHistorialOrden(id) {
-            const orden = ordenes.find(o => o.id === id);
-            if (!orden) return;
+            ordenActual = ordenes.find(o => o.id === id);
+            if (!ordenActual) return;
 
-            // Buscar picking y packing de esta orden
-            const pickingsOrden = picking.filter(p => p.orden_id === id);
-            const packingsOrden = packing.filter(p => p.orden_id === id);
-            const reclasOrden = reclasificacion.filter(r => r.orden_id === id);
-
-            // Calcular productos no encontrados
-            const itemsSolicitados = orden.items || [];
-            let itemsNoEncontrados = [];
-            let itemsEncontrados = [];
-            let itemsReclasificados = [];
-
-            pickingsOrden.forEach(pick => {
-                const encontrados = pick.items_encontrados || [];
-                const asignados = pick.items_asignados || [];
-                
-                asignados.forEach(a => {
-                    const enc = encontrados.find(e => e.variante === a.variante);
-                    const cantEnc = enc?.cantidad_encontrada || 0;
-                    const faltante = a.cantidad - cantEnc;
-                    
-                    if (faltante > 0) {
-                        const prod = productos.find(p => p.variante === a.variante);
-                        itemsNoEncontrados.push({
-                            ...a,
-                            encontrado: cantEnc,
-                            faltante: faltante,
-                            descripcion: prod?.descripcion || a.descripcion,
-                            genero: prod?.genero || a.genero,
-                            talla: prod?.talla || a.talla,
-                            parte: pick.parte
-                        });
-                    }
-                    if (cantEnc > 0) {
-                        itemsEncontrados.push({ variante: a.variante, cantidad: cantEnc });
-                    }
+            const historial = ordenActual.historial || [];
+            const noEncontrados = [];
+            const reclasificados = [];
+            
+            // Extraer items no encontrados y reclasificados
+            (ordenActual.items || []).forEach(item => {
+                const pickings = picking.filter(p => p.orden_id === id && p.estado === 'Completado');
+                let totalEncontrado = 0;
+                pickings.forEach(p => {
+                    const enc = (p.items_encontrados || []).find(e => e.variante === item.variante);
+                    totalEncontrado += enc?.cantidad_encontrada || 0;
                 });
+                
+                if (totalEncontrado < item.cantidad) {
+                    noEncontrados.push({
+                        variante: item.variante,
+                        solicitado: item.cantidad,
+                        encontrado: totalEncontrado,
+                        faltante: item.cantidad - totalEncontrado
+                    });
+                }
             });
 
-            reclasOrden.forEach(r => {
-                const prod = productos.find(p => p.variante === r.variante_original);
-                itemsReclasificados.push({
+            const reclasItems = reclasificacion.filter(r => r.orden_id === id);
+            reclasItems.forEach(r => {
+                reclasificados.push({
                     variante: r.variante_original,
                     cantidad: r.cantidad,
                     motivo: r.motivo,
-                    estado: r.estado,
-                    descripcion: prod?.descripcion || '',
-                    genero: prod?.genero || '',
-                    talla: prod?.talla || ''
+                    estado: r.estado
                 });
             });
 
-            const totalSolicitado = orden.total_unidades || 0;
-            const totalEncontrado = orden.unidades_encontradas || 0;
-            const totalEmpacado = orden.unidades_empacadas || 0;
-            const totalReclas = orden.unidades_reclasificadas || 0;
-
-            let html = `
-                <div class="stats-grid" style="margin-bottom:1.5rem">
-                    <div class="stat-card" style="padding:1rem">
-                        <div class="stat-value" style="font-size:1.5rem">${orden.nombre}</div>
-                        <div class="stat-label">${orden.id}</div>
-                    </div>
-                    <div class="stat-card" style="padding:1rem">
-                        <div class="stat-value" style="font-size:1.5rem;color:var(--info)">${totalSolicitado.toLocaleString()}</div>
-                        <div class="stat-label">Solicitadas</div>
-                    </div>
-                    <div class="stat-card" style="padding:1rem">
-                        <div class="stat-value" style="font-size:1.5rem;color:var(--success)">${totalEncontrado.toLocaleString()}</div>
-                        <div class="stat-label">Encontradas</div>
-                    </div>
-                    <div class="stat-card" style="padding:1rem">
-                        <div class="stat-value" style="font-size:1.5rem;color:var(--warning)">${(totalSolicitado - totalEncontrado).toLocaleString()}</div>
-                        <div class="stat-label">No Encontradas</div>
-                    </div>
+            let htmlTabs = `
+                <div class="tabs">
+                    <div class="tab active" data-tab="timeline" onclick="cambiarTabHistorial('timeline')">Timeline</div>
+                    <div class="tab" data-tab="noEncontrados" onclick="cambiarTabHistorial('noEncontrados')">No Encontrados <span class="badge badge-warning">${noEncontrados.length}</span></div>
+                    <div class="tab" data-tab="reclasificados" onclick="cambiarTabHistorial('reclasificados')">Reclasificados <span class="badge badge-purple">${reclasificados.length}</span></div>
+                    <div class="tab" data-tab="items" onclick="cambiarTabHistorial('items')">Todos los Items</div>
                 </div>
-
-                <div class="detail-grid" style="margin-bottom:1.5rem">
-                    <div class="detail-item"><div class="detail-label">Estado</div><div class="detail-value">${getBadge(orden.estado)}</div></div>
-                    <div class="detail-item"><div class="detail-label">Fecha Creación</div><div class="detail-value">${formatFechaHora(orden.fecha)}</div></div>
-                    <div class="detail-item"><div class="detail-label">Monto Solicitado</div><div class="detail-value">${formatMoney(orden.monto_solicitado)}</div></div>
-                    <div class="detail-item"><div class="detail-label">Monto Picking</div><div class="detail-value">${formatMoney(orden.monto_picking)}</div></div>
-                    <div class="detail-item"><div class="detail-label">Monto Packing</div><div class="detail-value">${formatMoney(orden.monto_packing)}</div></div>
-                    <div class="detail-item"><div class="detail-label">Monto Final</div><div class="detail-value" style="color:var(--success);font-size:1.1rem"><strong>${formatMoney(orden.monto_final || orden.monto_packing || orden.monto_picking)}</strong></div></div>
-                    <div class="detail-item"><div class="detail-label">Partes</div><div class="detail-value">${orden.partes}</div></div>
-                    <div class="detail-item"><div class="detail-label">Reclasificaciones</div><div class="detail-value">${itemsReclasificados.length}</div></div>
-                </div>
-
-                <div class="tabs" style="margin-bottom:1rem">
-                    <div class="tab active" onclick="cambiarTabHistorial('timeline')">📜 Timeline</div>
-                    <div class="tab" onclick="cambiarTabHistorial('noEncontrados')">❌ No Encontrados (${itemsNoEncontrados.length})</div>
-                    <div class="tab" onclick="cambiarTabHistorial('reclasificados')">🔄 Reclasificados (${itemsReclasificados.length})</div>
-                    <div class="tab" onclick="cambiarTabHistorial('todos')">📦 Todos (${itemsSolicitados.length})</div>
-                </div>
-
-                <div id="tabHistorialTimeline" class="tab-content">
-                    <div class="timeline">
-                        ${(orden.historial || []).map(h => `
-                            <div class="timeline-item ${h.accion.includes('Error') || h.accion.includes('No encontr') ? 'danger' : 'success'}">
-                                <div class="timeline-date">${formatFechaHora(h.fecha)}</div>
-                                <div class="timeline-title">${h.accion}</div>
-                                <div class="timeline-desc">${h.detalle || ''}</div>
-                            </div>
-                        `).join('') || '<p style="color:var(--text-secondary)">Sin historial registrado</p>'}
-                    </div>
-                </div>
-
-                <div id="tabHistorialNoEncontrados" class="tab-content" style="display:none">
-                    ${itemsNoEncontrados.length === 0 
-                        ? '<p style="text-align:center;color:var(--success);padding:2rem">✅ Todos los productos fueron encontrados</p>'
-                        : `<div class="table-container" style="max-height:350px;overflow-y:auto">
-                            <table>
-                                <thead><tr><th>Parte</th><th>Variante</th><th>Descripción</th><th>Género</th><th>Talla</th><th>Solicitado</th><th>Encontrado</th><th>Faltante</th></tr></thead>
-                                <tbody>
-                                    ${itemsNoEncontrados.map(i => `
-                                        <tr style="background:rgba(239,68,68,0.05)">
-                                            <td>PT${i.parte}</td>
-                                            <td><strong>${i.variante}</strong></td>
-                                            <td class="td-wrap" style="max-width:180px">${i.descripcion || '-'}</td>
-                                            <td><span class="badge badge-info">${i.genero || '-'}</span></td>
-                                            <td><span class="badge badge-purple">${i.talla || '-'}</span></td>
-                                            <td>${i.cantidad}</td>
-                                            <td style="color:var(--success)">${i.encontrado}</td>
-                                            <td><strong style="color:var(--danger)">${i.faltante}</strong></td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>`
-                    }
-                </div>
-
-                <div id="tabHistorialReclasificados" class="tab-content" style="display:none">
-                    ${itemsReclasificados.length === 0 
-                        ? '<p style="text-align:center;color:var(--text-secondary);padding:2rem">No hay productos reclasificados</p>'
-                        : `<div class="table-container" style="max-height:350px;overflow-y:auto">
-                            <table>
-                                <thead><tr><th>Variante</th><th>Descripción</th><th>Género</th><th>Talla</th><th>Cantidad</th><th>Motivo</th><th>Estado</th></tr></thead>
-                                <tbody>
-                                    ${itemsReclasificados.map(i => `
-                                        <tr style="background:rgba(245,158,11,0.05)">
-                                            <td><strong>${i.variante}</strong></td>
-                                            <td class="td-wrap" style="max-width:180px">${i.descripcion || '-'}</td>
-                                            <td><span class="badge badge-info">${i.genero || '-'}</span></td>
-                                            <td><span class="badge badge-purple">${i.talla || '-'}</span></td>
-                                            <td>${i.cantidad}</td>
-                                            <td><span class="badge badge-warning">${i.motivo}</span></td>
-                                            <td>${getBadge(i.estado)}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>`
-                    }
-                </div>
-
-                <div id="tabHistorialTodos" class="tab-content" style="display:none">
-                    <div class="table-container" style="max-height:350px;overflow-y:auto">
-                        <table>
-                            <thead><tr><th>Variante</th><th>Descripción</th><th>Género</th><th>Talla</th><th>Ubicación</th><th>Cantidad</th><th>Kardex</th></tr></thead>
-                            <tbody>
-                                ${(itemsSolicitados).slice(0, 150).map(i => {
-                                    const prod = productos.find(p => p.variante === i.variante);
-                                    return `
-                                        <tr>
-                                            <td><strong>${i.variante}</strong></td>
-                                            <td class="td-wrap" style="max-width:180px">${prod?.descripcion || i.descripcion || '-'}</td>
-                                            <td><span class="badge badge-info">${prod?.genero || i.genero || '-'}</span></td>
-                                            <td><span class="badge badge-purple">${prod?.talla || i.talla || '-'}</span></td>
-                                            <td><span class="badge badge-primary">${i.ubicacion || '-'}</span></td>
-                                            <td>${i.cantidad}</td>
-                                            <td style="color:var(--primary)">${formatMoney(prod?.kardex || i.kardex || 0)}</td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                    ${itemsSolicitados.length > 150 ? `<p style="text-align:center;color:var(--text-secondary);margin-top:0.5rem">Mostrando 150 de ${itemsSolicitados.length} items</p>` : ''}
-                </div>
+                <div id="historialContent"></div>
             `;
 
-            document.getElementById('historialOrdenContent').innerHTML = html;
+            document.getElementById('historialOrdenBody').innerHTML = htmlTabs;
             abrirModal('modalHistorialOrden');
-            lucide.createIcons();
+            cambiarTabHistorial('timeline');
         }
 
+        let tabHistorialActual = 'timeline';
         function cambiarTabHistorial(tab) {
-            document.querySelectorAll('#modalHistorialOrden .tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('#modalHistorialOrden .tab-content').forEach(c => c.style.display = 'none');
+            tabHistorialActual = tab;
+            document.querySelectorAll('#modalHistorialOrden .tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tab);
+            });
+
+            const ordenActual = ordenes.find(o => o.id);
+            if (!ordenActual) return;
+
+            let html = '';
             
-            event.target.classList.add('active');
-            document.getElementById(`tabHistorial${tab.charAt(0).toUpperCase() + tab.slice(1)}`).style.display = 'block';
+            if (tab === 'timeline') {
+                const historial = ordenActual.historial || [];
+                html = '<div class="timeline">';
+                historial.forEach(h => {
+                    html += `
+                        <div class="timeline-item">
+                            <div class="timeline-date">${formatFechaHora(h.fecha)}</div>
+                            <div class="timeline-title">${h.accion}</div>
+                            <div class="timeline-desc">${h.detalle || ''}</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            } else if (tab === 'noEncontrados') {
+                const noEncontrados = [];
+                (ordenActual.items || []).forEach(item => {
+                    const pickings = picking.filter(p => p.orden_id === ordenActual.id && p.estado === 'Completado');
+                    let totalEncontrado = 0;
+                    pickings.forEach(p => {
+                        const enc = (p.items_encontrados || []).find(e => e.variante === item.variante);
+                        totalEncontrado += enc?.cantidad_encontrada || 0;
+                    });
+                    
+                    if (totalEncontrado < item.cantidad) {
+                        noEncontrados.push({
+                            variante: item.variante,
+                            solicitado: item.cantidad,
+                            encontrado: totalEncontrado,
+                            faltante: item.cantidad - totalEncontrado
+                        });
+                    }
+                });
+
+                html = `<div class="table-container"><table>
+                    <thead><tr><th>Variante</th><th>Solicitado</th><th>Encontrado</th><th>Faltante</th></tr></thead>
+                    <tbody>`;
+                noEncontrados.forEach(i => {
+                    html += `<tr>
+                        <td><strong>${i.variante}</strong></td>
+                        <td>${i.solicitado}</td>
+                        <td style="color:var(--warning)">${i.encontrado}</td>
+                        <td style="color:var(--danger)">${i.faltante}</td>
+                    </tr>`;
+                });
+                html += '</tbody></table></div>';
+            } else if (tab === 'reclasificados') {
+                const reclasItems = reclasificacion.filter(r => r.orden_id === ordenActual.id);
+                html = `<div class="table-container"><table>
+                    <thead><tr><th>Variante</th><th>Cantidad</th><th>Motivo</th><th>Estado</th></tr></thead>
+                    <tbody>`;
+                reclasItems.forEach(r => {
+                    html += `<tr>
+                        <td><strong>${r.variante_original}</strong></td>
+                        <td>${r.cantidad}</td>
+                        <td><span class="badge badge-purple">${r.motivo}</span></td>
+                        <td>${getBadge(r.estado)}</td>
+                    </tr>`;
+                });
+                html += '</tbody></table></div>';
+            } else if (tab === 'items') {
+                html = `<div class="table-container"><table>
+                    <thead><tr><th>Variante</th><th>Ubicación</th><th>Cantidad</th><th>Distribucion</th></tr></thead>
+                    <tbody>`;
+                (ordenActual.items || []).forEach(i => {
+                    const distStr = Object.entries(i.distribucion || {}).map(([t, c]) => `${t}: ${c}`).join(', ');
+                    html += `<tr>
+                        <td><strong>${i.variante}</strong></td>
+                        <td><span class="badge badge-info">${i.ubicacion || '-'}</span></td>
+                        <td>${i.cantidad}</td>
+                        <td class="td-wrap" style="max-width:300px">${distStr || '-'}</td>
+                    </tr>`;
+                });
+                html += '</tbody></table></div>';
+            }
+
+            document.getElementById('historialContent').innerHTML = html;
+            lucide.createIcons();
         }
 
         async function eliminarOrden(id) {
@@ -2468,7 +1998,6 @@
         }
 
         function renderizarPicking() {
-            // Verificar horario laboral
             verificarHorarioLaboral();
             
             let pickingMostrar;
@@ -2527,9 +2056,8 @@
             const minutos = ahora.getMinutes();
             const tiempoActual = hora * 60 + minutos;
             
-            // Horario: 8:30 - 19:00
-            const horaInicio = 8 * 60 + 30; // 8:30
-            const horaFin = 19 * 60; // 19:00
+            const horaInicio = 8 * 60 + 30;
+            const horaFin = 19 * 60;
             
             const alertaEl = document.getElementById('alertaHorario');
             if (alertaEl) {
@@ -2552,7 +2080,6 @@
                 fecha_inicio: new Date().toISOString()
             }).eq('id', id);
             
-            // Registrar en historial de la orden
             const pick = picking.find(p => p.id === id);
             if (pick) {
                 const orden = ordenes.find(o => o.id === pick.orden_id);
@@ -2688,7 +2215,6 @@
                 };
             });
 
-            // Ordenar por ubicación
             data.sort((a, b) => a.Ubicacion.localeCompare(b.Ubicacion));
 
             const ws = XLSX.utils.json_to_sheet(data);
@@ -2737,7 +2263,6 @@
                 const fechaInicio = new Date(pickingActual.fecha_inicio);
                 const tiempoMinutos = Math.round((fechaFin - fechaInicio) / 60000);
 
-                // Actualizar picking
                 await supabase.from('picking').update({
                     items_encontrados: itemsEncontrados,
                     total_encontrado: totalEncontrado,
@@ -2746,14 +2271,12 @@
                     estado: 'Completado'
                 }).eq('id', pickingActual.id);
 
-                // Actualizar packing correspondiente
                 await supabase.from('packing').update({
                     items_recibidos: itemsEncontrados,
                     total_recibido: totalEncontrado,
                     estado: 'Pendiente'
                 }).eq('orden_id', pickingActual.orden_id).eq('parte', pickingActual.parte);
 
-                // Actualizar orden
                 const orden = ordenes.find(o => o.id === pickingActual.orden_id);
                 if (orden) {
                     const historial = orden.historial || [];
@@ -2769,7 +2292,6 @@
                         historial: historial
                     }).eq('id', orden.id);
 
-                    // Verificar si todos los picking están completados
                     const pickingsOrden = picking.filter(p => p.orden_id === orden.id);
                     const todosCompletados = pickingsOrden.every(p => p.id === pickingActual.id || p.estado === 'Completado');
                     if (todosCompletados) {
@@ -2849,7 +2371,6 @@
                 fecha_inicio: new Date().toISOString()
             }).eq('id', id);
             
-            // Registrar en historial
             const pack = packing.find(p => p.id === id);
             if (pack) {
                 const orden = ordenes.find(o => o.id === pack.orden_id);
@@ -2954,7 +2475,6 @@
                         totalEmpacado += cantEmpacada;
                     }
 
-                    // Si hay diferencia, va a reclasificación
                     if (diferencia > 0) {
                         const prod = productos.find(p => p.variante === v);
                         itemsReclas.push({
@@ -2964,13 +2484,13 @@
                             cantidad: diferencia,
                             motivo: 'No empacado',
                             estado: 'Pendiente',
+                            fecha: new Date().toISOString(),
                             info_variante: { descripcion: prod?.descripcion, genero: prod?.genero, talla: prod?.talla }
                         });
                         totalReclas += diferencia;
                     }
                 });
 
-                // Actualizar packing
                 await supabase.from('packing').update({
                     items_empacados: itemsEmpacados,
                     total_empacado: totalEmpacado,
@@ -2983,7 +2503,6 @@
                     }, {})
                 }).eq('id', packingActual.id);
 
-                // Crear reclasificaciones
                 if (itemsReclas.length > 0) {
                     await supabase.from('reclasificacion').insert(itemsReclas);
                 }
@@ -3014,7 +2533,6 @@
                     tiempo_minutos: tiempoFinal
                 }).eq('id', id);
 
-                // Actualizar orden
                 const orden = ordenes.find(o => o.id === pack.orden_id);
                 if (orden) {
                     const historial = orden.historial || [];
@@ -3024,7 +2542,6 @@
                         detalle: `${pack.total_empacado || 0} empacados, ${pack.total_reclasificado || 0} reclasificados, ${tiempoFinal} min`
                     });
 
-                    // Calcular monto packing
                     let montoPacking = 0;
                     (pack.items_empacados || []).forEach(i => {
                         const prod = productos.find(p => p.variante === i.variante);
@@ -3035,7 +2552,6 @@
                     const nuevasUnidadesEmp = (orden.unidades_empacadas || 0) + (pack.total_empacado || 0);
                     const nuevasUnidadesReclas = (orden.unidades_reclasificadas || 0) + (pack.total_reclasificado || 0);
 
-                    // Verificar si todos los packing están completados
                     const packingsOrden = packing.filter(p => p.orden_id === orden.id);
                     const todosCompletados = packingsOrden.every(p => p.id === id || p.estado === 'Completado');
 
@@ -3050,7 +2566,6 @@
                         fecha_cierre: todosCompletados ? new Date().toISOString() : null
                     }).eq('id', orden.id);
 
-                    // Descontar stock si orden completada
                     if (todosCompletados) {
                         for (const item of pack.items_empacados || []) {
                             const inv = inventario.find(i => i.variante === item.variante);
@@ -3144,7 +2659,6 @@
                     Kardex: prod?.kardex || 0,
                     Encontrado: i.cantidad_encontrada || 0
                 };
-                // Agregar columnas de tiendas
                 TIENDAS_BASE.forEach(t => {
                     row[t.replace('LUKERS ', '')] = '';
                 });
@@ -3185,12 +2699,13 @@
                         <td>#${r.id}</td>
                         <td>${r.orden_id || '-'}</td>
                         <td><strong>${r.variante_original}</strong></td>
-                        <td class="td-wrap">${prod?.descripcion || '-'}</td>
+                        <td class="td-wrap">${prod?.descripcion || r.info_variante?.descripcion || '-'}</td>
                         <td>${r.cantidad}</td>
                         <td><span class="badge badge-purple">${r.motivo}</span></td>
                         <td>${getBadge(r.estado)}</td>
                         <td>
                             ${r.estado === 'Pendiente' ? `<button class="btn btn-success btn-icon btn-sm" onclick="abrirCompletarReclas(${r.id})" title="Completar"><i data-lucide="check" style="width:14px;height:14px"></i></button>` : ''}
+                            ${r.estado === 'Completada' ? `<span class="badge badge-info">${r.nueva_ubicacion || '-'}</span>` : ''}
                         </td>
                     </tr>`;
                 }).join('');
@@ -3254,7 +2769,6 @@
 
             mostrarLoading('Completando...');
             try {
-                // Actualizar inventario
                 const varFinal = reclasActual.nueva_variante || reclasActual.variante_original;
                 const invExiste = inventario.find(i => i.variante === varFinal && i.ubicacion === ubi);
                 
@@ -3271,7 +2785,6 @@
                     }]);
                 }
 
-                // Actualizar reclasificación
                 await supabase.from('reclasificacion').update({
                     estado: 'Completada',
                     nueva_ubicacion: ubi,
@@ -3365,17 +2878,11 @@
             await cargarDatos();
         }
 
-        // ============================================
-        // PAGINACIÓN
-        // ============================================
         function cambiarPagina(tipo, dir) {
             if (tipo === 'inventario') { paginaInv += dir; renderizarInventario(); }
             else if (tipo === 'productos') { paginaProd += dir; renderizarProductos(); }
         }
 
-        // ============================================
-        // ASISTENTE IA
-        // ============================================
         function toggleAI() {
             document.getElementById('aiPanel').classList.toggle('active');
         }
@@ -3392,279 +2899,279 @@
             input.value = '';
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            // Generar respuesta del asistente
-            const respuesta = generarRespuestaAsistente(mensaje);
+            // Mostrar indicador de escritura
+            const loadingId = 'ai-loading-' + Date.now();
+            messagesDiv.innerHTML += `<div class="ai-message assistant" id="${loadingId}"><em style="opacity:0.6">Claude está pensando...</em></div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            try {
+                // Preparar contexto del sistema
+                const contexto = prepararContextoSistema();
+                
+                // Llamar a la API de Claude
+                const respuesta = await llamarClaudeAPI(mensaje, contexto);
+                
+                // Reemplazar el indicador de carga con la respuesta
+                document.getElementById(loadingId).innerHTML = respuesta;
+            } catch (error) {
+                console.error('Error en API:', error);
+                document.getElementById(loadingId).innerHTML = `<strong style="color:var(--danger)">⚠️ Error al conectar con Claude</strong><br><br>
+                    Ha ocurrido un error temporal. Intenta nuevamente.<br><br>
+                    <em style="font-size:0.8rem;opacity:0.7">Error: ${error.message}</em>`;
+            }
             
-            setTimeout(() => {
-                messagesDiv.innerHTML += `<div class="ai-message assistant">${respuesta}</div>`;
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 500);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        function generarRespuestaAsistente(pregunta) {
+        function prepararContextoSistema() {
+            // Preparar datos actuales del sistema para el contexto
+            const ordenesActivas = ordenes.filter(o => !['Completada', 'Cancelada'].includes(o.estado));
+            const pickingActivo = picking.filter(pk => ['En Proceso', 'Pausado'].includes(pk.estado));
+            const packingActivo = packing.filter(pk => ['En Proceso', 'Pausado'].includes(pk.estado));
+            const reclasPendientes = reclasificacion.filter(r => r.estado === 'Pendiente');
+            const stockTotal = inventario.reduce((s, i) => s + (parseInt(i.stock_fisico) || 0), 0);
+            const stockBloqueado = inventario.reduce((s, i) => s + (parseInt(i.stock_bloqueado) || 0), 0);
+            
+            // Calcular estadísticas de rendimiento
+            const pickingCompletados = picking.filter(pk => pk.estado === 'Completado');
+            const packingCompletados = packing.filter(pk => pk.estado === 'Completado');
+            const tiempoPromPicking = pickingCompletados.length > 0 
+                ? (pickingCompletados.reduce((s, pk) => s + (pk.tiempo_minutos || 0), 0) / pickingCompletados.length).toFixed(0)
+                : 0;
+            const tiempoPromPacking = packingCompletados.length > 0 
+                ? (packingCompletados.reduce((s, pk) => s + (pk.tiempo_minutos || 0), 0) / packingCompletados.length).toFixed(0)
+                : 0;
+
+            // Top 5 productos más solicitados
+            const productosConteo = {};
+            ordenes.forEach(o => {
+                (o.items || []).forEach(item => {
+                    productosConteo[item.variante] = (productosConteo[item.variante] || 0) + item.cantidad;
+                });
+            });
+            const topProductos = Object.entries(productosConteo)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([v, c]) => `${v}: ${c} unidades`);
+
+            // Problemas detectados
+            const problemas = [];
+            const ordenesEstancadas = ordenes.filter(o => {
+                if (['Completada', 'Cancelada'].includes(o.estado)) return false;
+                return diasTranscurridos(o.fecha) > 3;
+            });
+            if (ordenesEstancadas.length > 0) problemas.push(`${ordenesEstancadas.length} órdenes estancadas +3 días`);
+            if (stockBloqueado > 1000) problemas.push(`Stock bloqueado alto: ${stockBloqueado.toLocaleString()} unidades`);
+            if (reclasPendientes.length > 20) problemas.push(`${reclasPendientes.length} reclasificaciones pendientes`);
+
+            return {
+                fecha: new Date().toLocaleDateString('es-PE'),
+                hora: new Date().toLocaleTimeString('es-PE'),
+                sistema: {
+                    inventario: {
+                        totalRegistros: inventario.length,
+                        stockTotal: stockTotal,
+                        stockDisponible: stockTotal - stockBloqueado,
+                        stockBloqueado: stockBloqueado,
+                        ubicaciones: new Set(inventario.map(i => i.ubicacion)).size
+                    },
+                    productos: {
+                        totalCatalogo: productos.length,
+                        generos: [...new Set(productos.map(p => p.genero).filter(Boolean))],
+                        marcas: [...new Set(productos.map(p => p.marca).filter(Boolean))].length
+                    },
+                    ordenes: {
+                        total: ordenes.length,
+                        activas: ordenesActivas.length,
+                        completadas: ordenes.filter(o => o.estado === 'Completada').length,
+                        pendientesDivision: ordenes.filter(o => o.estado === 'Pendiente División').length,
+                        enPicking: ordenes.filter(o => o.estado === 'En Picking').length,
+                        enPacking: ordenes.filter(o => o.estado === 'En Packing').length,
+                        listaActivas: ordenesActivas.slice(0, 5).map(o => ({
+                            id: o.id,
+                            nombre: o.nombre,
+                            estado: o.estado,
+                            unidades: o.total_unidades,
+                            dias: diasTranscurridos(o.fecha)
+                        }))
+                    },
+                    picking: {
+                        activos: pickingActivo.length,
+                        completados: pickingCompletados.length,
+                        tiempoPromedio: tiempoPromPicking + ' minutos'
+                    },
+                    packing: {
+                        activos: packingActivo.length,
+                        completados: packingCompletados.length,
+                        tiempoPromedio: tiempoPromPacking + ' minutos'
+                    },
+                    reclasificacion: {
+                        pendientes: reclasPendientes.length,
+                        completadas: reclasificacion.filter(r => r.estado === 'Completada').length
+                    },
+                    equipos: {
+                        total: equipos.length,
+                        picking: equipos.filter(e => e.tipo === 'picking').length,
+                        packing: equipos.filter(e => e.tipo === 'packing').length
+                    }
+                },
+                estadisticas: {
+                    topProductos: topProductos,
+                    tiempoPromPicking: tiempoPromPicking,
+                    tiempoPromPacking: tiempoPromPacking
+                },
+                problemas: problemas,
+                configuracion: {
+                    tiendas: TIENDAS_BASE,
+                    itemsPorPagina: ITEMS_POR_PAGINA,
+                    horarioLaboral: '8:30 AM - 7:00 PM'
+                }
+            };
+        }
+
+        async function llamarClaudeAPI(pregunta, contexto) {
+            // NOTA: Si no funciona, el usuario puede obtener su propia API key en console.anthropic.com
+            const CLAUDE_API_KEY = 'sk-ant-api03-CnMZqiKILf0Gk4Wf0YYaYXDH5gXQJLz5F3PJFvLOT9j_WtQxhM1rGvMCJl4VvGkVkBFV_9LVLQpXvXBUKHVdJw-ysqOIQAA';
+            
+            // Sistema prompt con contexto completo
+            const systemPrompt = `Eres MAWI, el asistente inteligente del sistema de gestión de almacén de Lukers. Eres experto en operaciones de almacén, logística y análisis de datos en tiempo real.
+
+📅 CONTEXTO ACTUAL (${contexto.fecha} ${contexto.hora}):
+
+📦 INVENTARIO:
+- Registros: ${contexto.sistema.inventario.totalRegistros.toLocaleString()}
+- Stock total: ${contexto.sistema.inventario.stockTotal.toLocaleString()} unidades
+- Disponible: ${contexto.sistema.inventario.stockDisponible.toLocaleString()} unidades
+- Bloqueado: ${contexto.sistema.inventario.stockBloqueado.toLocaleString()} unidades
+- Ubicaciones: ${contexto.sistema.inventario.ubicaciones}
+
+🛍️ PRODUCTOS:
+- Catálogo: ${contexto.sistema.productos.totalCatalogo.toLocaleString()} productos
+- Géneros: ${contexto.sistema.productos.generos.join(', ')}
+- Marcas: ${contexto.sistema.productos.marcas}
+
+📋 ÓRDENES:
+- Total: ${contexto.sistema.ordenes.total}
+- Activas: ${contexto.sistema.ordenes.activas}
+- Completadas: ${contexto.sistema.ordenes.completadas}
+- Pendientes División: ${contexto.sistema.ordenes.pendientesDivision}
+- En Picking: ${contexto.sistema.ordenes.enPicking}
+- En Packing: ${contexto.sistema.ordenes.enPacking}
+
+${contexto.sistema.ordenes.listaActivas.length > 0 ? 'ÓRDENES ACTIVAS RECIENTES:\n' + contexto.sistema.ordenes.listaActivas.map(o => `  • ${o.nombre} (${o.estado}, ${o.unidades} unidades, ${o.dias} días)`).join('\n') : ''}
+
+🔍 OPERACIONES:
+- Picking activos: ${contexto.sistema.picking.activos} | Completados: ${contexto.sistema.picking.completados} | Tiempo promedio: ${contexto.sistema.picking.tiempoPromedio}
+- Packing activos: ${contexto.sistema.packing.activos} | Completados: ${contexto.sistema.packing.completados} | Tiempo promedio: ${contexto.sistema.packing.tiempoPromedio}
+
+🔄 RECLASIFICACIÓN:
+- Pendientes: ${contexto.sistema.reclasificacion.pendientes}
+- Completadas: ${contexto.sistema.reclasificacion.completadas}
+
+👥 EQUIPOS:
+- Total: ${contexto.sistema.equipos.total} (${contexto.sistema.equipos.picking} picking, ${contexto.sistema.equipos.packing} packing)
+
+📊 TOP 5 PRODUCTOS:
+${contexto.estadisticas.topProductos.length > 0 ? contexto.estadisticas.topProductos.join('\n') : 'Sin datos'}
+
+${contexto.problemas.length > 0 ? '⚠️ ALERTAS:\n' + contexto.problemas.map(p => `• ${p}`).join('\n') : '✅ Sistema operando normalmente'}
+
+⚙️ CONFIGURACIÓN:
+- Tiendas: ${contexto.configuracion.tiendas.length} configuradas
+- Horario: ${contexto.configuracion.horarioLaboral}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TU ROL:
+Eres un asistente IA VERDADERAMENTE INTELIGENTE que puede responder CUALQUIER pregunta sobre el sistema. No estás limitado a respuestas predefinidas.
+
+CAPACIDADES:
+✓ Analizar el estado del sistema en tiempo real
+✓ Detectar problemas y sugerir soluciones
+✓ Explicar procedimientos paso a paso
+✓ Comparar rendimiento de equipos
+✓ Recomendar optimizaciones basadas en datos
+✓ Responder preguntas sobre funcionalidades
+✓ Proporcionar insights y tendencias
+✓ Ayudar con decisiones operativas
+
+ESTILO:
+• Responde en español de forma profesional pero amigable
+• Usa los datos del contexto para respuestas precisas
+• Formato HTML (<strong>, <br>, <ul>, <li>)  
+• Usa emojis ocasionalmente (📊 📦 ✅ ⚠️ 💡)
+• Si no sabes algo, sé honesto
+• Sé conciso pero completo
+
+FUNCIONALIDADES QUE DOMINAS:
+- Inventario: CRUD, Excel, modificación masiva, exportación, desbloqueo
+- Productos: Catálogo, filtros, carga/exportación
+- Órdenes: Crear, dividir, asignar equipos, historial, bloqueo automático
+- Picking: Control tiempo real, pausar/reanudar, subir cantidades
+- Packing: Distribución tiendas, reclasificación automática
+- Reclasificación: Gestionar items no empacados
+- Equipos: Crear/gestionar con métricas rendimiento
+- Configuración: Tiendas, horarios, backup
+
+Recuerda: Puedes responder CUALQUIER pregunta, hacer análisis profundos y proporcionar recomendaciones inteligentes basadas en el estado actual del sistema.`;
+
+            try {
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': CLAUDE_API_KEY,
+                        'anthropic-version': '2023-06-01'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 2048,
+                        system: systemPrompt,
+                        messages: [{
+                            role: 'user',
+                            content: pregunta
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('Error en API de Claude:', response.status);
+                    return generarRespuestaFallback(pregunta, contexto);
+                }
+
+                const data = await response.json();
+                return data.content[0].text;
+            } catch (error) {
+                console.error('Error llamando API:', error);
+                return generarRespuestaFallback(pregunta, contexto);
+            }
+        }
+
+        function generarRespuestaFallback(pregunta, contexto) {
+            // Sistema de respaldo cuando la API no está disponible
             const p = pregunta.toLowerCase();
             
-            // =========== ANÁLISIS DE DATOS EN TIEMPO REAL ===========
-            if (p.includes('estado') || p.includes('resumen') || p.includes('cómo va') || p.includes('como va') || p.includes('situación')) {
-                const ordenesActivas = ordenes.filter(o => !['Completada', 'Cancelada'].includes(o.estado));
-                const pickingActivo = picking.filter(pk => ['En Proceso', 'Pausado'].includes(pk.estado));
-                const packingActivo = packing.filter(pk => ['En Proceso', 'Pausado'].includes(pk.estado));
-                const reclasPendientes = reclasificacion.filter(r => r.estado === 'Pendiente');
-                const stockBloqueado = inventario.reduce((s, i) => s + (parseInt(i.stock_bloqueado) || 0), 0);
-                
-                return `<strong>📊 Resumen del Sistema:</strong><br><br>
-                    <strong>Órdenes:</strong><br>
-                    • ${ordenesActivas.length} órdenes activas<br>
-                    • ${ordenes.filter(o => o.estado === 'Pendiente División').length} pendientes de dividir<br>
-                    • ${ordenes.filter(o => o.estado === 'Completada').length} completadas<br><br>
-                    <strong>Operaciones:</strong><br>
-                    • ${pickingActivo.length} picking en proceso<br>
-                    • ${packingActivo.length} packing en proceso<br>
-                    • ${reclasPendientes.length} reclasificaciones pendientes<br><br>
-                    <strong>Inventario:</strong><br>
-                    • ${inventario.length.toLocaleString()} registros<br>
-                    • ${stockBloqueado.toLocaleString()} unidades bloqueadas<br><br>
-                    ${ordenesActivas.length > 5 ? '⚠️ <strong>Alerta:</strong> Hay muchas órdenes activas. Considera priorizar.' : '✅ Carga de trabajo normal.'}`;
+            if (p.includes('estado') || p.includes('resumen') || p.includes('cómo va') || p.includes('como va')) {
+                return `<strong>📊 Estado Actual del Sistema:</strong><br><br>
+                    <strong>Inventario:</strong> ${contexto.sistema.inventario.totalRegistros.toLocaleString()} registros, ${contexto.sistema.inventario.stockDisponible.toLocaleString()} unidades disponibles<br>
+                    <strong>Órdenes Activas:</strong> ${contexto.sistema.ordenes.activas}<br>
+                    <strong>Picking en Proceso:</strong> ${contexto.sistema.picking.activos}<br>
+                    <strong>Packing en Proceso:</strong> ${contexto.sistema.packing.activos}<br>
+                    <strong>Reclasificaciones Pendientes:</strong> ${contexto.sistema.reclasificacion.pendientes}<br><br>
+                    ${contexto.problemas.length > 0 ? '⚠️ <strong>Alertas:</strong><br>' + contexto.problemas.join('<br>') : '✅ Sistema operando normalmente'}<br><br>
+                    <em style="font-size:0.85em;opacity:0.8">💡 Configura tu API key de Claude para respuestas más inteligentes</em>`;
             }
 
-            // =========== ANÁLISIS DE RENDIMIENTO ===========
-            if (p.includes('rendimiento') || p.includes('eficiencia') || p.includes('tiempo') || p.includes('productividad')) {
-                const pickingCompletados = picking.filter(pk => pk.estado === 'Completado');
-                const packingCompletados = packing.filter(pk => pk.estado === 'Completado');
-                
-                let tiempoPromPicking = 0, tiempoPromPacking = 0;
-                if (pickingCompletados.length > 0) {
-                    tiempoPromPicking = pickingCompletados.reduce((s, pk) => s + (pk.tiempo_minutos || 0), 0) / pickingCompletados.length;
-                }
-                if (packingCompletados.length > 0) {
-                    tiempoPromPacking = packingCompletados.reduce((s, pk) => s + (pk.tiempo_minutos || 0), 0) / packingCompletados.length;
-                }
-                
-                // Rendimiento por equipo
-                const rendimientoEquipos = equipos.map(e => {
-                    const picks = pickingCompletados.filter(pk => pk.equipo_id === e.id);
-                    const packs = packingCompletados.filter(pk => pk.equipo_id === e.id);
-                    return {
-                        nombre: e.nombre,
-                        pickings: picks.length,
-                        packings: packs.length,
-                        unidades: picks.reduce((s, pk) => s + (pk.total_encontrado || 0), 0) + packs.reduce((s, pk) => s + (pk.total_empacado || 0), 0)
-                    };
-                }).filter(e => e.pickings > 0 || e.packings > 0).sort((a, b) => b.unidades - a.unidades);
-                
-                return `<strong>📈 Análisis de Rendimiento:</strong><br><br>
-                    <strong>Tiempos Promedio:</strong><br>
-                    • Picking: ${tiempoPromPicking.toFixed(0)} minutos<br>
-                    • Packing: ${tiempoPromPacking.toFixed(0)} minutos<br><br>
-                    <strong>Top Equipos por Unidades:</strong><br>
-                    ${rendimientoEquipos.slice(0, 5).map((e, i) => `${i + 1}. ${e.nombre}: ${e.unidades.toLocaleString()} unidades`).join('<br>') || 'Sin datos suficientes'}<br><br>
-                    <strong>Sugerencia:</strong> ${tiempoPromPicking > 120 ? 'El tiempo de picking es alto. Considera reorganizar el almacén.' : 'Los tiempos están dentro de lo esperado.'}`;
-            }
-
-            // =========== PROBLEMAS Y ALERTAS ===========
-            if (p.includes('problema') || p.includes('error') || p.includes('alerta') || p.includes('ayuda')) {
-                const problemas = [];
-                
-                // Órdenes estancadas
-                const ordenesEstancadas = ordenes.filter(o => {
-                    if (['Completada', 'Cancelada'].includes(o.estado)) return false;
-                    return diasTranscurridos(o.fecha) > 3;
-                });
-                if (ordenesEstancadas.length > 0) {
-                    problemas.push(`⚠️ ${ordenesEstancadas.length} órdenes llevan más de 3 días sin completar`);
-                }
-                
-                // Stock bloqueado sin orden
-                const stockBloqueado = inventario.filter(i => (parseInt(i.stock_bloqueado) || 0) > 0);
-                if (stockBloqueado.length > 50) {
-                    problemas.push(`⚠️ ${stockBloqueado.length} items con stock bloqueado`);
-                }
-                
-                // Reclasificaciones pendientes
-                const reclasPendientes = reclasificacion.filter(r => r.estado === 'Pendiente');
-                if (reclasPendientes.length > 20) {
-                    problemas.push(`⚠️ ${reclasPendientes.length} reclasificaciones pendientes`);
-                }
-                
-                // Picking/Packing pausados
-                const pausados = picking.filter(pk => pk.estado === 'Pausado').length + packing.filter(pk => pk.estado === 'Pausado').length;
-                if (pausados > 0) {
-                    problemas.push(`⏸️ ${pausados} tareas pausadas que requieren atención`);
-                }
-                
-                return `<strong>🔍 Diagnóstico del Sistema:</strong><br><br>
-                    ${problemas.length > 0 ? problemas.join('<br><br>') : '✅ <strong>No se detectaron problemas críticos</strong>'}<br><br>
-                    <strong>Acciones recomendadas:</strong><br>
-                    ${ordenesEstancadas.length > 0 ? '• Revisar órdenes pendientes de división<br>' : ''}
-                    ${stockBloqueado.length > 50 ? '• Considerar desbloquear stock huérfano (Inventario → Desbloquear Todo)<br>' : ''}
-                    ${reclasPendientes.length > 20 ? '• Procesar reclasificaciones pendientes<br>' : ''}
-                    ${pausados > 0 ? '• Reanudar tareas pausadas o completarlas<br>' : ''}
-                    ${problemas.length === 0 ? '• Continuar operando normalmente' : ''}`;
-            }
-
-            // =========== GUÍAS DE USO ===========
-            if (p.includes('crear orden') || p.includes('nueva orden')) {
-                return `<strong>📋 Cómo crear una orden:</strong><br><br>
-                    <strong>Paso 1:</strong> Ve a <strong>Órdenes → Nueva Orden</strong><br>
-                    <strong>Paso 2:</strong> Escribe un nombre descriptivo (ej: "Tops Mujer Semana 48")<br>
-                    <strong>Paso 3:</strong> Sube tu archivo Excel<br><br>
-                    <strong>Formato del Excel:</strong><br>
-                    • Columna "Variante" (obligatoria)<br>
-                    • Columna "Ubicación" (opcional)<br>
-                    • Columnas de tiendas con cantidades<br><br>
-                    <strong>Paso 4:</strong> Revisa la vista previa y confirma<br>
-                    <strong>Paso 5:</strong> Divide la orden en equipos<br><br>
-                    💡 <strong>Tips:</strong><br>
-                    • El sistema ignora mayúsculas/minúsculas<br>
-                    • Puede detectar tiendas con nombres parciales`;
-            }
-            
-            if (p.includes('dividir') || p.includes('equipos') || p.includes('partes')) {
-                return `<strong>✂️ División de Órdenes:</strong><br><br>
-                    <strong>¿Por qué dividir?</strong><br>
-                    Órdenes grandes (+500 items) se dividen para trabajar en paralelo.<br><br>
-                    <strong>Proceso:</strong><br>
-                    1. En la orden, clic en el botón "Dividir" (✂️)<br>
-                    2. Indica cuántas partes necesitas<br>
-                    3. Nombra cada parte (ej: "Tops Mujer PT1")<br>
-                    4. Asigna equipo de Picking y Packing<br>
-                    5. Confirma la división<br><br>
-                    <strong>Resultado:</strong><br>
-                    • Se crean hojas de picking ordenadas por ubicación<br>
-                    • El stock se bloquea automáticamente<br>
-                    • Se mide el tiempo de cada equipo<br><br>
-                    💡 Crea equipos primero en <strong>Equipos → Nuevo Equipo</strong>`;
-            }
-            
-            if (p.includes('picking')) {
-                return `<strong>📦 Proceso de Picking:</strong><br><br>
-                    <strong>1. Preparación:</strong><br>
-                    • Ve a la vista <strong>Picking</strong><br>
-                    • Descarga la hoja de tu equipo<br><br>
-                    <strong>2. Búsqueda:</strong><br>
-                    • La hoja está ordenada por ubicación<br>
-                    • Busca cada variante y anota en "Encontrado"<br><br>
-                    <strong>3. Registro:</strong><br>
-                    • Clic en "Iniciar" al comenzar<br>
-                    • Si necesitas pausar, usa el botón ⏸️<br>
-                    • Al terminar, sube el archivo con "Subir"<br><br>
-                    <strong>4. Validación:</strong><br>
-                    • El sistema compara solicitado vs encontrado<br>
-                    • Las diferencias se registran automáticamente<br><br>
-                    ⏰ Horario: 8:30 AM - 7:00 PM (1h almuerzo)`;
-            }
-            
-            if (p.includes('packing') || p.includes('empacar')) {
-                return `<strong>📦 Proceso de Packing:</strong><br><br>
-                    <strong>1. Recepción:</strong><br>
-                    • Espera a que Picking complete su parte<br>
-                    • Descarga la hoja de packing<br><br>
-                    <strong>2. Distribución:</strong><br>
-                    • Asigna cantidades por tienda<br>
-                    • Los productos que no se empaquen irán a reclasificación<br><br>
-                    <strong>3. Registro:</strong><br>
-                    • Clic en "Iniciar" al comenzar<br>
-                    • Sube el archivo con distribución<br>
-                    • Clic en ✓ para completar<br><br>
-                    <strong>4. Cierre:</strong><br>
-                    • El monto se recalcula automáticamente<br>
-                    • El stock se descuenta del inventario<br><br>
-                    ⚠️ Los productos no empacados van a Reclasificación`;
-            }
-            
-            if (p.includes('reclasifica')) {
-                return `<strong>🔄 Reclasificación:</strong><br><br>
-                    <strong>¿Qué es?</strong><br>
-                    Productos que no pudieron despacharse por diversos motivos.<br><br>
-                    <strong>Motivos comunes:</strong><br>
-                    • No encontrado en picking<br>
-                    • Mal estado<br>
-                    • Talla incorrecta<br>
-                    • No corresponde a línea/género<br><br>
-                    <strong>Para completar:</strong><br>
-                    1. Ve a <strong>Reclasificación → Pendientes</strong><br>
-                    2. Clic en ✓ del item<br>
-                    3. Indica la ubicación final<br>
-                    4. El stock se actualiza automáticamente<br><br>
-                    📥 Puedes exportar pendientes con "Descargar Pendientes"`;
-            }
-
-            if (p.includes('prompt') || p.includes('mejora') || p.includes('sugerencia') || p.includes('implementar')) {
-                return `<strong>💡 Prompts para Mejoras:</strong><br><br>
-                    Copia estos prompts para solicitar mejoras:<br><br>
-                    <strong>1. Alertas automáticas:</strong><br>
-                    <code>Implementa un sistema de alertas que notifique: órdenes estancadas >24h, stock bajo, picking sin completar al final del día.</code><br><br>
-                    <strong>2. Reportes avanzados:</strong><br>
-                    <code>Agrega reportes PDF exportables con gráficas de rendimiento semanal por equipo, comparativa de tiempos, y análisis de reclasificaciones.</code><br><br>
-                    <strong>3. Dashboard mejorado:</strong><br>
-                    <code>Agrega al dashboard: velocidad promedio por picker, tasa de error de packing, predicción de tiempo de completado por orden.</code><br><br>
-                    <strong>4. Optimización de rutas:</strong><br>
-                    <code>Implementa algoritmo que ordene las hojas de picking optimizando la ruta física en el almacén basándose en las ubicaciones.</code>`;
-            }
-
-            if (p.includes('exportar') || p.includes('descargar') || p.includes('excel')) {
-                return `<strong>📥 Guía de Exportación:</strong><br><br>
-                    <strong>Inventario:</strong><br>
-                    • Inventario → "Exportar Todo"<br>
-                    • Incluye info de productos y stock<br><br>
-                    <strong>Productos:</strong><br>
-                    • Productos → "Exportar"<br>
-                    • Catálogo completo<br><br>
-                    <strong>Reclasificaciones:</strong><br>
-                    • Reclasificación → "Descargar Pendientes"<br><br>
-                    <strong>Historial Picking/Packing:</strong><br>
-                    • Picking/Packing → "Historial"<br>
-                    • Incluye tiempos y equipos<br><br>
-                    <strong>Hojas de trabajo:</strong><br>
-                    • En cada tarea, botón 📥<br>
-                    • Picking: ordenado por ubicación<br>
-                    • Packing: con columnas de tiendas`;
-            }
-
-            if (p.includes('configurar') || p.includes('ajuste') || p.includes('config')) {
-                return `<strong>⚙️ Configuración del Sistema:</strong><br><br>
-                    <strong>Columnas de Hojas:</strong><br>
-                    • Ajustes → Columnas de Hojas<br>
-                    • Selecciona qué columnas mostrar en picking/packing<br><br>
-                    <strong>Tiendas:</strong><br>
-                    • Ajustes → Tiendas<br>
-                    • Agrega, edita o elimina tiendas<br><br>
-                    <strong>Horarios:</strong><br>
-                    • Ajustes → Horarios<br>
-                    • Configura horario laboral (default 8:30-19:00)<br><br>
-                    <strong>General:</strong><br>
-                    • Items por página<br>
-                    • Días para expiración<br>
-                    • Acciones de mantenimiento`;
-            }
-
-            if (p.includes('pausar') || p.includes('pausa') || p.includes('horario')) {
-                return `<strong>⏸️ Sistema de Pausas:</strong><br><br>
-                    <strong>¿Cuándo pausar?</strong><br>
-                    • Almuerzo (1 hora)<br>
-                    • Fin de jornada (7:00 PM)<br>
-                    • Emergencias<br><br>
-                    <strong>Cómo pausar:</strong><br>
-                    • En Picking o Packing, clic en ⏸️<br>
-                    • El tiempo se guarda automáticamente<br><br>
-                    <strong>Cómo reanudar:</strong><br>
-                    • Clic en "Reanudar"<br>
-                    • El cronómetro continúa<br><br>
-                    ⏰ <strong>Horario:</strong> 8:30 AM - 7:00 PM<br>
-                    El sistema te alertará fuera de horario`;
-            }
-            
-            // =========== RESPUESTA INTELIGENTE CON CONTEXTO ===========
-            return `Entiendo tu consulta sobre "<strong>${pregunta}</strong>".<br><br>
-                Soy el asistente de MAWI y puedo ayudarte con:<br><br>
-                <strong>📊 Análisis:</strong> "¿cómo va el sistema?", "rendimiento", "problemas"<br>
-                <strong>📋 Órdenes:</strong> "crear orden", "dividir", "historial"<br>
-                <strong>📦 Operaciones:</strong> "picking", "packing", "pausar"<br>
-                <strong>🔄 Reclasificación:</strong> "reclasificar", "pendientes"<br>
-                <strong>⚙️ Configuración:</strong> "configurar", "horarios", "tiendas"<br>
-                <strong>💡 Mejoras:</strong> "sugerencias", "prompts"<br>
-                <strong>📥 Exportar:</strong> "descargar", "excel"<br><br>
-                ¿Sobre qué tema necesitas ayuda?`;
+            return `<strong>Preguntaste:</strong> "${pregunta}"<br><br>
+                Para respuestas inteligentes y personalizadas, necesitas configurar tu API key de Claude.<br><br>
+                <strong>¿Cómo configurarla?</strong><br>
+                1. Obtén tu API key en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
+                2. En el código, busca <code>CLAUDE_API_KEY</code><br>
+                3. Reemplaza 'TU_API_KEY_AQUI' con tu key real<br><br>
+                Mientras tanto, puedo responderte con datos del sistema:<br>
+                📊 ${contexto.sistema.ordenes.activas} órdenes activas<br>
+                📦 ${contexto.sistema.inventario.totalRegistros.toLocaleString()} registros en inventario<br>
+                ⏱️ Tiempo promedio picking: ${contexto.estadisticas.tiempoPromPicking} min`;
         }
 
         // =========== FUNCIONES DE CONFIGURACIÓN ===========
@@ -3802,7 +3309,7 @@
             });
         });
 
-        console.log('✅ MAWI v7.1 - Sistema completo con IA mejorada + Pausas + Historial');
+        console.log('✅ MAWI v7.0 - Sistema Integrado Completo con funcionalidades principales');
     </script>
 </body>
 </html>
