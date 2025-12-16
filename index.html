@@ -1070,17 +1070,53 @@
         function aplicarFiltrosDashboard() {
             const periodo = document.getElementById('filtroPeriodo').value;
             document.getElementById('filtroCustom').style.display = periodo === 'custom' ? 'flex' : 'none';
-            actualizarDashboard();
+            
+            // Calcular rango de fechas según el período
+            let fechaInicio, fechaFin = new Date();
+            const hoy = new Date();
+            
+            switch(periodo) {
+                case 'hoy':
+                    fechaInicio = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+                    break;
+                case 'semana':
+                    fechaInicio = new Date(hoy);
+                    fechaInicio.setDate(hoy.getDate() - hoy.getDay());
+                    break;
+                case 'mes':
+                    fechaInicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                    break;
+                case 'año':
+                    fechaInicio = new Date(hoy.getFullYear(), 0, 1);
+                    break;
+                case 'custom':
+                    const desde = document.getElementById('filtroFechaDesde').value;
+                    const hasta = document.getElementById('filtroFechaHasta').value;
+                    if (desde) fechaInicio = new Date(desde);
+                    if (hasta) fechaFin = new Date(hasta);
+                    break;
+            }
+            
+            // Filtrar órdenes según el período
+            let ordenesFiltradas = ordenes;
+            if (fechaInicio) {
+                ordenesFiltradas = ordenes.filter(o => {
+                    const fecha = new Date(o.fecha);
+                    return fecha >= fechaInicio && fecha <= fechaFin;
+                });
+            }
+            
+            actualizarDashboard(ordenesFiltradas);
         }
 
-        function actualizarDashboard() {
+        function actualizarDashboard(ordenesFiltradas = ordenes) {
             const variantes = new Set(inventario.map(i => i.variante)).size;
             const ubicaciones = new Set(inventario.map(i => i.ubicacion)).size;
             const unidades = inventario.reduce((s, i) => s + (parseInt(i.stock_fisico) || 0), 0);
             const bloqueadas = inventario.reduce((s, i) => s + (parseInt(i.stock_bloqueado) || 0), 0);
-            const activas = ordenes.filter(o => !['Completada', 'Cancelada'].includes(o.estado));
+            const activas = ordenesFiltradas.filter(o => !['Completada', 'Cancelada'].includes(o.estado));
             const montoActivas = activas.reduce((s, o) => s + (parseFloat(o.monto_solicitado) || 0), 0);
-            const completadas = ordenes.filter(o => o.estado === 'Completada');
+            const completadas = ordenesFiltradas.filter(o => o.estado === 'Completada');
             
             let tiempoProm = 0;
             if (completadas.length > 0) {
@@ -1104,14 +1140,14 @@
             document.getElementById('statTiempoProm').innerHTML = tiempoProm.toFixed(1) + '<span style="font-size:0.9rem">d</span>';
             document.getElementById('statCompletadas').textContent = completadas.length;
 
-            generarGraficas();
+            generarGraficas(ordenesFiltradas);
         }
 
-        function generarGraficas() {
+        function generarGraficas(ordenesFiltradas = ordenes) {
             const ctxEstados = document.getElementById('chartEstados');
             if (chartEstados) chartEstados.destroy();
             const estados = {};
-            ordenes.forEach(o => { estados[o.estado] = (estados[o.estado] || 0) + 1; });
+            ordenesFiltradas.forEach(o => { estados[o.estado] = (estados[o.estado] || 0) + 1; });
             chartEstados = new Chart(ctxEstados, {
                 type: 'doughnut',
                 data: {
@@ -1131,7 +1167,7 @@
                 const d = new Date(); d.setDate(d.getDate() - i);
                 const fecha = d.toISOString().split('T')[0];
                 labels.push(d.toLocaleDateString('es-PE', { day: '2-digit', month: 'short' }));
-                const monto = ordenes.filter(o => o.fecha && o.fecha.startsWith(fecha))
+                const monto = ordenesFiltradas.filter(o => o.fecha && o.fecha.startsWith(fecha))
                     .reduce((s, o) => s + (parseFloat(o.monto_solicitado) || 0), 0);
                 dataMontos.push(monto);
             }
@@ -1820,6 +1856,9 @@
         function verHistorialOrden(id) {
             ordenActual = ordenes.find(o => o.id === id);
             if (!ordenActual) return;
+            
+            // Guardar en variable global para cambiarTabHistorial
+            ordenHistorialActual = ordenActual;
 
             const historial = ordenActual.historial || [];
             const noEncontrados = [];
@@ -1870,34 +1909,39 @@
         }
 
         let tabHistorialActual = 'timeline';
+        let ordenHistorialActual = null;
+        
         function cambiarTabHistorial(tab) {
             tabHistorialActual = tab;
             document.querySelectorAll('#modalHistorialOrden .tab').forEach(t => {
                 t.classList.toggle('active', t.dataset.tab === tab);
             });
 
-            const ordenActual = ordenes.find(o => o.id);
-            if (!ordenActual) return;
+            if (!ordenHistorialActual) return;
 
             let html = '';
             
             if (tab === 'timeline') {
-                const historial = ordenActual.historial || [];
-                html = '<div class="timeline">';
-                historial.forEach(h => {
-                    html += `
-                        <div class="timeline-item">
-                            <div class="timeline-date">${formatFechaHora(h.fecha)}</div>
-                            <div class="timeline-title">${h.accion}</div>
-                            <div class="timeline-desc">${h.detalle || ''}</div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
+                const historial = ordenHistorialActual.historial || [];
+                if (historial.length === 0) {
+                    html = '<div style="text-align:center;padding:2rem;opacity:0.6">No hay historial registrado</div>';
+                } else {
+                    html = '<div class="timeline">';
+                    historial.forEach(h => {
+                        html += `
+                            <div class="timeline-item">
+                                <div class="timeline-date">${formatFechaHora(h.fecha)}</div>
+                                <div class="timeline-title">${h.accion}</div>
+                                <div class="timeline-desc">${h.detalle || ''}</div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
             } else if (tab === 'noEncontrados') {
                 const noEncontrados = [];
-                (ordenActual.items || []).forEach(item => {
-                    const pickings = picking.filter(p => p.orden_id === ordenActual.id && p.estado === 'Completado');
+                (ordenHistorialActual.items || []).forEach(item => {
+                    const pickings = picking.filter(p => p.orden_id === ordenHistorialActual.id && p.estado === 'Completado');
                     let totalEncontrado = 0;
                     pickings.forEach(p => {
                         const enc = (p.items_encontrados || []).find(e => e.variante === item.variante);
@@ -1914,37 +1958,45 @@
                     }
                 });
 
-                html = `<div class="table-container"><table>
-                    <thead><tr><th>Variante</th><th>Solicitado</th><th>Encontrado</th><th>Faltante</th></tr></thead>
-                    <tbody>`;
-                noEncontrados.forEach(i => {
-                    html += `<tr>
-                        <td><strong>${i.variante}</strong></td>
-                        <td>${i.solicitado}</td>
-                        <td style="color:var(--warning)">${i.encontrado}</td>
-                        <td style="color:var(--danger)">${i.faltante}</td>
-                    </tr>`;
-                });
-                html += '</tbody></table></div>';
+                if (noEncontrados.length === 0) {
+                    html = '<div style="text-align:center;padding:2rem;opacity:0.6">✅ Todos los items fueron encontrados</div>';
+                } else {
+                    html = `<div class="table-container"><table>
+                        <thead><tr><th>Variante</th><th>Solicitado</th><th>Encontrado</th><th>Faltante</th></tr></thead>
+                        <tbody>`;
+                    noEncontrados.forEach(i => {
+                        html += `<tr>
+                            <td><strong>${i.variante}</strong></td>
+                            <td>${i.solicitado}</td>
+                            <td style="color:var(--warning)">${i.encontrado}</td>
+                            <td style="color:var(--danger)"><strong>${i.faltante}</strong></td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table></div>';
+                }
             } else if (tab === 'reclasificados') {
-                const reclasItems = reclasificacion.filter(r => r.orden_id === ordenActual.id);
-                html = `<div class="table-container"><table>
-                    <thead><tr><th>Variante</th><th>Cantidad</th><th>Motivo</th><th>Estado</th></tr></thead>
-                    <tbody>`;
-                reclasItems.forEach(r => {
-                    html += `<tr>
-                        <td><strong>${r.variante_original}</strong></td>
-                        <td>${r.cantidad}</td>
-                        <td><span class="badge badge-purple">${r.motivo}</span></td>
-                        <td>${getBadge(r.estado)}</td>
-                    </tr>`;
-                });
-                html += '</tbody></table></div>';
+                const reclasItems = reclasificacion.filter(r => r.orden_id === ordenHistorialActual.id);
+                if (reclasItems.length === 0) {
+                    html = '<div style="text-align:center;padding:2rem;opacity:0.6">Sin items reclasificados</div>';
+                } else {
+                    html = `<div class="table-container"><table>
+                        <thead><tr><th>Variante</th><th>Cantidad</th><th>Motivo</th><th>Estado</th></tr></thead>
+                        <tbody>`;
+                    reclasItems.forEach(r => {
+                        html += `<tr>
+                            <td><strong>${r.variante_original}</strong></td>
+                            <td>${r.cantidad}</td>
+                            <td><span class="badge badge-purple">${r.motivo}</span></td>
+                            <td>${getBadge(r.estado)}</td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table></div>';
+                }
             } else if (tab === 'items') {
                 html = `<div class="table-container"><table>
-                    <thead><tr><th>Variante</th><th>Ubicación</th><th>Cantidad</th><th>Distribucion</th></tr></thead>
+                    <thead><tr><th>Variante</th><th>Ubicación</th><th>Cantidad</th><th>Distribución</th></tr></thead>
                     <tbody>`;
-                (ordenActual.items || []).forEach(i => {
+                (ordenHistorialActual.items || []).forEach(i => {
                     const distStr = Object.entries(i.distribucion || {}).map(([t, c]) => `${t}: ${c}`).join(', ');
                     html += `<tr>
                         <td><strong>${i.variante}</strong></td>
@@ -2199,28 +2251,75 @@
         function descargarHojaPicking(id) {
             const pick = picking.find(p => p.id === id);
             if (!pick) return;
+            
+            const orden = ordenes.find(o => o.id === pick.orden_id);
 
             const data = (pick.items_asignados || []).map(i => {
                 const prod = productos.find(p => p.variante === i.variante);
+                const inv = inventario.find(inv => inv.variante === i.variante && inv.ubicacion === i.ubicacion);
+                
                 return {
-                    Ubicacion: i.ubicacion,
-                    Variante: i.variante,
-                    CodigoComercial: prod?.codigo_comercial || '',
-                    Marca: prod?.marca || '',
-                    PVP: prod?.pvp || 0,
-                    PVPRegular: prod?.pvp_regular || 0,
-                    Descripcion: prod?.descripcion || '',
-                    Cantidad: i.cantidad,
-                    Encontrado: ''
+                    // ORDEN (solo parte)
+                    'Parte': pick.nombre_parte || `PT${pick.parte}`,
+                    
+                    // INVENTARIO
+                    'Ubicación': i.ubicacion || '',
+                    'Stock Físico': inv?.stock_fisico || 0,
+                    'Stock Bloqueado': inv?.stock_bloqueado || 0,
+                    'Stock Disponible': (inv?.stock_fisico || 0) - (inv?.stock_bloqueado || 0),
+                    
+                    // PRODUCTO
+                    'Variante': i.variante,
+                    'Código Comercial': prod?.codigo_comercial || '',
+                    'Descripción': prod?.descripcion || '',
+                    'Marca': prod?.marca || '',
+                    'Género': prod?.genero || '',
+                    'Línea': prod?.linea || '',
+                    'Talla': prod?.talla || '',
+                    'Color': prod?.color || '',
+                    'Kardex': prod?.kardex || 0,
+                    'PVP': prod?.pvp || 0,
+                    'PVP Regular': prod?.pvp_regular || 0,
+                    'PVP Oferta': prod?.pvp_oferta || 0,
+                    
+                    // CANTIDADES
+                    'Solicitado': i.cantidad,
+                    'Encontrado': ''
                 };
             });
 
-            data.sort((a, b) => a.Ubicacion.localeCompare(b.Ubicacion));
+            // Ordenar por ubicación
+            data.sort((a, b) => (a['Ubicación'] || '').localeCompare(b['Ubicación'] || ''));
 
             const ws = XLSX.utils.json_to_sheet(data);
+            
+            // Ajustar anchos
+            ws['!cols'] = [
+                {wch: 8},  // Parte
+                {wch: 15}, // Ubicación
+                {wch: 12}, // Stock Físico
+                {wch: 15}, // Stock Bloqueado
+                {wch: 18}, // Stock Disponible
+                {wch: 15}, // Variante
+                {wch: 15}, // Código Comercial
+                {wch: 40}, // Descripción
+                {wch: 15}, // Marca
+                {wch: 10}, // Género
+                {wch: 15}, // Línea
+                {wch: 8},  // Talla
+                {wch: 12}, // Color
+                {wch: 8},  // Kardex
+                {wch: 10}, // PVP
+                {wch: 12}, // PVP Regular
+                {wch: 12}, // PVP Oferta
+                {wch: 10}, // Solicitado
+                {wch: 12}  // Encontrado
+            ];
+            
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'HojaPicking');
-            XLSX.writeFile(wb, `Picking_${pick.nombre_parte || pick.orden_id}_PT${pick.parte}.xlsx`);
+            const filename = `Picking_${orden?.nombre || pick.orden_id}_${pick.nombre_parte || 'PT' + pick.parte}.xlsx`;
+            XLSX.writeFile(wb, filename);
             toast('Hoja descargada', 'success');
         }
 
@@ -2611,7 +2710,7 @@
             `;
             
             document.getElementById('packingContent').innerHTML = html;
-            document.getElementById('packingFooter').innerHTML = '<button class="btn btn-outline" onclick="cerrarModal(\'modalPacking\')">Cerrar</button>';
+            document.getElementById('packingFooter').innerHTML = '<button class="btn btn-outline" onclick="cerrarModal(&apos;modalPacking&apos;)">Cerrar</button>';
             document.getElementById('tituloModalPacking').textContent = 'Detalle de Packing';
             abrirModal('modalPacking');
         }
@@ -2647,28 +2746,75 @@
         function descargarHojaPacking(id) {
             const pack = packing.find(p => p.id === id);
             if (!pack) return;
+            
+            const orden = ordenes.find(o => o.id === pack.orden_id);
 
             const data = (pack.items_recibidos || []).map(i => {
                 const prod = productos.find(p => p.variante === i.variante);
+                const inv = inventario.find(inv => inv.variante === i.variante);
+                
                 const row = {
-                    Variante: i.variante,
-                    Descripcion: prod?.descripcion || '',
-                    Marca: prod?.marca || '',
-                    Genero: prod?.genero || '',
-                    Talla: prod?.talla || '',
-                    Kardex: prod?.kardex || 0,
-                    Encontrado: i.cantidad_encontrada || 0
+                    // ORDEN (solo parte)
+                    'Parte': pack.nombre_parte || `PT${pack.parte}`,
+                    
+                    // PRODUCTO COMPLETO
+                    'Variante': i.variante,
+                    'Código Comercial': prod?.codigo_comercial || '',
+                    'Descripción': prod?.descripcion || '',
+                    'Marca': prod?.marca || '',
+                    'Género': prod?.genero || '',
+                    'Línea': prod?.linea || '',
+                    'Talla': prod?.talla || '',
+                    'Color': prod?.color || '',
+                    'Kardex': prod?.kardex || 0,
+                    'PVP': prod?.pvp || 0,
+                    'PVP Regular': prod?.pvp_regular || 0,
+                    'PVP Oferta': prod?.pvp_oferta || 0,
+                    
+                    // INVENTARIO
+                    'Stock Total Sistema': inv?.stock_fisico || 0,
+                    
+                    // CANTIDADES
+                    'Encontrado': i.cantidad_encontrada || 0
                 };
+                
+                // Agregar columnas de tiendas
                 TIENDAS_BASE.forEach(t => {
                     row[t.replace('LUKERS ', '')] = '';
                 });
+                
                 return row;
             });
 
             const ws = XLSX.utils.json_to_sheet(data);
+            
+            // Ajustar anchos de columnas
+            const colWidths = [
+                {wch: 8},  // Parte
+                {wch: 15}, // Variante
+                {wch: 15}, // Código Comercial
+                {wch: 40}, // Descripción
+                {wch: 15}, // Marca
+                {wch: 10}, // Género
+                {wch: 15}, // Línea
+                {wch: 8},  // Talla
+                {wch: 12}, // Color
+                {wch: 8},  // Kardex
+                {wch: 10}, // PVP
+                {wch: 12}, // PVP Regular
+                {wch: 12}, // PVP Oferta
+                {wch: 18}, // Stock Total Sistema
+                {wch: 12}  // Encontrado
+            ];
+            
+            // Agregar anchos para tiendas
+            TIENDAS_BASE.forEach(() => colWidths.push({wch: 12}));
+            ws['!cols'] = colWidths;
+            
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'HojaPacking');
-            XLSX.writeFile(wb, `Packing_${pack.nombre_parte || pack.orden_id}_PT${pack.parte}.xlsx`);
+            const filename = `Packing_${orden?.nombre || pack.orden_id}_${pack.nombre_parte || 'PT' + pack.parte}.xlsx`;
+            XLSX.writeFile(wb, filename);
             toast('Hoja descargada', 'success');
         }
 
@@ -3081,53 +3227,12 @@ ${contexto.estadisticas.topProductos.length > 0 ? contexto.estadisticas.topProdu
 
 ${contexto.problemas.length > 0 ? '⚠️ ALERTAS:\n' + contexto.problemas.map(p => `• ${p}`).join('\n') : '✅ Sistema operando normalmente'}
 
-⚙️ CONFIGURACIÓN:
-- Tiendas: ${contexto.configuracion.tiendas.length} configuradas
-- Horario: ${contexto.configuracion.horarioLaboral}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-TU ROL:
-Eres un asistente IA VERDADERAMENTE INTELIGENTE que puede responder CUALQUIER pregunta sobre el sistema. No estás limitado a respuestas predefinidas.
-
-CAPACIDADES:
-✓ Analizar el estado del sistema en tiempo real
-✓ Detectar problemas y sugerir soluciones
-✓ Explicar procedimientos paso a paso
-✓ Comparar rendimiento de equipos
-✓ Recomendar optimizaciones basadas en datos
-✓ Responder preguntas sobre funcionalidades
-✓ Proporcionar insights y tendencias
-✓ Ayudar con decisiones operativas
-
-ESTILO:
-• Responde en español de forma profesional pero amigable
-• Usa los datos del contexto para respuestas precisas
-• Formato HTML (<strong>, <br>, <ul>, <li>)  
-• Usa emojis ocasionalmente (📊 📦 ✅ ⚠️ 💡)
-• Si no sabes algo, sé honesto
-• Sé conciso pero completo
-
-FUNCIONALIDADES QUE DOMINAS:
-- Inventario: CRUD, Excel, modificación masiva, exportación, desbloqueo
-- Productos: Catálogo, filtros, carga/exportación
-- Órdenes: Crear, dividir, asignar equipos, historial, bloqueo automático
-- Picking: Control tiempo real, pausar/reanudar, subir cantidades
-- Packing: Distribución tiendas, reclasificación automática
-- Reclasificación: Gestionar items no empacados
-- Equipos: Crear/gestionar con métricas rendimiento
-- Configuración: Tiendas, horarios, backup
-
-Recuerda: Puedes responder CUALQUIER pregunta, hacer análisis profundos y proporcionar recomendaciones inteligentes basadas en el estado actual del sistema.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 PREGUNTA DEL USUARIO: ${pregunta}
 
-RESPONDE EN FORMATO HTML (usa <strong>, <br>, <ul>, <li> para mejor legibilidad):`;
+Responde en español, formato HTML (<strong>, <br>, <ul>, <li>), usa emojis, sé conciso y profesional.`;
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -3142,46 +3247,28 @@ RESPONDE EN FORMATO HTML (usa <strong>, <br>, <ul>, <li> para mejor legibilidad)
                             temperature: 0.7,
                             topK: 40,
                             topP: 0.95,
-                            maxOutputTokens: 2048,
-                        },
-                        safetySettings: [
-                            {
-                                category: "HARM_CATEGORY_HARASSMENT",
-                                threshold: "BLOCK_NONE"
-                            },
-                            {
-                                category: "HARM_CATEGORY_HATE_SPEECH",
-                                threshold: "BLOCK_NONE"
-                            },
-                            {
-                                category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                                threshold: "BLOCK_NONE"
-                            },
-                            {
-                                category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-                                threshold: "BLOCK_NONE"
-                            }
-                        ]
+                            maxOutputTokens: 2048
+                        }
                     })
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('Error en API de Gemini:', response.status, errorData);
+                    const errorText = await response.text();
+                    console.error('Error Gemini API:', response.status, errorText);
                     return generarRespuestaFallback(pregunta, contexto);
                 }
 
                 const data = await response.json();
                 
-                // Extraer la respuesta de Gemini
-                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-                    return data.candidates[0].content.parts[0].text;
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    const texto = data.candidates[0].content.parts[0].text;
+                    return texto;
                 } else {
-                    console.error('Formato de respuesta inesperado:', data);
+                    console.error('Respuesta inesperada:', data);
                     return generarRespuestaFallback(pregunta, contexto);
                 }
             } catch (error) {
-                console.error('Error llamando API de Gemini:', error);
+                console.error('Error API Gemini:', error);
                 return generarRespuestaFallback(pregunta, contexto);
             }
         }
