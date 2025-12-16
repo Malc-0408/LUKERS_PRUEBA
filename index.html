@@ -252,20 +252,6 @@
         .chip-remove:hover{color:var(--danger)}
         
         /* AI ASSISTANT */
-        .ai-panel{position:fixed;right:-400px;top:0;bottom:0;width:400px;background:#fff;box-shadow:-5px 0 30px rgba(0,0,0,0.1);z-index:500;display:flex;flex-direction:column;transition:right 0.3s ease}
-        .ai-panel.active{right:0}
-        .ai-header{padding:1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-        .ai-title{font-weight:700;font-size:1rem;display:flex;align-items:center;gap:0.5rem}
-        .ai-title i{color:var(--purple)}
-        .ai-body{flex:1;overflow-y:auto;padding:1rem}
-        .ai-message{margin-bottom:1rem;padding:1rem;border-radius:12px;font-size:0.85rem;line-height:1.5}
-        .ai-message.assistant{background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(99,102,241,0.1));border-left:3px solid var(--purple)}
-        .ai-message.user{background:var(--bg-hover);margin-left:2rem}
-        .ai-footer{padding:1rem;border-top:1px solid var(--border)}
-        .ai-input{display:flex;gap:0.5rem}
-        .ai-input input{flex:1}
-        .ai-toggle{position:fixed;right:1rem;bottom:1rem;width:56px;height:56px;background:linear-gradient(135deg,var(--purple),var(--primary));border:none;border-radius:50%;color:#fff;cursor:pointer;box-shadow:0 4px 15px rgba(168,85,247,0.4);z-index:499;display:flex;align-items:center;justify-content:center;transition:transform 0.2s}
-        .ai-toggle:hover{transform:scale(1.1)}
         
         /* RESPONSIVE */
         @media(max-width:768px){
@@ -373,8 +359,8 @@
             <div class="content-area" id="contentArea">
                 <!-- VISTA DASHBOARD -->
                 <div id="vista-dashboard" class="vista active">
-                    <!-- Filtros -->
-                    <div class="filters-bar">
+                    <!-- Filtros Mejorados -->
+                    <div class="filters-bar" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center">
                         <div class="filter-group">
                             <label class="filter-label">Período:</label>
                             <select id="filtroPeriodo" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
@@ -385,12 +371,37 @@
                                 <option value="custom">Personalizado</option>
                             </select>
                         </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Equipo:</label>
+                            <select id="filtroEquipo" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Género:</label>
+                            <select id="filtroGenero" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Línea:</label>
+                            <select id="filtroLinea" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Tienda:</label>
+                            <select id="filtroTienda" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
                         <div class="filter-group" id="filtroCustom" style="display:none">
                             <input type="date" id="filtroFechaDesde" class="form-input form-input-sm" style="width:auto">
                             <span style="color:var(--text-secondary)">a</span>
                             <input type="date" id="filtroFechaHasta" class="form-input form-input-sm" style="width:auto">
                             <button class="btn btn-sm btn-primary" onclick="aplicarFiltrosDashboard()">Aplicar</button>
                         </div>
+                        <button class="btn btn-sm btn-outline" onclick="limpiarFiltrosDashboard()"><i data-lucide="x"></i> Limpiar</button>
                     </div>
 
                     <!-- Stats -->
@@ -446,6 +457,75 @@
                                 <div class="chart-title"><i data-lucide="pie-chart" style="width:18px;height:18px;color:var(--warning)"></i> Distribución por Género</div>
                             </div>
                             <div class="chart-wrapper"><canvas id="chartGeneros"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- Tablas de Consumo -->
+                    <div style="margin-top:2rem">
+                        <h3 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem"><i data-lucide="bar-chart-4"></i> Análisis de Consumo</h3>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1.5rem">
+                            <!-- Tabla Consumo por Género -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title" style="font-size:1rem">📊 Consumo por Género</h4>
+                                </div>
+                                <div class="table-container">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Género</th>
+                                                <th style="text-align:right">Unidades</th>
+                                                <th style="text-align:right">Monto</th>
+                                                <th style="text-align:right">%</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaConsumoGenero">
+                                            <tr><td colspan="4" class="empty-state">Sin datos</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Tabla Consumo por Tienda -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title" style="font-size:1rem">🏪 Consumo por Tienda</h4>
+                                </div>
+                                <div class="table-container">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Tienda</th>
+                                                <th style="text-align:right">Unidades</th>
+                                                <th style="text-align:right">Monto</th>
+                                                <th style="text-align:right">%</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaConsumoTienda">
+                                            <tr><td colspan="4" class="empty-state">Sin datos</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Matriz Género x Tienda -->
+                        <div class="card" style="margin-top:1.5rem">
+                            <div class="card-header">
+                                <h4 class="card-title" style="font-size:1rem">📈 Matriz: Género x Tienda (Unidades)</h4>
+                            </div>
+                            <div class="table-container">
+                                <table id="tablaMatrizGeneroTienda">
+                                    <thead>
+                                        <tr>
+                                            <th>Género</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="empty-state">Sin datos</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -685,6 +765,9 @@
 
                 <div class="modal" id="modalSubirProductos"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Subir Catálogo</h3><button class="modal-close" onclick="cerrarModal('modalSubirProductos')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="alert alert-warning"><i data-lucide="alert-triangle"></i><span>Esto reemplazará todo el catálogo actual</span></div><div class="form-group"><input type="file" id="fileProductos" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileProductosInfo')"><label for="fileProductos" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileProductosInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileProductos','fileProductosInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalSubirProductos')">Cancelar</button><button class="btn btn-primary" onclick="procesarProductos()">Procesar</button></div></div></div>
 
+                <!-- Modal de Validaciones -->
+                <div class="modal" id="modalValidaciones"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Validaciones</h3><button class="modal-close" onclick="cerrarModal('modalValidaciones')"><i data-lucide="x"></i></button></div><div class="modal-body" id="alertasValidacionContent"></div></div></div>
+
                 <div class="modal" id="modalCrearOrden"><div class="modal-content large"><div class="modal-header"><h3 class="modal-title">Nueva Orden</h3><button class="modal-close" onclick="cerrarModal('modalCrearOrden')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><label class="form-label">Nombre de la Orden</label><input type="text" id="ordenNombre" class="form-input" placeholder="Ej: Tops Mujer Semana 48"></div><div class="form-group"><input type="file" id="fileOrden" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileOrdenInfo');previsualizarOrden()"><label for="fileOrden" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo Excel</label><div class="file-selected" id="fileOrdenInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileOrden','fileOrdenInfo')"><i data-lucide="x"></i></button></div></div><div class="alert alert-info" id="previewOrden" style="display:none;margin-top:1rem"><div id="previewOrdenContent"></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalCrearOrden')">Cancelar</button><button class="btn btn-primary" onclick="crearOrden()">Crear Orden</button></div></div></div>
 
                 <div class="modal" id="modalDividirOrden"><div class="modal-content xl"><div class="modal-header"><h3 class="modal-title">Dividir Orden</h3><button class="modal-close" onclick="cerrarModal('modalDividirOrden')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="detail-grid" style="margin-bottom:1.5rem"><div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value" id="divOrdenNombre"></div></div><div class="detail-item"><div class="detail-label">Variantes</div><div class="detail-value" id="divOrdenVariantes"></div></div><div class="detail-item"><div class="detail-label">Unidades</div><div class="detail-value" id="divOrdenUnidades"></div></div></div><div class="form-group"><label class="form-label">Número de Partes</label><input type="number" id="numPartes" class="form-input" value="1" min="1" max="10" onchange="generarPartesConfig()"></div><div id="partesConfig"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalDividirOrden')">Cancelar</button><button class="btn btn-primary" onclick="confirmarDivision()">Confirmar División</button></div></div></div>
@@ -701,33 +784,6 @@
             </div>
         </div>
     </div>
-
-    <!-- AI PANEL -->
-    <div class="ai-panel" id="aiPanel">
-        <div class="ai-header">
-            <div class="ai-title"><i data-lucide="sparkles"></i> Asistente MAWI</div>
-            <button class="modal-close" onclick="toggleAI()"><i data-lucide="x"></i></button>
-        </div>
-        <div class="ai-body" id="aiMessages">
-            <div class="ai-message assistant">
-                <strong>👋 ¡Hola! Soy MAWI, tu asistente inteligente.</strong><br><br>
-                Soy un asistente de IA <strong>verdaderamente inteligente</strong> powered by <strong>Gemini de Google</strong>. Puedo ayudarte con:<br><br>
-                💡 <strong>Responder CUALQUIER pregunta</strong> sobre el sistema<br>
-                📊 <strong>Analizar datos</strong> en tiempo real<br>
-                🔍 <strong>Detectar problemas</strong> y sugerir soluciones<br>
-                📈 <strong>Recomendar optimizaciones</strong> basadas en métricas<br>
-                📖 <strong>Explicar procedimientos</strong> paso a paso<br><br>
-                <em style="opacity:0.8">Pregúntame lo que quieras sobre órdenes, inventario, picking, packing, equipos, o cualquier aspecto del sistema. ¡No estoy limitado a respuestas predefinidas!</em>
-            </div>
-        </div>
-        <div class="ai-footer">
-            <div class="ai-input">
-                <input type="text" id="aiInput" class="form-input" placeholder="Escribe tu pregunta..." onkeypress="if(event.key==='Enter')enviarMensajeAI()">
-                <button class="btn btn-primary" onclick="enviarMensajeAI()"><i data-lucide="send" style="width:16px;height:16px"></i></button>
-            </div>
-        </div>
-    </div>
-    <button class="ai-toggle" onclick="toggleAI()" title="Asistente IA"><i data-lucide="sparkles" style="width:24px;height:24px"></i></button>
 
     <script>
         // ============================================
@@ -1031,6 +1087,7 @@
 
                 actualizarFiltrosProductos();
                 renderizarTodo();
+                inicializarFiltrosDashboard();
                 actualizarDashboard();
                 
                 ocultarLoading();
@@ -1069,6 +1126,11 @@
         // ============================================
         function aplicarFiltrosDashboard() {
             const periodo = document.getElementById('filtroPeriodo').value;
+            const equipoFiltro = document.getElementById('filtroEquipo').value;
+            const generoFiltro = document.getElementById('filtroGenero').value;
+            const lineaFiltro = document.getElementById('filtroLinea').value;
+            const tiendaFiltro = document.getElementById('filtroTienda').value;
+            
             document.getElementById('filtroCustom').style.display = periodo === 'custom' ? 'flex' : 'none';
             
             // Calcular rango de fechas según el período
@@ -1097,16 +1159,97 @@
                     break;
             }
             
-            // Filtrar órdenes según el período
+            // Filtrar órdenes según TODOS los criterios
             let ordenesFiltradas = ordenes;
+            
+            // Filtro por fecha
             if (fechaInicio) {
-                ordenesFiltradas = ordenes.filter(o => {
+                ordenesFiltradas = ordenesFiltradas.filter(o => {
                     const fecha = new Date(o.fecha);
                     return fecha >= fechaInicio && fecha <= fechaFin;
                 });
             }
             
+            // Filtro por equipo
+            if (equipoFiltro) {
+                ordenesFiltradas = ordenesFiltradas.filter(o => {
+                    const equipoPicking = o.division_config?.find(d => d.equipoPicking === equipoFiltro);
+                    const equipoPacking = o.division_config?.find(d => d.equipoPacking === equipoFiltro);
+                    return equipoPicking || equipoPacking;
+                });
+            }
+            
+            // Filtro por género
+            if (generoFiltro) {
+                ordenesFiltradas = ordenesFiltradas.filter(o => {
+                    return (o.items || []).some(item => {
+                        const prod = productos.find(p => p.variante === item.variante);
+                        return prod && prod.genero === generoFiltro;
+                    });
+                });
+            }
+            
+            // Filtro por línea
+            if (lineaFiltro) {
+                ordenesFiltradas = ordenesFiltradas.filter(o => {
+                    return (o.items || []).some(item => {
+                        const prod = productos.find(p => p.variante === item.variante);
+                        return prod && prod.linea === lineaFiltro;
+                    });
+                });
+            }
+            
+            // Filtro por tienda
+            if (tiendaFiltro) {
+                ordenesFiltradas = ordenesFiltradas.filter(o => {
+                    return (o.items || []).some(item => {
+                        const dist = item.distribucion || {};
+                        return dist[tiendaFiltro] && dist[tiendaFiltro] > 0;
+                    });
+                });
+            }
+            
             actualizarDashboard(ordenesFiltradas);
+        }
+        
+        function limpiarFiltrosDashboard() {
+            document.getElementById('filtroPeriodo').value = 'mes';
+            document.getElementById('filtroEquipo').value = '';
+            document.getElementById('filtroGenero').value = '';
+            document.getElementById('filtroLinea').value = '';
+            document.getElementById('filtroTienda').value = '';
+            document.getElementById('filtroFechaDesde').value = '';
+            document.getElementById('filtroFechaHasta').value = '';
+            document.getElementById('filtroCustom').style.display = 'none';
+            aplicarFiltrosDashboard();
+        }
+        
+        function inicializarFiltrosDashboard() {
+            // Poblar filtro de equipos
+            const equiposSet = new Set();
+            equipos.forEach(e => equiposSet.add(e.nombre));
+            const equipoSelect = document.getElementById('filtroEquipo');
+            equipoSelect.innerHTML = '<option value="">Todos</option>' +
+                Array.from(equiposSet).sort().map(e => `<option value="${e}">${e}</option>`).join('');
+            
+            // Poblar filtro de géneros
+            const generosSet = new Set();
+            productos.forEach(p => { if (p.genero) generosSet.add(p.genero); });
+            const generoSelect = document.getElementById('filtroGenero');
+            generoSelect.innerHTML = '<option value="">Todos</option>' +
+                Array.from(generosSet).sort().map(g => `<option value="${g}">${g}</option>`).join('');
+            
+            // Poblar filtro de líneas
+            const lineasSet = new Set();
+            productos.forEach(p => { if (p.linea) lineasSet.add(p.linea); });
+            const lineaSelect = document.getElementById('filtroLinea');
+            lineaSelect.innerHTML = '<option value="">Todas</option>' +
+                Array.from(lineasSet).sort().map(l => `<option value="${l}">${l}</option>`).join('');
+            
+            // Poblar filtro de tiendas
+            const tiendaSelect = document.getElementById('filtroTienda');
+            tiendaSelect.innerHTML = '<option value="">Todas</option>' +
+                TIENDAS_BASE.map(t => `<option value="${t}">${t}</option>`).join('');
         }
 
         function actualizarDashboard(ordenesFiltradas = ordenes) {
@@ -1141,6 +1284,187 @@
             document.getElementById('statCompletadas').textContent = completadas.length;
 
             generarGraficas(ordenesFiltradas);
+            generarTablasConsumo(ordenesFiltradas);
+        }
+        
+        function generarTablasConsumo(ordenesFiltradas) {
+            // Calcular consumo por género
+            const consumoGenero = {};
+            let totalUnidades = 0;
+            let totalMonto = 0;
+            
+            ordenesFiltradas.forEach(o => {
+                if (o.estado === 'Completada' && o.items) {
+                    o.items.forEach(item => {
+                        const prod = productos.find(p => p.variante === item.variante);
+                        if (prod && prod.genero) {
+                            if (!consumoGenero[prod.genero]) {
+                                consumoGenero[prod.genero] = { unidades: 0, monto: 0 };
+                            }
+                            const cantidad = item.cantidad || 0;
+                            const precio = prod.pvp_regular || prod.pvp || 0;
+                            consumoGenero[prod.genero].unidades += cantidad;
+                            consumoGenero[prod.genero].monto += cantidad * precio;
+                            totalUnidades += cantidad;
+                            totalMonto += cantidad * precio;
+                        }
+                    });
+                }
+            });
+            
+            // Renderizar tabla de género
+            let htmlGenero = '';
+            Object.entries(consumoGenero)
+                .sort((a, b) => b[1].unidades - a[1].unidades)
+                .forEach(([genero, datos]) => {
+                    const pct = totalUnidades > 0 ? ((datos.unidades / totalUnidades) * 100).toFixed(1) : 0;
+                    htmlGenero += `<tr>
+                        <td><strong>${genero}</strong></td>
+                        <td style="text-align:right">${datos.unidades.toLocaleString()}</td>
+                        <td style="text-align:right">${formatMoney(datos.monto)}</td>
+                        <td style="text-align:right"><span class="badge badge-info">${pct}%</span></td>
+                    </tr>`;
+                });
+            
+            if (htmlGenero) {
+                htmlGenero += `<tr style="background:var(--bg-hover);font-weight:600">
+                    <td>TOTAL</td>
+                    <td style="text-align:right">${totalUnidades.toLocaleString()}</td>
+                    <td style="text-align:right">${formatMoney(totalMonto)}</td>
+                    <td style="text-align:right">100%</td>
+                </tr>`;
+            } else {
+                htmlGenero = '<tr><td colspan="4" class="empty-state">Sin datos</td></tr>';
+            }
+            document.getElementById('tablaConsumoGenero').innerHTML = htmlGenero;
+            
+            // Calcular consumo por tienda
+            const consumoTienda = {};
+            ordenesFiltradas.forEach(o => {
+                if (o.estado === 'Completada' && o.items) {
+                    o.items.forEach(item => {
+                        const prod = productos.find(p => p.variante === item.variante);
+                        const precio = prod ? (prod.pvp_regular || prod.pvp || 0) : 0;
+                        const dist = item.distribucion || {};
+                        
+                        Object.entries(dist).forEach(([tienda, cant]) => {
+                            if (cant > 0) {
+                                if (!consumoTienda[tienda]) {
+                                    consumoTienda[tienda] = { unidades: 0, monto: 0 };
+                                }
+                                consumoTienda[tienda].unidades += cant;
+                                consumoTienda[tienda].monto += cant * precio;
+                            }
+                        });
+                    });
+                }
+            });
+            
+            // Renderizar tabla de tienda
+            let htmlTienda = '';
+            let totalUnidadesTienda = 0;
+            let totalMontoTienda = 0;
+            
+            Object.entries(consumoTienda)
+                .sort((a, b) => b[1].unidades - a[1].unidades)
+                .forEach(([tienda, datos]) => {
+                    totalUnidadesTienda += datos.unidades;
+                    totalMontoTienda += datos.monto;
+                });
+            
+            Object.entries(consumoTienda)
+                .sort((a, b) => b[1].unidades - a[1].unidades)
+                .forEach(([tienda, datos]) => {
+                    const pct = totalUnidadesTienda > 0 ? ((datos.unidades / totalUnidadesTienda) * 100).toFixed(1) : 0;
+                    htmlTienda += `<tr>
+                        <td><strong>${tienda.replace('LUKERS ', '')}</strong></td>
+                        <td style="text-align:right">${datos.unidades.toLocaleString()}</td>
+                        <td style="text-align:right">${formatMoney(datos.monto)}</td>
+                        <td style="text-align:right"><span class="badge badge-info">${pct}%</span></td>
+                    </tr>`;
+                });
+            
+            if (htmlTienda) {
+                htmlTienda += `<tr style="background:var(--bg-hover);font-weight:600">
+                    <td>TOTAL</td>
+                    <td style="text-align:right">${totalUnidadesTienda.toLocaleString()}</td>
+                    <td style="text-align:right">${formatMoney(totalMontoTienda)}</td>
+                    <td style="text-align:right">100%</td>
+                </tr>`;
+            } else {
+                htmlTienda = '<tr><td colspan="4" class="empty-state">Sin datos</td></tr>';
+            }
+            document.getElementById('tablaConsumoTienda').innerHTML = htmlTienda;
+            
+            // Generar matriz género x tienda
+            generarMatrizGeneroTienda(ordenesFiltradas);
+        }
+        
+        function generarMatrizGeneroTienda(ordenesFiltradas) {
+            const matriz = {};
+            const tiendas = new Set();
+            const generos = new Set();
+            
+            ordenesFiltradas.forEach(o => {
+                if (o.estado === 'Completada' && o.items) {
+                    o.items.forEach(item => {
+                        const prod = productos.find(p => p.variante === item.variante);
+                        if (prod && prod.genero) {
+                            generos.add(prod.genero);
+                            const dist = item.distribucion || {};
+                            
+                            Object.entries(dist).forEach(([tienda, cant]) => {
+                                if (cant > 0) {
+                                    tiendas.add(tienda);
+                                    if (!matriz[prod.genero]) matriz[prod.genero] = {};
+                                    matriz[prod.genero][tienda] = (matriz[prod.genero][tienda] || 0) + cant;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            
+            if (generos.size === 0 || tiendas.size === 0) {
+                document.getElementById('tablaMatrizGeneroTienda').innerHTML = 
+                    '<thead><tr><th>Género</th></tr></thead><tbody><tr><td class="empty-state">Sin datos</td></tr></tbody>';
+                return;
+            }
+            
+            // Construir tabla
+            let html = '<thead><tr><th>Género</th>';
+            const tiendasArray = Array.from(tiendas).sort();
+            tiendasArray.forEach(t => {
+                html += `<th style="text-align:right">${t.replace('LUKERS ', '')}</th>`;
+            });
+            html += '<th style="text-align:right;background:var(--bg-hover)">TOTAL</th></tr></thead><tbody>';
+            
+            const generosArray = Array.from(generos).sort();
+            generosArray.forEach(g => {
+                html += `<tr><td><strong>${g}</strong></td>`;
+                let totalGenero = 0;
+                tiendasArray.forEach(t => {
+                    const valor = matriz[g]?.[t] || 0;
+                    totalGenero += valor;
+                    html += `<td style="text-align:right">${valor > 0 ? valor.toLocaleString() : '-'}</td>`;
+                });
+                html += `<td style="text-align:right;background:var(--bg-hover);font-weight:600">${totalGenero.toLocaleString()}</td></tr>`;
+            });
+            
+            // Fila de totales
+            html += '<tr style="background:var(--bg-hover);font-weight:600"><td>TOTAL</td>';
+            let granTotal = 0;
+            tiendasArray.forEach(t => {
+                let totalTienda = 0;
+                generosArray.forEach(g => {
+                    totalTienda += matriz[g]?.[t] || 0;
+                });
+                granTotal += totalTienda;
+                html += `<td style="text-align:right">${totalTienda.toLocaleString()}</td>`;
+            });
+            html += `<td style="text-align:right">${granTotal.toLocaleString()}</td></tr></tbody>`;
+            
+            document.getElementById('tablaMatrizGeneroTienda').innerHTML = html;
         }
 
         function generarGraficas(ordenesFiltradas = ordenes) {
@@ -1247,33 +1571,90 @@
         function verVariante(variante, ubicacion) {
             const inv = inventario.find(i => i.variante === variante && i.ubicacion === ubicacion);
             const prod = productos.find(p => p.variante === variante);
+            const todasUbicaciones = inventario.filter(i => i.variante === variante);
             
-            let html = '<div class="detail-grid">';
-            html += `<div class="detail-item"><div class="detail-label">Variante</div><div class="detail-value">${variante}</div></div>`;
-            html += `<div class="detail-item"><div class="detail-label">Ubicación</div><div class="detail-value">${ubicacion}</div></div>`;
-            
-            if (inv) {
-                html += `<div class="detail-item"><div class="detail-label">Stock Físico</div><div class="detail-value">${inv.stock_fisico || 0}</div></div>`;
-                html += `<div class="detail-item"><div class="detail-label">Bloqueado</div><div class="detail-value">${inv.stock_bloqueado || 0}</div></div>`;
-                html += `<div class="detail-item"><div class="detail-label">Disponible</div><div class="detail-value" style="color:var(--success)">${(inv.stock_fisico || 0) - (inv.stock_bloqueado || 0)}</div></div>`;
-            }
-            
-            if (prod) {
-                html += `<div class="detail-item" style="grid-column:span 2"><div class="detail-label">Descripción</div><div class="detail-value">${prod.descripcion || '-'}</div></div>`;
-                html += `<div class="detail-item"><div class="detail-label">Código Comercial</div><div class="detail-value">${prod.codigo_comercial || '-'}</div></div>`;
-                html += `<div class="detail-item"><div class="detail-label">Género</div><div class="detail-value">${prod.genero || '-'}</div></div>`;
-                html += `<div class="detail-item"><div class="detail-label">Marca</div><div class="detail-value">${prod.marca || '-'}</div></div>`;
-                html += `<div class="detail-item"><div class="detail-label">Talla</div><div class="detail-value">${prod.talla || '-'}</div></div>`;
-                html += `<div class="detail-item"><div class="detail-label">Kardex</div><div class="detail-value" style="color:var(--primary)">${formatMoney(prod.kardex)}</div></div>`;
-                html += `<div class="detail-item"><div class="detail-label">PVP</div><div class="detail-value" style="color:var(--success)">${formatMoney(prod.pvp)}</div></div>`;
-                html += `<div class="detail-item"><div class="detail-label">PVP Regular</div><div class="detail-value">${formatMoney(prod.pvp_regular)}</div></div>`;
-            } else {
-                html += `<div class="detail-item" style="grid-column:span 2"><div class="detail-label">Producto</div><div class="detail-value" style="color:var(--warning)">No encontrado en catálogo</div></div>`;
-            }
-            html += '</div>';
+            let html = `
+                <div class="tabs" style="margin-bottom:1rem">
+                    <div class="tab active" data-tab="producto" onclick="cambiarTabInfo('producto', '${variante}', '${ubicacion}')">📦 Producto</div>
+                    <div class="tab" data-tab="inventario" onclick="cambiarTabInfo('inventario', '${variante}', '${ubicacion}')">📊 Inventario</div>
+                    <div class="tab" data-tab="movimientos" onclick="cambiarTabInfo('movimientos', '${variante}', '${ubicacion}')">📋 Movimientos</div>
+                </div>
+                <div id="infoTabContent"></div>
+            `;
             
             document.getElementById('varianteDetalleContent').innerHTML = html;
             abrirModal('modalVerVariante');
+            cambiarTabInfo('producto', variante, ubicacion);
+        }
+        
+        function cambiarTabInfo(tab, variante, ubicacion) {
+            // Actualizar tabs
+            document.querySelectorAll('#modalVerVariante .tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tab);
+            });
+            
+            const inv = inventario.find(i => i.variante === variante && i.ubicacion === ubicacion);
+            const prod = productos.find(p => p.variante === variante);
+            const todasUbicaciones = inventario.filter(i => i.variante === variante);
+            
+            let html = '';
+            
+            if (tab === 'producto') {
+                html = '<div class="detail-grid">';
+                html += `<div class="detail-item"><div class="detail-label">Variante</div><div class="detail-value"><strong>${variante}</strong></div></div>`;
+                
+                if (prod) {
+                    html += `<div class="detail-item"><div class="detail-label">Código Comercial</div><div class="detail-value">${prod.codigo_comercial || '-'}</div></div>`;
+                    html += `<div class="detail-item" style="grid-column:span 2"><div class="detail-label">Descripción</div><div class="detail-value">${prod.descripcion || '-'}</div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">Marca</div><div class="detail-value">${prod.marca || '-'}</div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">Género</div><div class="detail-value">${prod.genero || '-'}</div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">Línea</div><div class="detail-value">${prod.linea || '-'}</div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">Talla</div><div class="detail-value">${prod.talla || '-'}</div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">Color</div><div class="detail-value">${prod.color || '-'}</div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">Kardex</div><div class="detail-value" ${prod.kardex === 0 ? 'style="color:var(--danger)"' : ''}><strong>${prod.kardex || 0}</strong> ${prod.kardex === 0 ? '⚠️' : ''}</div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">PVP</div><div class="detail-value" style="color:var(--success)">${formatMoney(prod.pvp || 0)}</div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">PVP Regular</div><div class="detail-value">${formatMoney(prod.pvp_regular || 0)}</div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">PVP Oferta</div><div class="detail-value" style="color:var(--warning)">${formatMoney(prod.pvp_oferta || 0)}</div></div>`;
+                } else {
+                    html += `<div class="detail-item" style="grid-column:span 2"><div class="alert alert-warning" style="margin:0"><i data-lucide="alert-triangle"></i><span>Este producto NO existe en el catálogo</span></div></div>`;
+                }
+                html += '</div>';
+                
+            } else if (tab === 'inventario') {
+                html = '<div class="detail-grid" style="margin-bottom:1rem">';
+                html += `<div class="detail-item"><div class="detail-label">Variante</div><div class="detail-value"><strong>${variante}</strong></div></div>`;
+                html += `<div class="detail-item"><div class="detail-label">Ubicación Actual</div><div class="detail-value"><span class="badge badge-info">${ubicacion}</span></div></div>`;
+                
+                if (inv) {
+                    html += `<div class="detail-item"><div class="detail-label">Stock Físico</div><div class="detail-value"><strong>${inv.stock_fisico || 0}</strong></div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">Bloqueado</div><div class="detail-value" style="color:var(--warning)"><strong>${inv.stock_bloqueado || 0}</strong></div></div>`;
+                    html += `<div class="detail-item"><div class="detail-label">Disponible</div><div class="detail-value" style="color:var(--success)"><strong>${(inv.stock_fisico || 0) - (inv.stock_bloqueado || 0)}</strong></div></div>`;
+                }
+                html += '</div>';
+                
+                if (todasUbicaciones.length > 1) {
+                    html += '<h4 style="margin:1rem 0">Todas las Ubicaciones</h4>';
+                    html += '<div class="table-container"><table><thead><tr><th>Ubicación</th><th>Stock Físico</th><th>Bloqueado</th><th>Disponible</th></tr></thead><tbody>';
+                    todasUbicaciones.forEach(i => {
+                        const disp = (i.stock_fisico || 0) - (i.stock_bloqueado || 0);
+                        html += `<tr>
+                            <td><span class="badge badge-info">${i.ubicacion}</span></td>
+                            <td>${i.stock_fisico || 0}</td>
+                            <td style="color:var(--warning)">${i.stock_bloqueado || 0}</td>
+                            <td style="color:${disp > 0 ? 'var(--success)' : 'var(--danger)'}"><strong>${disp}</strong></td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table></div>';
+                }
+                
+            } else if (tab === 'movimientos') {
+                html = '<div class="timeline">';
+                html += '<div class="timeline-item"><div class="timeline-date">Próximamente</div><div class="timeline-title">Historial de movimientos</div><div class="timeline-desc">Esta funcionalidad estará disponible pronto</div></div>';
+                html += '</div>';
+            }
+            
+            document.getElementById('infoTabContent').innerHTML = html;
+            lucide.createIcons();
         }
 
         async function desbloquearItem(variante, ubicacion) {
@@ -1486,21 +1867,78 @@
                 kardex: parseFloat(getCol(r, ['kardex', 'Kardex', 'KARDEX'])) || 0,
                 pvp: parseFloat(getCol(r, ['pvp', 'PVP'])) || 0,
                 pvp_regular: parseFloat(getCol(r, ['pvp_regular', 'PVPRegular', 'pvpregular'])) || 0,
+                pvp_oferta: parseFloat(getCol(r, ['pvp_oferta', 'PVPOferta', 'pvpoferta'])) || 0,
                 genero: String(getCol(r, ['genero', 'Genero', 'GENERO']) || '').trim(),
                 linea: String(getCol(r, ['linea', 'Linea', 'LINEA']) || '').trim(),
                 marca: String(getCol(r, ['marca', 'Marca', 'MARCA']) || '').trim(),
-                talla: String(getCol(r, ['talla', 'Talla', 'TALLA']) || '').trim()
+                talla: String(getCol(r, ['talla', 'Talla', 'TALLA']) || '').trim(),
+                color: String(getCol(r, ['color', 'Color', 'COLOR']) || '').trim()
             })).filter(i => i.variante);
+
+            // VALIDACIONES
+            const variantesInventario = new Set(inventario.map(i => i.variante));
+            const variantesFaltantes = items.filter(p => !variantesInventario.has(p.variante));
+            const kardexCero = items.filter(p => p.kardex === 0);
 
             for (let i = 0; i < items.length; i += BATCH_SIZE) {
                 await supabase.from('productos_system').insert(items.slice(i, i + BATCH_SIZE));
                 actualizarProgreso((i / items.length) * 100);
             }
+            
             ocultarLoading();
             toast(`${items.length} productos cargados`, 'success');
+            
+            // Mostrar alertas
+            let alertas = [];
+            if (variantesFaltantes.length > 0) {
+                alertas.push(`⚠️ <strong>${variantesFaltantes.length} variantes NO existen en inventario</strong>`);
+            }
+            if (kardexCero.length > 0) {
+                alertas.push(`⚠️ <strong>${kardexCero.length} productos tienen kardex = 0</strong>`);
+            }
+            
+            if (alertas.length > 0) {
+                const html = `
+                    <div style="text-align:left">
+                        <h3 style="margin-bottom:1rem">⚠️ Validaciones Detectadas</h3>
+                        ${alertas.map(a => `<div style="padding:0.5rem 0">${a}</div>`).join('')}
+                        <div style="margin-top:1.5rem;display:flex;gap:0.5rem;justify-content:center">
+                            ${variantesFaltantes.length > 0 ? '<button class="btn btn-warning" onclick="descargarVariantesFaltantes()">📥 Descargar Faltantes</button>' : ''}
+                            ${kardexCero.length > 0 ? '<button class="btn btn-warning" onclick="descargarKardexCero()">📥 Descargar Kardex=0</button>' : ''}
+                            <button class="btn btn-outline" onclick="cerrarModal(&apos;modalValidaciones&apos;)">Cerrar</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Guardar para descargas
+                window.variantesFaltantesTemp = variantesFaltantes;
+                window.kardexCeroTemp = kardexCero;
+                
+                document.getElementById('alertasValidacionContent').innerHTML = html;
+                abrirModal('modalValidaciones');
+            }
+            
             cerrarModal('modalSubirProductos');
             limpiarArchivo('fileProductos', 'fileProductosInfo');
             await cargarDatos();
+        }
+        
+        function descargarVariantesFaltantes() {
+            if (!window.variantesFaltantesTemp || window.variantesFaltantesTemp.length === 0) return;
+            const ws = XLSX.utils.json_to_sheet(window.variantesFaltantesTemp);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Faltantes');
+            XLSX.writeFile(wb, `Variantes_Faltantes_Inventario_${new Date().toISOString().split('T')[0]}.xlsx`);
+            toast('Archivo descargado', 'success');
+        }
+        
+        function descargarKardexCero() {
+            if (!window.kardexCeroTemp || window.kardexCeroTemp.length === 0) return;
+            const ws = XLSX.utils.json_to_sheet(window.kardexCeroTemp);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'KardexCero');
+            XLSX.writeFile(wb, `Productos_Kardex_Cero_${new Date().toISOString().split('T')[0]}.xlsx`);
+            toast('Archivo descargado', 'success');
         }
 
         function exportarProductos() {
@@ -3027,278 +3465,6 @@
         function cambiarPagina(tipo, dir) {
             if (tipo === 'inventario') { paginaInv += dir; renderizarInventario(); }
             else if (tipo === 'productos') { paginaProd += dir; renderizarProductos(); }
-        }
-
-        function toggleAI() {
-            document.getElementById('aiPanel').classList.toggle('active');
-        }
-
-        async function enviarMensajeAI() {
-            const input = document.getElementById('aiInput');
-            const mensaje = input.value.trim();
-            if (!mensaje) return;
-
-            const messagesDiv = document.getElementById('aiMessages');
-            
-            // Agregar mensaje del usuario
-            messagesDiv.innerHTML += `<div class="ai-message user">${mensaje}</div>`;
-            input.value = '';
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-            // Mostrar indicador de escritura
-            const loadingId = 'ai-loading-' + Date.now();
-            messagesDiv.innerHTML += `<div class="ai-message assistant" id="${loadingId}">
-                <div style="display:flex;align-items:center;gap:8px">
-                    <div style="width:8px;height:8px;border-radius:50%;background:var(--primary);animation:pulse 1.5s infinite"></div>
-                    <em style="opacity:0.7">Gemini está pensando...</em>
-                </div>
-            </div>`;
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-            try {
-                // Preparar contexto del sistema
-                const contexto = prepararContextoSistema();
-                
-                // Llamar a la API de Claude
-                const respuesta = await llamarClaudeAPI(mensaje, contexto);
-                
-                // Reemplazar el indicador de carga con la respuesta
-                document.getElementById(loadingId).innerHTML = respuesta;
-            } catch (error) {
-                console.error('Error en API:', error);
-                document.getElementById(loadingId).innerHTML = `<strong style="color:var(--danger)">⚠️ Error al conectar con Gemini</strong><br><br>
-                    Ha ocurrido un error temporal. Intenta nuevamente.<br><br>
-                    <em style="font-size:0.8rem;opacity:0.7">Error: ${error.message}</em>`;
-            }
-            
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        function prepararContextoSistema() {
-            // Preparar datos actuales del sistema para el contexto
-            const ordenesActivas = ordenes.filter(o => !['Completada', 'Cancelada'].includes(o.estado));
-            const pickingActivo = picking.filter(pk => ['En Proceso', 'Pausado'].includes(pk.estado));
-            const packingActivo = packing.filter(pk => ['En Proceso', 'Pausado'].includes(pk.estado));
-            const reclasPendientes = reclasificacion.filter(r => r.estado === 'Pendiente');
-            const stockTotal = inventario.reduce((s, i) => s + (parseInt(i.stock_fisico) || 0), 0);
-            const stockBloqueado = inventario.reduce((s, i) => s + (parseInt(i.stock_bloqueado) || 0), 0);
-            
-            // Calcular estadísticas de rendimiento
-            const pickingCompletados = picking.filter(pk => pk.estado === 'Completado');
-            const packingCompletados = packing.filter(pk => pk.estado === 'Completado');
-            const tiempoPromPicking = pickingCompletados.length > 0 
-                ? (pickingCompletados.reduce((s, pk) => s + (pk.tiempo_minutos || 0), 0) / pickingCompletados.length).toFixed(0)
-                : 0;
-            const tiempoPromPacking = packingCompletados.length > 0 
-                ? (packingCompletados.reduce((s, pk) => s + (pk.tiempo_minutos || 0), 0) / packingCompletados.length).toFixed(0)
-                : 0;
-
-            // Top 5 productos más solicitados
-            const productosConteo = {};
-            ordenes.forEach(o => {
-                (o.items || []).forEach(item => {
-                    productosConteo[item.variante] = (productosConteo[item.variante] || 0) + item.cantidad;
-                });
-            });
-            const topProductos = Object.entries(productosConteo)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5)
-                .map(([v, c]) => `${v}: ${c} unidades`);
-
-            // Problemas detectados
-            const problemas = [];
-            const ordenesEstancadas = ordenes.filter(o => {
-                if (['Completada', 'Cancelada'].includes(o.estado)) return false;
-                return diasTranscurridos(o.fecha) > 3;
-            });
-            if (ordenesEstancadas.length > 0) problemas.push(`${ordenesEstancadas.length} órdenes estancadas +3 días`);
-            if (stockBloqueado > 1000) problemas.push(`Stock bloqueado alto: ${stockBloqueado.toLocaleString()} unidades`);
-            if (reclasPendientes.length > 20) problemas.push(`${reclasPendientes.length} reclasificaciones pendientes`);
-
-            return {
-                fecha: new Date().toLocaleDateString('es-PE'),
-                hora: new Date().toLocaleTimeString('es-PE'),
-                sistema: {
-                    inventario: {
-                        totalRegistros: inventario.length,
-                        stockTotal: stockTotal,
-                        stockDisponible: stockTotal - stockBloqueado,
-                        stockBloqueado: stockBloqueado,
-                        ubicaciones: new Set(inventario.map(i => i.ubicacion)).size
-                    },
-                    productos: {
-                        totalCatalogo: productos.length,
-                        generos: [...new Set(productos.map(p => p.genero).filter(Boolean))],
-                        marcas: [...new Set(productos.map(p => p.marca).filter(Boolean))].length
-                    },
-                    ordenes: {
-                        total: ordenes.length,
-                        activas: ordenesActivas.length,
-                        completadas: ordenes.filter(o => o.estado === 'Completada').length,
-                        pendientesDivision: ordenes.filter(o => o.estado === 'Pendiente División').length,
-                        enPicking: ordenes.filter(o => o.estado === 'En Picking').length,
-                        enPacking: ordenes.filter(o => o.estado === 'En Packing').length,
-                        listaActivas: ordenesActivas.slice(0, 5).map(o => ({
-                            id: o.id,
-                            nombre: o.nombre,
-                            estado: o.estado,
-                            unidades: o.total_unidades,
-                            dias: diasTranscurridos(o.fecha)
-                        }))
-                    },
-                    picking: {
-                        activos: pickingActivo.length,
-                        completados: pickingCompletados.length,
-                        tiempoPromedio: tiempoPromPicking + ' minutos'
-                    },
-                    packing: {
-                        activos: packingActivo.length,
-                        completados: packingCompletados.length,
-                        tiempoPromedio: tiempoPromPacking + ' minutos'
-                    },
-                    reclasificacion: {
-                        pendientes: reclasPendientes.length,
-                        completadas: reclasificacion.filter(r => r.estado === 'Completada').length
-                    },
-                    equipos: {
-                        total: equipos.length,
-                        picking: equipos.filter(e => e.tipo === 'picking').length,
-                        packing: equipos.filter(e => e.tipo === 'packing').length
-                    }
-                },
-                estadisticas: {
-                    topProductos: topProductos,
-                    tiempoPromPicking: tiempoPromPicking,
-                    tiempoPromPacking: tiempoPromPacking
-                },
-                problemas: problemas,
-                configuracion: {
-                    tiendas: TIENDAS_BASE,
-                    itemsPorPagina: ITEMS_POR_PAGINA,
-                    horarioLaboral: '8:30 AM - 7:00 PM'
-                }
-            };
-        }
-
-        async function llamarClaudeAPI(pregunta, contexto) {
-            // API KEY DE GEMINI
-            const GEMINI_API_KEY = 'AIzaSyA76fWbgW9lwvllILLvcZNCCEK2FH8n3dk';
-            
-            // Preparar el prompt con todo el contexto
-            const promptCompleto = `Eres MAWI, el asistente inteligente del sistema de gestión de almacén de Lukers. Eres experto en operaciones de almacén, logística y análisis de datos en tiempo real.
-
-📅 CONTEXTO ACTUAL (${contexto.fecha} ${contexto.hora}):
-
-📦 INVENTARIO:
-- Registros: ${contexto.sistema.inventario.totalRegistros.toLocaleString()}
-- Stock total: ${contexto.sistema.inventario.stockTotal.toLocaleString()} unidades
-- Disponible: ${contexto.sistema.inventario.stockDisponible.toLocaleString()} unidades
-- Bloqueado: ${contexto.sistema.inventario.stockBloqueado.toLocaleString()} unidades
-- Ubicaciones: ${contexto.sistema.inventario.ubicaciones}
-
-🛍️ PRODUCTOS:
-- Catálogo: ${contexto.sistema.productos.totalCatalogo.toLocaleString()} productos
-- Géneros: ${contexto.sistema.productos.generos.join(', ')}
-- Marcas: ${contexto.sistema.productos.marcas}
-
-📋 ÓRDENES:
-- Total: ${contexto.sistema.ordenes.total}
-- Activas: ${contexto.sistema.ordenes.activas}
-- Completadas: ${contexto.sistema.ordenes.completadas}
-- Pendientes División: ${contexto.sistema.ordenes.pendientesDivision}
-- En Picking: ${contexto.sistema.ordenes.enPicking}
-- En Packing: ${contexto.sistema.ordenes.enPacking}
-
-${contexto.sistema.ordenes.listaActivas.length > 0 ? 'ÓRDENES ACTIVAS RECIENTES:\n' + contexto.sistema.ordenes.listaActivas.map(o => `  • ${o.nombre} (${o.estado}, ${o.unidades} unidades, ${o.dias} días)`).join('\n') : ''}
-
-🔍 OPERACIONES:
-- Picking activos: ${contexto.sistema.picking.activos} | Completados: ${contexto.sistema.picking.completados} | Tiempo promedio: ${contexto.sistema.picking.tiempoPromedio}
-- Packing activos: ${contexto.sistema.packing.activos} | Completados: ${contexto.sistema.packing.completados} | Tiempo promedio: ${contexto.sistema.packing.tiempoPromedio}
-
-🔄 RECLASIFICACIÓN:
-- Pendientes: ${contexto.sistema.reclasificacion.pendientes}
-- Completadas: ${contexto.sistema.reclasificacion.completadas}
-
-👥 EQUIPOS:
-- Total: ${contexto.sistema.equipos.total} (${contexto.sistema.equipos.picking} picking, ${contexto.sistema.equipos.packing} packing)
-
-📊 TOP 5 PRODUCTOS:
-${contexto.estadisticas.topProductos.length > 0 ? contexto.estadisticas.topProductos.join('\n') : 'Sin datos'}
-
-${contexto.problemas.length > 0 ? '⚠️ ALERTAS:\n' + contexto.problemas.map(p => `• ${p}`).join('\n') : '✅ Sistema operando normalmente'}
-
-PREGUNTA DEL USUARIO: ${pregunta}
-
-Responde en español, formato HTML (<strong>, <br>, <ul>, <li>), usa emojis, sé conciso y profesional.`;
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: promptCompleto
-                            }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.7,
-                            topK: 40,
-                            topP: 0.95,
-                            maxOutputTokens: 2048
-                        }
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Error Gemini API:', response.status, errorText);
-                    return generarRespuestaFallback(pregunta, contexto);
-                }
-
-                const data = await response.json();
-                
-                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-                    const texto = data.candidates[0].content.parts[0].text;
-                    return texto;
-                } else {
-                    console.error('Respuesta inesperada:', data);
-                    return generarRespuestaFallback(pregunta, contexto);
-                }
-            } catch (error) {
-                console.error('Error API Gemini:', error);
-                return generarRespuestaFallback(pregunta, contexto);
-            }
-        }
-
-        function generarRespuestaFallback(pregunta, contexto) {
-            // Sistema de respaldo cuando la API no está disponible
-            const p = pregunta.toLowerCase();
-            
-            if (p.includes('estado') || p.includes('resumen') || p.includes('cómo va') || p.includes('como va')) {
-                return `<strong>📊 Estado Actual del Sistema:</strong><br><br>
-                    <strong>Inventario:</strong> ${contexto.sistema.inventario.totalRegistros.toLocaleString()} registros, ${contexto.sistema.inventario.stockDisponible.toLocaleString()} unidades disponibles<br>
-                    <strong>Órdenes Activas:</strong> ${contexto.sistema.ordenes.activas}<br>
-                    <strong>Picking en Proceso:</strong> ${contexto.sistema.picking.activos}<br>
-                    <strong>Packing en Proceso:</strong> ${contexto.sistema.packing.activos}<br>
-                    <strong>Reclasificaciones Pendientes:</strong> ${contexto.sistema.reclasificacion.pendientes}<br><br>
-                    ${contexto.problemas.length > 0 ? '⚠️ <strong>Alertas:</strong><br>' + contexto.problemas.join('<br>') : '✅ Sistema operando normalmente'}<br><br>
-                    <em style="font-size:0.85em;opacity:0.8">💡 Configura tu API key de Gemini para respuestas más inteligentes</em>`;
-            }
-
-            return `<strong>Preguntaste:</strong> "${pregunta}"<br><br>
-                Para respuestas inteligentes y personalizadas, necesitas configurar tu API key de <strong>Gemini</strong>.<br><br>
-                <strong>¿Cómo configurarla?</strong><br>
-                1. Obtén tu API key GRATIS en <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color:var(--primary)">Google AI Studio</a><br>
-                2. En el código, busca <code>GEMINI_API_KEY</code><br>
-                3. Reemplaza con tu key real<br><br>
-                <strong>Mientras tanto, puedo responderte con datos del sistema:</strong><br>
-                📊 ${contexto.sistema.ordenes.activas} órdenes activas<br>
-                📦 ${contexto.sistema.inventario.totalRegistros.toLocaleString()} registros en inventario<br>
-                ⏱️ Tiempo promedio picking: ${contexto.estadisticas.tiempoPromPicking} min<br>
-                ⏱️ Tiempo promedio packing: ${contexto.estadisticas.tiempoPromPacking} min`;
         }
 
         // =========== FUNCIONES DE CONFIGURACIÓN ===========
