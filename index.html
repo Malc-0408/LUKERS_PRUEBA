@@ -3323,13 +3323,13 @@
                         <div class="file-selected" id="fileDistribucionInfo">
                             <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
                             <span class="file-selected-name"></span>
-                            <button class="file-selected-remove" onclick="limpiarArchivo('fileDistribucion','fileDistribucionInfo')"><i data-lucide="x" style="width:16px;height:16px"></i></button>
+                            <button class="file-selected-remove" onclick="limpiarArchivo(&apos;fileDistribucion&apos;,&apos;fileDistribucionInfo&apos;)"><i data-lucide="x" style="width:16px;height:16px"></i></button>
                         </div>
                     </div>
                 </div>
             `;
             document.getElementById('packingFooter').innerHTML = `
-                <button class="btn btn-outline" onclick="cerrarModal('modalPacking')">Cancelar</button>
+                <button class="btn btn-outline" onclick="cerrarModal(&apos;modalPacking&apos;)">Cancelar</button>
                 <button class="btn btn-primary" onclick="procesarDistribucion()">Procesar</button>
             `;
             document.getElementById('tituloModalPacking').textContent = 'Subir Distribución';
