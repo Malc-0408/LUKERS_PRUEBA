@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MAWI v7.0 - Sistema Lukers</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -791,7 +791,36 @@
         // ============================================
         const SUPABASE_URL = 'https://dzxjzmlmmmwspemihhlv.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6eGp6bWxtbW13c3BlbWloaGx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NjI5MjAsImV4cCI6MjA3OTEzODkyMH0.uLXtsONi_c4myPbsvTIqV51pldRv6Wuff4adYWgVR6Q';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Inicializar Supabase cuando esté disponible
+        let supabase;
+        
+        // Función para inicializar Supabase
+        function inicializarSupabase() {
+            try {
+                // El UMD build expone createClient en window.supabase
+                if (typeof window.supabase !== 'undefined' && typeof window.supabase.createClient === 'function') {
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('✅ Supabase inicializado correctamente');
+                    return true;
+                } else if (typeof window.createClient === 'function') {
+                    // Fallback por si está en el scope global
+                    supabase = window.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('✅ Supabase inicializado (fallback)');
+                    return true;
+                } else {
+                    console.error('❌ Supabase no está cargado. Verifica la conexión a internet.');
+                    console.log('window.supabase:', typeof window.supabase);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Error al inicializar Supabase:', error);
+                return false;
+            }
+        }
+        
+        // Intentar inicializar inmediatamente
+        inicializarSupabase();
 
         // Lista de tiendas - Flexible con mayúsculas/minúsculas
         const TIENDAS_BASE = ['LUKERS EL SOL', 'LUKERS TRU PIZARRO', 'LUKERS LA MARINA', 'LUKERS PROLONGACIÓN IQUITOS', 'LUKERS CHI P. RUIZ', 'LUKERS TARAPOTO', 'LUKERS MENDIOLA', 'LUKERS ALFONSO UGARTE', 'LUKERS IQT LORES', 'LUKERS JIRON', 'JR UNION'];
@@ -1545,9 +1574,9 @@
                         <td>${bloq > 0 ? `<strong style="color:var(--warning)">${bloq}</strong>` : '0'}</td>
                         <td><strong style="color:${disp > 0 ? 'var(--success)' : 'var(--danger)'}">${disp}</strong></td>
                         <td>
-                            <button class="btn btn-info btn-icon btn-sm" onclick="verVariante('${i.variante}','${i.ubicacion}')" title="Ver Info"><i data-lucide="info" style="width:14px;height:14px"></i></button>
-                            ${bloq > 0 ? `<button class="btn btn-warning btn-icon btn-sm" onclick="desbloquearItem('${i.variante}','${i.ubicacion}')" title="Desbloquear"><i data-lucide="unlock" style="width:14px;height:14px"></i></button>` : ''}
-                            <button class="btn btn-danger btn-icon btn-sm" onclick="eliminarItem('${i.variante}','${i.ubicacion}')" title="Eliminar"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
+                            <button class="btn btn-info btn-icon btn-sm" onclick="verVariante('${i.variante}','${i.ubicacion}')" title='Ver Info'><i data-lucide="info" style="width:14px;height:14px"></i></button>
+                            ${bloq > 0 ? `<button class="btn btn-warning btn-icon btn-sm" onclick="desbloquearItem('${i.variante}','${i.ubicacion}')" title='Desbloquear'><i data-lucide="unlock" style="width:14px;height:14px"></i></button>` : ''}
+                            <button class="btn btn-danger btn-icon btn-sm" onclick="eliminarItem('${i.variante}','${i.ubicacion}')" title='Eliminar'><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
                         </td>
                     </tr>`;
                 }).join('');
@@ -1993,9 +2022,9 @@
                         </td>
                         <td>${getBadge(o.estado)}</td>
                         <td>
-                            <button class="btn btn-info btn-icon btn-sm" onclick="verHistorialOrden('${o.id}')" title="Historial"><i data-lucide="history" style="width:14px;height:14px"></i></button>
-                            ${o.estado === 'Pendiente División' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="abrirDividirOrden('${o.id}')" title="Dividir"><i data-lucide="scissors" style="width:14px;height:14px"></i></button>` : ''}
-                            ${['Pendiente División', 'Cancelada'].includes(o.estado) ? `<button class="btn btn-danger btn-icon btn-sm" onclick="eliminarOrden('${o.id}')" title="Eliminar"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>` : ''}
+                            <button class="btn btn-info btn-icon btn-sm" onclick="verHistorialOrden('${o.id}')" title='Historial'><i data-lucide="history" style="width:14px;height:14px"></i></button>
+                            ${o.estado === 'Pendiente División' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="abrirDividirOrden('${o.id}')" title='Dividir'><i data-lucide="scissors" style="width:14px;height:14px"></i></button>` : ''}
+                            ${['Pendiente División', 'Cancelada'].includes(o.estado) ? `<button class="btn btn-danger btn-icon btn-sm" onclick="eliminarOrden('${o.id}')" title='Eliminar'><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>` : ''}
                         </td>
                     </tr>`;
                 }).join('');
@@ -2511,14 +2540,14 @@
                         <td>${tiempoStr}</td>
                         <td>${getBadge(p.estado)}</td>
                         <td style="white-space:nowrap">
-                            <button class="btn btn-info btn-icon btn-sm" onclick="descargarHojaPicking(${p.id})" title="Descargar Hoja"><i data-lucide="download" style="width:14px;height:14px"></i></button>
+                            <button class="btn btn-info btn-icon btn-sm" onclick="descargarHojaPicking(${p.id})" title='Descargar Hoja'><i data-lucide="download" style="width:14px;height:14px"></i></button>
                             ${p.estado === 'Pendiente' ? `<button class="btn btn-success btn-sm" onclick="iniciarPicking(${p.id})"><i data-lucide="play" style="width:12px;height:12px"></i> Iniciar</button>` : ''}
                             ${p.estado === 'En Proceso' ? `
-                                <button class="btn btn-warning btn-sm" onclick="pausarPicking(${p.id})" title="Pausar"><i data-lucide="pause" style="width:12px;height:12px"></i></button>
+                                <button class="btn btn-warning btn-sm" onclick="pausarPicking(${p.id})" title='Pausar'><i data-lucide="pause" style="width:12px;height:12px"></i></button>
                                 <button class="btn btn-success btn-sm" onclick="abrirSubirCantidadesPicking(${p.id})"><i data-lucide="upload" style="width:12px;height:12px"></i> Subir</button>
                             ` : ''}
                             ${p.estado === 'Pausado' ? `<button class="btn btn-success btn-sm" onclick="reanudarPicking(${p.id})"><i data-lucide="play" style="width:12px;height:12px"></i> Reanudar</button>` : ''}
-                            ${p.estado === 'Completado' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="verDetallePicking(${p.id})" title="Ver Detalle"><i data-lucide="eye" style="width:14px;height:14px"></i></button>` : ''}
+                            ${p.estado === 'Completado' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="verDetallePicking(${p.id})" title='Ver Detalle'><i data-lucide="eye" style="width:14px;height:14px"></i></button>` : ''}
                         </td>
                     </tr>`;
                 }).join('');
@@ -2885,16 +2914,16 @@
                         <td>${tiempoStr}</td>
                         <td>${getBadge(p.estado)}</td>
                         <td style="white-space:nowrap">
-                            <button class="btn btn-info btn-icon btn-sm" onclick="descargarHojaPacking(${p.id})" title="Descargar Hoja"><i data-lucide="download" style="width:14px;height:14px"></i></button>
+                            <button class="btn btn-info btn-icon btn-sm" onclick="descargarHojaPacking(${p.id})" title='Descargar Hoja'><i data-lucide="download" style="width:14px;height:14px"></i></button>
                             ${p.estado === 'Esperando Picking' ? '<span class="badge badge-purple">Esperando</span>' : ''}
                             ${p.estado === 'Pendiente' ? `<button class="btn btn-success btn-sm" onclick="iniciarPacking(${p.id})"><i data-lucide="play" style="width:12px;height:12px"></i> Iniciar</button>` : ''}
                             ${p.estado === 'En Proceso' ? `
-                                <button class="btn btn-warning btn-sm" onclick="pausarPacking(${p.id})" title="Pausar"><i data-lucide="pause" style="width:12px;height:12px"></i></button>
+                                <button class="btn btn-warning btn-sm" onclick="pausarPacking(${p.id})" title='Pausar'><i data-lucide="pause" style="width:12px;height:12px"></i></button>
                                 <button class="btn btn-purple btn-sm" onclick="abrirSubirDistribucion(${p.id})"><i data-lucide="upload" style="width:12px;height:12px"></i> Subir</button>
                                 <button class="btn btn-success btn-sm" onclick="completarPacking(${p.id})"><i data-lucide="check" style="width:12px;height:12px"></i></button>
                             ` : ''}
                             ${p.estado === 'Pausado' ? `<button class="btn btn-success btn-sm" onclick="reanudarPacking(${p.id})"><i data-lucide="play" style="width:12px;height:12px"></i> Reanudar</button>` : ''}
-                            ${p.estado === 'Completado' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="verDetallePacking(${p.id})" title="Ver Detalle"><i data-lucide="eye" style="width:14px;height:14px"></i></button>` : ''}
+                            ${p.estado === 'Completado' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="verDetallePacking(${p.id})" title='Ver Detalle'><i data-lucide="eye" style="width:14px;height:14px"></i></button>` : ''}
                         </td>
                     </tr>`;
                 }).join('');
@@ -3288,7 +3317,7 @@
                         <td><span class="badge badge-purple">${r.motivo}</span></td>
                         <td>${getBadge(r.estado)}</td>
                         <td>
-                            ${r.estado === 'Pendiente' ? `<button class="btn btn-success btn-icon btn-sm" onclick="abrirCompletarReclas(${r.id})" title="Completar"><i data-lucide="check" style="width:14px;height:14px"></i></button>` : ''}
+                            ${r.estado === 'Pendiente' ? `<button class="btn btn-success btn-icon btn-sm" onclick="abrirCompletarReclas(${r.id})" title='Completar'><i data-lucide="check" style="width:14px;height:14px"></i></button>` : ''}
                             ${r.estado === 'Completada' ? `<span class="badge badge-info">${r.nueva_ubicacion || '-'}</span>` : ''}
                         </td>
                     </tr>`;
@@ -3407,8 +3436,8 @@
                     <td><span class="badge badge-${e.tipo === 'picking' ? 'info' : 'purple'}">${e.tipo}</span></td>
                     <td>${e.activo ? '<span class="badge badge-success">Activo</span>' : '<span class="badge badge-danger">Inactivo</span>'}</td>
                     <td>
-                        <button class="btn btn-info btn-icon btn-sm" onclick="editarEquipo(${e.id})" title="Editar"><i data-lucide="edit" style="width:14px;height:14px"></i></button>
-                        <button class="btn btn-danger btn-icon btn-sm" onclick="eliminarEquipo(${e.id})" title="Eliminar"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
+                        <button class="btn btn-info btn-icon btn-sm" onclick="editarEquipo(${e.id})" title='Editar'><i data-lucide="edit" style="width:14px;height:14px"></i></button>
+                        <button class="btn btn-danger btn-icon btn-sm" onclick="eliminarEquipo(${e.id})" title='Eliminar'><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
                     </td>
                 </tr>`).join('');
             lucide.createIcons();
@@ -3595,11 +3624,47 @@
         // INICIALIZACIÓN
         // ============================================
         window.addEventListener('DOMContentLoaded', async () => {
+            console.log('🔵 DOMContentLoaded - Iniciando sistema...');
+            
+            // Reintentar inicializar Supabase si no se hizo antes
+            if (!supabase) {
+                console.log('⚠️ Supabase no inicializado, reintentando...');
+                const exito = inicializarSupabase();
+                
+                if (!exito) {
+                    console.error('❌ No se pudo inicializar Supabase');
+                    toast('Error: No se pudo conectar con la base de datos. Verifica tu conexión.', 'error');
+                    
+                    // Mostrar modal de error
+                    document.body.innerHTML = `
+                        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f5f5;padding:20px">
+                            <div style="background:white;padding:40px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);max-width:500px;text-align:center">
+                                <h1 style="color:#dc3545;margin-bottom:20px">⚠️ Error de Conexión</h1>
+                                <p style="margin-bottom:20px;color:#666">No se pudo cargar Supabase. Esto puede deberse a:</p>
+                                <ul style="text-align:left;margin-bottom:20px;color:#666">
+                                    <li>Conexión a internet inestable</li>
+                                    <li>Firewall bloqueando CDN</li>
+                                    <li>Extensiones del navegador (AdBlock, etc.)</li>
+                                </ul>
+                                <button onclick="location.reload()" style="background:#6366f1;color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:16px">
+                                    🔄 Reintentar
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+            }
+            
+            console.log('✅ Supabase disponible, continuando...');
+            
             lucide.createIcons();
             await verificarSesion();
             document.getElementById('loginPassword')?.addEventListener('keypress', e => {
                 if (e.key === 'Enter') iniciarSesion();
             });
+            
+            console.log('✅ Sistema inicializado correctamente');
         });
 
         console.log('✅ MAWI v7.0 - Sistema Integrado Completo con funcionalidades principales');
