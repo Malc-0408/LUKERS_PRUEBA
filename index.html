@@ -253,6 +253,60 @@
         
         /* AI ASSISTANT */
         
+        /* SCROLLBAR DISCRETO Y PROFESIONAL */
+        *::-webkit-scrollbar{width:8px;height:8px}
+        *::-webkit-scrollbar-track{background:transparent}
+        *::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:10px;transition:background 0.3s}
+        *::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.25)}
+        *{scrollbar-width:thin;scrollbar-color:rgba(0,0,0,0.15) transparent}
+        
+        /* FILTROS COMPACTOS Y PROFESIONALES */
+        .filters-bar{
+            display:flex !important;
+            flex-wrap:wrap;
+            gap:0.75rem !important;
+            padding:0.875rem 1rem !important;
+            background:white;
+            border-radius:10px;
+            box-shadow:0 1px 3px rgba(0,0,0,0.05) !important;
+            margin-bottom:1.25rem;
+            align-items:center
+        }
+        .filter-group{
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+            margin:0 !important
+        }
+        .filter-label{
+            font-size:0.8rem;
+            font-weight:600;
+            color:var(--text-secondary);
+            white-space:nowrap;
+            margin:0
+        }
+        .filter-group select,
+        .filter-group input[type="date"]{
+            min-width:110px;
+            font-size:0.85rem;
+            padding:0.45rem 0.65rem;
+            border:1.5px solid #e5e7eb;
+            border-radius:7px;
+            background:white;
+            transition:all 0.2s;
+            cursor:pointer
+        }
+        .filter-group select:hover,
+        .filter-group input[type="date"]:hover{
+            border-color:var(--primary-light)
+        }
+        .filter-group select:focus,
+        .filter-group input[type="date"]:focus{
+            outline:none;
+            border-color:var(--primary);
+            box-shadow:0 0 0 3px rgba(99,102,241,0.08)
+        }
+        
         /* RESPONSIVE */
         @media(max-width:768px){
             .sidebar{display:none}
@@ -352,7 +406,6 @@
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-outline" onclick="sincronizarDatos()"><i data-lucide="refresh-cw" style="width:16px;height:16px"></i> Sincronizar</button>
-                    <button class="btn btn-primary" onclick="toggleAI()"><i data-lucide="sparkles" style="width:16px;height:16px"></i> Asistente IA</button>
                 </div>
             </header>
 
@@ -1677,9 +1730,93 @@
                 }
                 
             } else if (tab === 'movimientos') {
-                html = '<div class="timeline">';
-                html += '<div class="timeline-item"><div class="timeline-date">Próximamente</div><div class="timeline-title">Historial de movimientos</div><div class="timeline-desc">Esta funcionalidad estará disponible pronto</div></div>';
-                html += '</div>';
+                // Generar movimientos simulados basados en órdenes reales
+                const movimientos = [];
+                
+                // Buscar en órdenes completadas que usaron esta variante
+                ordenes.filter(o => o.estado === 'Completada').forEach(orden => {
+                    if (orden.items && orden.items.some(item => item.variante === variante)) {
+                        const item = orden.items.find(i => i.variante === variante);
+                        if (item) {
+                            movimientos.push({
+                                fecha: orden.fecha_cierre || orden.fecha,
+                                tipo: 'Salida',
+                                cantidad: -(item.cantidad || 0),
+                                motivo: `Orden ${orden.nombre}`,
+                                estado: 'Completado'
+                            });
+                        }
+                    }
+                });
+                
+                // Buscar en packing
+                packing.filter(p => p.estado === 'Completado').forEach(pack => {
+                    if (pack.items_recibidos && pack.items_recibidos.some(item => item.variante === variante)) {
+                        const item = pack.items_recibidos.find(i => i.variante === variante);
+                        if (item && item.cantidad_encontrada) {
+                            movimientos.push({
+                                fecha: pack.fecha_fin || pack.fecha_inicio,
+                                tipo: 'Empaque',
+                                cantidad: item.cantidad_encontrada,
+                                motivo: `Packing ${pack.nombre_parte}`,
+                                estado: 'Procesado'
+                            });
+                        }
+                    }
+                });
+                
+                // Buscar en reclasificación
+                reclasificacion.filter(r => r.variante === variante).forEach(reclas => {
+                    movimientos.push({
+                        fecha: reclas.fecha_procesado || reclas.fecha_reporte,
+                        tipo: 'Reclasificación',
+                        cantidad: reclas.cantidad || 0,
+                        motivo: reclas.motivo || 'Reclasificación',
+                        estado: reclas.estado
+                    });
+                });
+                
+                // Ordenar por fecha (más reciente primero)
+                movimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+                
+                if (movimientos.length > 0) {
+                    html = '<div class="timeline">';
+                    movimientos.slice(0, 10).forEach(mov => {
+                        const fecha = new Date(mov.fecha);
+                        const colorTipo = mov.tipo === 'Salida' ? 'var(--danger)' : mov.tipo === 'Empaque' ? 'var(--success)' : 'var(--warning)';
+                        const iconoTipo = mov.tipo === 'Salida' ? '📤' : mov.tipo === 'Empaque' ? '📦' : '🔄';
+                        
+                        html += `<div class="timeline-item">
+                            <div class="timeline-date">${formatFechaHora(mov.fecha)}</div>
+                            <div class="timeline-title" style="color:${colorTipo}">${iconoTipo} ${mov.tipo}</div>
+                            <div class="timeline-desc">
+                                <strong style="color:${mov.cantidad < 0 ? 'var(--danger)' : 'var(--success)'}">
+                                    ${mov.cantidad > 0 ? '+' : ''}${mov.cantidad} unidades
+                                </strong><br>
+                                ${mov.motivo}<br>
+                                <span class="badge badge-${mov.estado === 'Completado' ? 'success' : mov.estado === 'Procesado' ? 'info' : 'warning'}" style="margin-top:0.25rem">
+                                    ${mov.estado}
+                                </span>
+                            </div>
+                        </div>`;
+                    });
+                    
+                    if (movimientos.length > 10) {
+                        html += `<div class="timeline-item" style="opacity:0.6">
+                            <div class="timeline-desc" style="text-align:center;font-style:italic">
+                                + ${movimientos.length - 10} movimientos más antiguos
+                            </div>
+                        </div>`;
+                    }
+                    
+                    html += '</div>';
+                } else {
+                    html = '<div style="text-align:center;padding:2rem;color:var(--text-secondary)">';
+                    html += '<i data-lucide="inbox" style="width:48px;height:48px;margin-bottom:1rem;opacity:0.5"></i><br>';
+                    html += '<strong>Sin movimientos registrados</strong><br>';
+                    html += '<span style="font-size:0.9rem">Esta variante no tiene historial de movimientos aún</span>';
+                    html += '</div>';
+                }
             }
             
             document.getElementById('infoTabContent').innerHTML = html;
