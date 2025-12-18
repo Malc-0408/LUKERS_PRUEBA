@@ -621,12 +621,31 @@
                                 <button class="btn btn-success" onclick="exportarProductos()"><i data-lucide="download"></i> Exportar</button>
                             </div>
                         </div>
-                        <div class="table-controls">
-                            <div class="search-box"><i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i><input type="text" id="searchProductos" placeholder="Buscar..." onkeyup="filtrarProductos()"></div>
-                            <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
-                                <select id="filtroGenero" class="form-select form-input-sm" onchange="filtrarProductos()"><option value="">Géneros</option></select>
-                                <select id="filtroLinea" class="form-select form-input-sm" onchange="filtrarProductos()"><option value="">Líneas</option></select>
-                                <select id="filtroMarca" class="form-select form-input-sm" onchange="filtrarProductos()"><option value="">Marcas</option></select>
+                        <!-- Filtros Armonizados -->
+                        <div class="filters-bar">
+                            <div class="filter-group">
+                                <div class="search-box" style="min-width:200px">
+                                    <i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i>
+                                    <input type="text" id="searchProductos" placeholder="Buscar..." onkeyup="filtrarProductos()">
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Género:</label>
+                                <select id="filtroGenero" onchange="filtrarProductos()">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Línea:</label>
+                                <select id="filtroLinea" onchange="filtrarProductos()">
+                                    <option value="">Todas</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">Marca:</label>
+                                <select id="filtroMarca" onchange="filtrarProductos()">
+                                    <option value="">Todas</option>
+                                </select>
                             </div>
                         </div>
                         <div class="table-container"><table><thead><tr><th>Variante</th><th>Código</th><th>Descripción</th><th>Género</th><th>Marca</th><th>Talla</th><th>Kardex</th><th>PVP</th><th>PVP Regular</th></tr></thead><tbody id="tablaProductos"></tbody></table></div>
@@ -821,11 +840,101 @@
                 <!-- Modal de Validaciones -->
                 <div class="modal" id="modalValidaciones"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Validaciones</h3><button class="modal-close" onclick="cerrarModal('modalValidaciones')"><i data-lucide="x"></i></button></div><div class="modal-body" id="alertasValidacionContent"></div></div></div>
 
-                <div class="modal" id="modalCrearOrden"><div class="modal-content large"><div class="modal-header"><h3 class="modal-title">Nueva Orden</h3><button class="modal-close" onclick="cerrarModal('modalCrearOrden')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><label class="form-label">Nombre de la Orden</label><input type="text" id="ordenNombre" class="form-input" placeholder="Ej: Tops Mujer Semana 48"></div><div class="form-group"><input type="file" id="fileOrden" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileOrdenInfo');previsualizarOrden()"><label for="fileOrden" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo Excel</label><div class="file-selected" id="fileOrdenInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileOrden','fileOrdenInfo')"><i data-lucide="x"></i></button></div></div><div class="alert alert-info" id="previewOrden" style="display:none;margin-top:1rem"><div id="previewOrdenContent"></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalCrearOrden')">Cancelar</button><button class="btn btn-primary" onclick="crearOrden()">Crear Orden</button></div></div></div>
+                <div class="modal" id="modalCrearOrden">
+                    <div class="modal-content large">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Nueva Orden</h3>
+                            <button class="modal-close" onclick="cerrarModal('modalCrearOrden')"><i data-lucide="x"></i></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="form-label">Nombre de la Orden</label>
+                                <input type="text" id="ordenNombre" class="form-input" placeholder="Ej: Tops Mujer Semana 48">
+                            </div>
+                            
+                            <!-- Información de columnas requeridas -->
+                            <div class="alert alert-info" style="margin-bottom:1rem">
+                                <div style="display:flex;align-items:start;gap:0.75rem">
+                                    <i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;margin-top:2px"></i>
+                                    <div>
+                                        <strong>📋 Columnas requeridas en el archivo Excel:</strong>
+                                        <div style="margin-top:0.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0.5rem;font-size:0.85rem">
+                                            <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Variante</code></div>
+                                            <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Cantidad</code></div>
+                                            <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Ubicacion</code></div>
+                                        </div>
+                                        <div style="margin-top:0.5rem;font-size:0.85rem">
+                                            <strong>Columnas opcionales de distribución por tienda:</strong><br>
+                                            <code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;font-size:0.75rem">LUKERS EL SOL</code>
+                                            <code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;font-size:0.75rem">LUKERS TRU PIZARRO</code>
+                                            <code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;font-size:0.75rem">LUKERS LA MARINA</code>
+                                            <span style="opacity:0.7">... (una columna por cada tienda)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <input type="file" id="fileOrden" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileOrdenInfo');previsualizarOrden()">
+                                <label for="fileOrden" class="file-upload-btn">
+                                    <i data-lucide="file-plus"></i> Seleccionar archivo Excel
+                                </label>
+                                <div class="file-selected" id="fileOrdenInfo">
+                                    <div class="file-selected-icon"><i data-lucide="check"></i></div>
+                                    <span class="file-selected-name"></span>
+                                    <button class="file-selected-remove" onclick="limpiarArchivo('fileOrden','fileOrdenInfo')"><i data-lucide="x"></i></button>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info" id="previewOrden" style="display:none;margin-top:1rem">
+                                <div id="previewOrdenContent"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline" onclick="cerrarModal('modalCrearOrden')">Cancelar</button>
+                            <button class="btn btn-primary" onclick="crearOrden()">Crear Orden</button>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="modal" id="modalDividirOrden"><div class="modal-content xl"><div class="modal-header"><h3 class="modal-title">Dividir Orden</h3><button class="modal-close" onclick="cerrarModal('modalDividirOrden')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="detail-grid" style="margin-bottom:1.5rem"><div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value" id="divOrdenNombre"></div></div><div class="detail-item"><div class="detail-label">Variantes</div><div class="detail-value" id="divOrdenVariantes"></div></div><div class="detail-item"><div class="detail-label">Unidades</div><div class="detail-value" id="divOrdenUnidades"></div></div></div><div class="form-group"><label class="form-label">Número de Partes</label><input type="number" id="numPartes" class="form-input" value="1" min="1" max="10" onchange="generarPartesConfig()"></div><div id="partesConfig"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalDividirOrden')">Cancelar</button><button class="btn btn-primary" onclick="confirmarDivision()">Confirmar División</button></div></div></div>
 
-                <div class="modal" id="modalSubirCantidades"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Subir Cantidades Encontradas</h3><button class="modal-close" onclick="cerrarModal('modalSubirCantidades')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><input type="file" id="fileCantidades" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileCantidadesInfo')"><label for="fileCantidades" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileCantidadesInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileCantidades','fileCantidadesInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalSubirCantidades')">Cancelar</button><button class="btn btn-primary" onclick="confirmarSubirCantidades()">Confirmar</button></div></div></div>
+                <div class="modal" id="modalSubirCantidades">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Subir Cantidades Encontradas</h3>
+                            <button class="modal-close" onclick="cerrarModal('modalSubirCantidades')"><i data-lucide="x"></i></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info" style="margin-bottom:1rem">
+                                <div style="display:flex;align-items:start;gap:0.75rem">
+                                    <i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;margin-top:2px"></i>
+                                    <div>
+                                        <strong>📋 Columnas requeridas:</strong>
+                                        <div style="margin-top:0.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.5rem;font-size:0.85rem">
+                                            <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Variante</code></div>
+                                            <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Ubicacion</code></div>
+                                            <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Encontrado</code></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="file" id="fileCantidades" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileCantidadesInfo')">
+                                <label for="fileCantidades" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label>
+                                <div class="file-selected" id="fileCantidadesInfo">
+                                    <div class="file-selected-icon"><i data-lucide="check"></i></div>
+                                    <span class="file-selected-name"></span>
+                                    <button class="file-selected-remove" onclick="limpiarArchivo('fileCantidades','fileCantidadesInfo')"><i data-lucide="x"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline" onclick="cerrarModal('modalSubirCantidades')">Cancelar</button>
+                            <button class="btn btn-primary" onclick="confirmarSubirCantidades()">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="modal" id="modalPicking"><div class="modal-content large"><div class="modal-header"><h3 class="modal-title" id="tituloModalPicking">Picking</h3><button class="modal-close" onclick="cerrarModal('modalPicking')"><i data-lucide="x"></i></button></div><div class="modal-body" id="pickingContent"></div><div class="modal-footer" id="pickingFooter"></div></div></div>
 
@@ -1974,9 +2083,9 @@
             const generos = [...new Set(productos.map(p => p.genero).filter(Boolean))].sort();
             const lineas = [...new Set(productos.map(p => p.linea).filter(Boolean))].sort();
             const marcas = [...new Set(productos.map(p => p.marca).filter(Boolean))].sort();
-            document.getElementById('filtroGenero').innerHTML = '<option value="">Géneros</option>' + generos.map(g => `<option value="${g}">${g}</option>`).join('');
-            document.getElementById('filtroLinea').innerHTML = '<option value="">Líneas</option>' + lineas.map(l => `<option value="${l}">${l}</option>`).join('');
-            document.getElementById('filtroMarca').innerHTML = '<option value="">Marcas</option>' + marcas.map(m => `<option value="${m}">${m}</option>`).join('');
+            document.getElementById('filtroGenero').innerHTML = '<option value="">Todos</option>' + generos.map(g => `<option value="${g}">${g}</option>`).join('');
+            document.getElementById('filtroLinea').innerHTML = '<option value="">Todas</option>' + lineas.map(l => `<option value="${l}">${l}</option>`).join('');
+            document.getElementById('filtroMarca').innerHTML = '<option value="">Todas</option>' + marcas.map(m => `<option value="${m}">${m}</option>`).join('');
         }
 
         function renderizarProductos() {
@@ -3126,8 +3235,32 @@
             
             document.getElementById('packingContent').innerHTML = `
                 <div class="alert alert-info" style="margin-bottom:1rem">
-                    <i data-lucide="info" style="width:18px;height:18px"></i>
-                    <span>Sube el archivo Excel con la distribución por tienda completada</span>
+                    <div style="display:flex;align-items:start;gap:0.75rem">
+                        <i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;margin-top:2px"></i>
+                        <div style="flex:1">
+                            <strong>📋 Columnas requeridas en el archivo Excel:</strong>
+                            <div style="margin-top:0.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.5rem;font-size:0.85rem">
+                                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Variante</code></div>
+                                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Encontrado</code></div>
+                            </div>
+                            <div style="margin-top:0.75rem">
+                                <strong>Columnas de distribución por tienda (al menos una):</strong>
+                                <div style="margin-top:0.5rem;font-size:0.82rem;line-height:1.6">
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS EL SOL</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS TRU PIZARRO</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS LA MARINA</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS PROLONGACIÓN IQUITOS</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS CHI P. RUIZ</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS TARAPOTO</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS MENDIOLA</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS ALFONSO UGARTE</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS IQT LORES</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS JIRON</code>
+                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">JR UNION</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <div class="file-upload-container">
