@@ -758,17 +758,68 @@
                         </div>
                         
                         <div class="config-section" id="configColumnas" style="padding:1.5rem">
-                            <h4 style="margin-bottom:1rem">Columnas de Hojas de Picking/Packing</h4>
-                            <div class="form-group">
-                                <label class="form-check"><input type="checkbox" checked> Ubicación</label>
-                                <label class="form-check"><input type="checkbox" checked> Variante</label>
-                                <label class="form-check"><input type="checkbox" checked> Código Comercial</label>
-                                <label class="form-check"><input type="checkbox" checked> Marca</label>
-                                <label class="form-check"><input type="checkbox"> PVP</label>
-                                <label class="form-check"><input type="checkbox"> PVP Regular</label>
-                                <label class="form-check"><input type="checkbox" checked> Descripción</label>
+                            <!-- COLUMNAS PARA PICKING -->
+                            <div style="background:#f8f9fa;padding:1.25rem;border-radius:8px;margin-bottom:1.5rem">
+                                <h4 style="margin-bottom:1rem;color:var(--primary)">
+                                    <i data-lucide="package-search" style="width:20px;height:20px;vertical-align:middle"></i>
+                                    Columnas de Hoja de Picking
+                                </h4>
+                                <div id="columnasPickingCheckboxes" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem">
+                                    <label class="form-check"><input type="checkbox" value="Parte" checked> Parte</label>
+                                    <label class="form-check"><input type="checkbox" value="Ubicación" checked> Ubicación</label>
+                                    <label class="form-check"><input type="checkbox" value="Stock Físico" checked> Stock Físico</label>
+                                    <label class="form-check"><input type="checkbox" value="Stock Bloqueado" checked> Stock Bloqueado</label>
+                                    <label class="form-check"><input type="checkbox" value="Stock Disponible" checked> Stock Disponible</label>
+                                    <label class="form-check"><input type="checkbox" value="Variante" checked> Variante</label>
+                                    <label class="form-check"><input type="checkbox" value="Código Comercial" checked> Código Comercial</label>
+                                    <label class="form-check"><input type="checkbox" value="Descripción" checked> Descripción</label>
+                                    <label class="form-check"><input type="checkbox" value="Marca" checked> Marca</label>
+                                    <label class="form-check"><input type="checkbox" value="Género" checked> Género</label>
+                                    <label class="form-check"><input type="checkbox" value="Línea" checked> Línea</label>
+                                    <label class="form-check"><input type="checkbox" value="Talla" checked> Talla</label>
+                                    <label class="form-check"><input type="checkbox" value="Color" checked> Color</label>
+                                    <label class="form-check"><input type="checkbox" value="Kardex" checked> Kardex</label>
+                                    <label class="form-check"><input type="checkbox" value="PVP" checked> PVP</label>
+                                    <label class="form-check"><input type="checkbox" value="PVP Regular" checked> PVP Regular</label>
+                                    <label class="form-check"><input type="checkbox" value="PVP Oferta" checked> PVP Oferta</label>
+                                    <label class="form-check"><input type="checkbox" value="Solicitado" checked> Solicitado</label>
+                                    <label class="form-check"><input type="checkbox" value="Encontrado" checked> Encontrado</label>
+                                </div>
                             </div>
-                            <button class="btn btn-primary" onclick="guardarConfigColumnas()">Guardar</button>
+
+                            <!-- COLUMNAS PARA PACKING -->
+                            <div style="background:#fff3cd;padding:1.25rem;border-radius:8px;margin-bottom:1.5rem">
+                                <h4 style="margin-bottom:1rem;color:#856404">
+                                    <i data-lucide="package" style="width:20px;height:20px;vertical-align:middle"></i>
+                                    Columnas de Hoja de Packing
+                                </h4>
+                                <div id="columnasPackingCheckboxes" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem">
+                                    <label class="form-check"><input type="checkbox" value="Parte" checked> Parte</label>
+                                    <label class="form-check"><input type="checkbox" value="Variante" checked> Variante</label>
+                                    <label class="form-check"><input type="checkbox" value="Código Comercial" checked> Código Comercial</label>
+                                    <label class="form-check"><input type="checkbox" value="Descripción" checked> Descripción</label>
+                                    <label class="form-check"><input type="checkbox" value="Marca" checked> Marca</label>
+                                    <label class="form-check"><input type="checkbox" value="Género" checked> Género</label>
+                                    <label class="form-check"><input type="checkbox" value="Línea" checked> Línea</label>
+                                    <label class="form-check"><input type="checkbox" value="Talla" checked> Talla</label>
+                                    <label class="form-check"><input type="checkbox" value="Color" checked> Color</label>
+                                    <label class="form-check"><input type="checkbox" value="Kardex" checked> Kardex</label>
+                                    <label class="form-check"><input type="checkbox" value="PVP" checked> PVP</label>
+                                    <label class="form-check"><input type="checkbox" value="PVP Regular" checked> PVP Regular</label>
+                                    <label class="form-check"><input type="checkbox" value="Solicitado" checked> Solicitado</label>
+                                    <label class="form-check"><input type="checkbox" value="Encontrado" checked> Encontrado</label>
+                                    <label class="form-check"><input type="checkbox" value="Tiendas" checked disabled> Columnas de Tiendas (siempre)</label>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:0.75rem">
+                                <button class="btn btn-primary" onclick="guardarConfigGeneral()">
+                                    <i data-lucide="save" style="width:16px;height:16px"></i> Guardar Configuración
+                                </button>
+                                <button class="btn btn-outline" onclick="restablecerColumnas()">
+                                    <i data-lucide="rotate-ccw" style="width:16px;height:16px"></i> Restablecer a Predeterminado
+                                </button>
+                            </div>
                         </div>
 
                         <div class="config-section" id="configTiendas" style="display:none;padding:1.5rem">
@@ -1275,6 +1326,9 @@
                 document.getElementById('loadingText').textContent = 'Cargando configuraciones...';
                 const { data: configData } = await supabase.from('configuraciones').select('*');
                 configuraciones = configData || [];
+                
+                // Aplicar configuraciones cargadas
+                aplicarConfiguraciones();
 
                 actualizarFiltrosProductos();
                 renderizarTodo();
@@ -1867,7 +1921,7 @@
                                 fecha: pack.fecha_fin || pack.fecha_inicio,
                                 tipo: 'Empaque',
                                 cantidad: item.cantidad_encontrada,
-                                motivo: `Packing ${pack.nombre_parte}`,
+                                motivo: `Packing PT${pack.parte}`,
                                 estado: 'Procesado'
                             });
                         }
@@ -2779,7 +2833,7 @@
                     const tiempoStr = calcularTiempoTrabajado(p);
                     return `<tr>
                         <td><strong>${orden?.nombre || p.orden_id}</strong></td>
-                        <td>${p.nombre_parte || 'Parte ' + p.parte}</td>
+                        <td><span class="badge badge-purple">PT${p.parte}</span></td>
                         <td>${p.equipo_nombre || '<span style="color:var(--warning)">Sin asignar</span>'}</td>
                         <td>${p.total_solicitado || 0}</td>
                         <td>${p.total_encontrado || 0}</td>
@@ -2902,7 +2956,7 @@
             let html = `
                 <div class="detail-grid" style="margin-bottom:1rem">
                     <div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value">${orden?.nombre || pick.orden_id}</div></div>
-                    <div class="detail-item"><div class="detail-label">Parte</div><div class="detail-value">${pick.nombre_parte}</div></div>
+                    <div class="detail-item"><div class="detail-label">Parte</div><div class="detail-value">PT${pick.parte}</div></div>
                     <div class="detail-item"><div class="detail-label">Equipo</div><div class="detail-value">${pick.equipo_nombre || '-'}</div></div>
                     <div class="detail-item"><div class="detail-label">Tiempo</div><div class="detail-value">${calcularTiempoTrabajado(pick)}</div></div>
                     <div class="detail-item"><div class="detail-label">Solicitado</div><div class="detail-value">${pick.total_solicitado}</div></div>
@@ -2943,7 +2997,7 @@
                 const orden = ordenes.find(o => o.id === p.orden_id);
                 return {
                     Orden: orden?.nombre || p.orden_id,
-                    Parte: p.nombre_parte,
+                    Parte: `PT${p.parte}`,
                     Equipo: p.equipo_nombre || '',
                     Integrantes: (p.integrantes || []).join(', '),
                     Solicitado: p.total_solicitado,
@@ -2973,7 +3027,7 @@
                 
                 return {
                     // ORDEN (solo parte)
-                    'Parte': pick.nombre_parte || `PT${pick.parte}`,
+                    'Parte': `PT${pick.parte}`,
                     
                     // INVENTARIO
                     'Ubicación': i.ubicacion || '',
@@ -3031,7 +3085,7 @@
             
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'HojaPicking');
-            const filename = `Picking_${orden?.nombre || pick.orden_id}_${pick.nombre_parte || 'PT' + pick.parte}.xlsx`;
+            const filename = `Picking_${orden?.nombre || pick.orden_id}_PT${pick.parte}.xlsx`;
             XLSX.writeFile(wb, filename);
             toast('Hoja descargada', 'success');
         }
@@ -3152,7 +3206,7 @@
                     const tiempoStr = calcularTiempoTrabajado(p);
                     return `<tr>
                         <td><strong>${orden?.nombre || p.orden_id}</strong></td>
-                        <td>${p.nombre_parte || 'Parte ' + p.parte}</td>
+                        <td><span class="badge badge-purple">PT${p.parte}</span></td>
                         <td>${p.equipo_nombre || '<span style="color:var(--warning)">Sin asignar</span>'}</td>
                         <td>${p.total_recibido || 0}</td>
                         <td style="color:var(--success)">${p.total_empacado || 0}</td>
@@ -3357,7 +3411,7 @@
             const pack = packing.find(p => p.id === id);
             if (!pack) return;
 
-            if (!confirm(`¿Completar packing de ${pack.nombre_parte}?\n\nEmpacados: ${pack.total_empacado || 0}\nReclasificados: ${pack.total_reclasificado || 0}`)) return;
+            if (!confirm(`¿Completar packing de PT${pack.parte}?\n\nEmpacados: ${pack.total_empacado || 0}\nReclasificados: ${pack.total_reclasificado || 0}`)) return;
 
             mostrarLoading('Completando packing...');
             try {
@@ -3433,7 +3487,7 @@
             let html = `
                 <div class="detail-grid" style="margin-bottom:1rem">
                     <div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value">${orden?.nombre || pack.orden_id}</div></div>
-                    <div class="detail-item"><div class="detail-label">Parte</div><div class="detail-value">${pack.nombre_parte}</div></div>
+                    <div class="detail-item"><div class="detail-label">Parte</div><div class="detail-value">PT${pack.parte}</div></div>
                     <div class="detail-item"><div class="detail-label">Equipo</div><div class="detail-value">${pack.equipo_nombre || '-'}</div></div>
                     <div class="detail-item"><div class="detail-label">Tiempo</div><div class="detail-value">${calcularTiempoTrabajado(pack)}</div></div>
                     <div class="detail-item"><div class="detail-label">Recibido</div><div class="detail-value">${pack.total_recibido}</div></div>
@@ -3460,7 +3514,7 @@
                 const orden = ordenes.find(o => o.id === p.orden_id);
                 return {
                     Orden: orden?.nombre || p.orden_id,
-                    Parte: p.nombre_parte,
+                    Parte: `PT${p.parte}`,
                     Equipo: p.equipo_nombre || '',
                     Integrantes: (p.integrantes || []).join(', '),
                     Recibido: p.total_recibido,
@@ -3488,11 +3542,13 @@
 
             const data = (pack.items_recibidos || []).map(i => {
                 const prod = productos.find(p => p.variante === i.variante);
-                const inv = inventario.find(inv => inv.variante === i.variante);
+                
+                // Buscar item original de la orden para obtener distribución
+                const itemOriginal = orden?.items?.find(oi => oi.variante === i.variante);
                 
                 const row = {
-                    // ORDEN (solo parte)
-                    'Parte': pack.nombre_parte || `PT${pack.parte}`,
+                    // ORDEN (solo PT1, PT2, etc.)
+                    'Parte': `PT${pack.parte}`,
                     
                     // PRODUCTO COMPLETO
                     'Variante': i.variante,
@@ -3506,18 +3562,20 @@
                     'Kardex': prod?.kardex || 0,
                     'PVP': prod?.pvp || 0,
                     'PVP Regular': prod?.pvp_regular || 0,
-                    'PVP Oferta': prod?.pvp_oferta || 0,
-                    
-                    // INVENTARIO
-                    'Stock Total Sistema': inv?.stock_fisico || 0,
                     
                     // CANTIDADES
+                    'Solicitado': itemOriginal?.cantidad || i.cantidad_solicitada || 0,
                     'Encontrado': i.cantidad_encontrada || 0
                 };
                 
-                // Agregar columnas de tiendas
+                // Agregar columnas de DISTRIBUCIÓN ORIGINAL de la orden
                 TIENDAS_BASE.forEach(t => {
-                    row[t.replace('LUKERS ', '')] = '';
+                    const nombreTienda = t.replace('LUKERS ', '');
+                    if (itemOriginal?.distribucion && itemOriginal.distribucion[t]) {
+                        row[nombreTienda] = itemOriginal.distribucion[t];
+                    } else {
+                        row[nombreTienda] = '';
+                    }
                 });
                 
                 return row;
@@ -3539,18 +3597,17 @@
                 {wch: 8},  // Kardex
                 {wch: 10}, // PVP
                 {wch: 12}, // PVP Regular
-                {wch: 12}, // PVP Oferta
-                {wch: 18}, // Stock Total Sistema
+                {wch: 12}, // Solicitado
                 {wch: 12}  // Encontrado
             ];
             
-            // Agregar anchos para tiendas
-            TIENDAS_BASE.forEach(() => colWidths.push({wch: 12}));
+            // Agregar anchos para tiendas (11 tiendas)
+            TIENDAS_BASE.forEach(() => colWidths.push({wch: 14}));
             ws['!cols'] = colWidths;
             
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'HojaPacking');
-            const filename = `Packing_${orden?.nombre || pack.orden_id}_${pack.nombre_parte || 'PT' + pack.parte}.xlsx`;
+            const filename = `Packing_${orden?.nombre || pack.orden_id}_PT${pack.parte}.xlsx`;
             XLSX.writeFile(wb, filename);
             toast('Hoja descargada', 'success');
         }
@@ -3830,16 +3887,189 @@
             toast('Configuración de columnas guardada', 'success');
         }
 
-        function guardarConfigTiendas() {
-            toast('Tiendas guardadas', 'success');
+        async function guardarConfigTiendas() {
+            mostrarLoading('Guardando tiendas...');
+            try {
+                // Guardar en Supabase
+                const config = {
+                    tipo: 'tiendas',
+                    data: TIENDAS_BASE,
+                    fecha_actualizacion: new Date().toISOString()
+                };
+                
+                // Verificar si existe configuración
+                const { data: existing } = await supabase
+                    .from('configuraciones')
+                    .select('id')
+                    .eq('tipo', 'tiendas')
+                    .single();
+                
+                if (existing) {
+                    // Actualizar
+                    await supabase
+                        .from('configuraciones')
+                        .update({ data: TIENDAS_BASE, fecha_actualizacion: new Date().toISOString() })
+                        .eq('tipo', 'tiendas');
+                } else {
+                    // Insertar
+                    await supabase
+                        .from('configuraciones')
+                        .insert([config]);
+                }
+                
+                ocultarLoading();
+                toast('Tiendas guardadas correctamente', 'success');
+                await cargarDatos(); // Recargar para sincronizar
+            } catch (error) {
+                ocultarLoading();
+                console.error('Error al guardar tiendas:', error);
+                toast('Error al guardar: ' + error.message, 'error');
+            }
         }
 
-        function guardarConfigHorarios() {
-            toast('Horarios guardados', 'success');
+        async function guardarConfigHorarios() {
+            const inicio = document.getElementById('horarioInicio')?.value || '08:30';
+            const fin = document.getElementById('horarioFin')?.value || '19:00';
+            
+            mostrarLoading('Guardando horarios...');
+            try {
+                const config = {
+                    tipo: 'horarios',
+                    data: { inicio, fin },
+                    fecha_actualizacion: new Date().toISOString()
+                };
+                
+                const { data: existing } = await supabase
+                    .from('configuraciones')
+                    .select('id')
+                    .eq('tipo', 'horarios')
+                    .single();
+                
+                if (existing) {
+                    await supabase
+                        .from('configuraciones')
+                        .update({ data: config.data, fecha_actualizacion: new Date().toISOString() })
+                        .eq('tipo', 'horarios');
+                } else {
+                    await supabase
+                        .from('configuraciones')
+                        .insert([config]);
+                }
+                
+                ocultarLoading();
+                toast('Horarios guardados correctamente', 'success');
+            } catch (error) {
+                ocultarLoading();
+                console.error('Error al guardar horarios:', error);
+                toast('Error al guardar: ' + error.message, 'error');
+            }
         }
 
-        function guardarConfigGeneral() {
-            toast('Configuración guardada', 'success');
+        async function guardarConfigGeneral() {
+            // Recoger columnas seleccionadas para PICKING
+            const columnasPicking = [];
+            document.querySelectorAll('#columnasPickingCheckboxes input[type="checkbox"]:checked').forEach(cb => {
+                columnasPicking.push(cb.value);
+            });
+            
+            // Recoger columnas seleccionadas para PACKING
+            const columnasPacking = [];
+            document.querySelectorAll('#columnasPackingCheckboxes input[type="checkbox"]:checked').forEach(cb => {
+                columnasPacking.push(cb.value);
+            });
+            
+            mostrarLoading('Guardando configuración...');
+            try {
+                const config = {
+                    tipo: 'columnas',
+                    data: {
+                        picking: columnasPicking,
+                        packing: columnasPacking
+                    },
+                    fecha_actualizacion: new Date().toISOString()
+                };
+                
+                const { data: existing } = await supabase
+                    .from('configuraciones')
+                    .select('id')
+                    .eq('tipo', 'columnas')
+                    .single();
+                
+                if (existing) {
+                    await supabase
+                        .from('configuraciones')
+                        .update({ data: config.data, fecha_actualizacion: new Date().toISOString() })
+                        .eq('tipo', 'columnas');
+                } else {
+                    await supabase
+                        .from('configuraciones')
+                        .insert([config]);
+                }
+                
+                ocultarLoading();
+                toast('Configuración guardada correctamente', 'success');
+            } catch (error) {
+                ocultarLoading();
+                console.error('Error al guardar configuración:', error);
+                toast('Error al guardar: ' + error.message, 'error');
+            }
+        }
+
+        function restablecerColumnas() {
+            if (!confirm('¿Restablecer columnas a configuración predeterminada?')) return;
+            
+            // Marcar todos los checkboxes de picking
+            document.querySelectorAll('#columnasPickingCheckboxes input[type="checkbox"]').forEach(cb => {
+                cb.checked = true;
+            });
+            
+            // Marcar todos los checkboxes de packing
+            document.querySelectorAll('#columnasPackingCheckboxes input[type="checkbox"]').forEach(cb => {
+                cb.checked = true;
+            });
+            
+            toast('Columnas restablecidas (recuerda Guardar)', 'info');
+        }
+
+        function aplicarConfiguraciones() {
+            // Aplicar tiendas si existen
+            const configTiendas = configuraciones.find(c => c.tipo === 'tiendas');
+            if (configTiendas && configTiendas.data && Array.isArray(configTiendas.data)) {
+                TIENDAS_BASE.length = 0;
+                TIENDAS_BASE.push(...configTiendas.data);
+                renderizarListaTiendas();
+            }
+            
+            // Aplicar columnas si existen
+            const configColumnas = configuraciones.find(c => c.tipo === 'columnas');
+            if (configColumnas && configColumnas.data) {
+                // Aplicar columnas de picking
+                if (configColumnas.data.picking && Array.isArray(configColumnas.data.picking)) {
+                    document.querySelectorAll('#columnasPickingCheckboxes input[type="checkbox"]').forEach(cb => {
+                        cb.checked = configColumnas.data.picking.includes(cb.value);
+                    });
+                }
+                
+                // Aplicar columnas de packing
+                if (configColumnas.data.packing && Array.isArray(configColumnas.data.packing)) {
+                    document.querySelectorAll('#columnasPackingCheckboxes input[type="checkbox"]').forEach(cb => {
+                        cb.checked = configColumnas.data.packing.includes(cb.value);
+                    });
+                }
+            }
+            
+            // Aplicar horarios si existen
+            const configHorarios = configuraciones.find(c => c.tipo === 'horarios');
+            if (configHorarios && configHorarios.data) {
+                if (configHorarios.data.inicio) {
+                    const inputInicio = document.getElementById('horaInicio');
+                    if (inputInicio) inputInicio.value = configHorarios.data.inicio;
+                }
+                if (configHorarios.data.fin) {
+                    const inputFin = document.getElementById('horaFin');
+                    if (inputFin) inputFin.value = configHorarios.data.fin;
+                }
+            }
         }
 
         async function limpiarOrdenesAntiguas() {
