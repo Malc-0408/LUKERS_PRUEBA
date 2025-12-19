@@ -20,6 +20,33 @@
         }
         body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh}
         
+        /* AUTH TABS */
+        .auth-tabs{
+            display:flex;
+            gap:0.5rem;
+            margin-bottom:1.5rem;
+            border-bottom:2px solid var(--border);
+        }
+        .auth-tab{
+            flex:1;
+            padding:0.75rem;
+            border:none;
+            background:transparent;
+            font-weight:600;
+            font-size:0.9rem;
+            color:var(--text-secondary);
+            cursor:pointer;
+            border-bottom:3px solid transparent;
+            transition:all 0.2s;
+        }
+        .auth-tab:hover{color:var(--primary)}
+        .auth-tab.active{
+            color:var(--primary);
+            border-bottom-color:var(--primary);
+        }
+        .auth-tab-content{display:none}
+        .auth-tab-content.active{display:block}
+        
         /* LOGIN */
         .login-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
         .login-card{background:#fff;padding:3rem;border-radius:20px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);max-width:420px;width:100%}
@@ -315,6 +342,134 @@
             .card-actions{justify-content:flex-start}
             .ai-panel{width:100%}
         }
+        
+        /* FILTROS PERSONALIZADOS CON CHECKBOXES */
+        .multi-select-filter{position:relative;display:inline-block}
+        .multi-select-trigger{
+            background:var(--bg-secondary);
+            border:1px solid var(--border);
+            padding:0.5rem 2.5rem 0.5rem 0.75rem;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:0.85rem;
+            min-width:180px;
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+            transition:all 0.2s;
+            position:relative;
+        }
+        .multi-select-trigger:hover{background:var(--bg-hover);border-color:var(--primary)}
+        .multi-select-trigger::after{
+            content:'▼';
+            position:absolute;
+            right:0.75rem;
+            font-size:0.65rem;
+            color:var(--text-secondary);
+            transition:transform 0.2s;
+        }
+        .multi-select-trigger.open::after{transform:rotate(180deg)}
+        .multi-select-count{
+            background:var(--primary);
+            color:#fff;
+            padding:0.1rem 0.5rem;
+            border-radius:12px;
+            font-size:0.7rem;
+            font-weight:600;
+            min-width:20px;
+            text-align:center;
+        }
+        .multi-select-dropdown{
+            position:absolute;
+            top:calc(100% + 4px);
+            left:0;
+            background:#fff;
+            border:1px solid var(--border);
+            border-radius:10px;
+            box-shadow:0 8px 24px rgba(0,0,0,0.12);
+            min-width:250px;
+            max-height:350px;
+            overflow-y:auto;
+            z-index:1000;
+            display:none;
+        }
+        .multi-select-dropdown.open{display:block}
+        .multi-select-search{
+            padding:0.75rem;
+            border-bottom:1px solid var(--border);
+            position:sticky;
+            top:0;
+            background:#fff;
+            z-index:1;
+        }
+        .multi-select-search input{
+            width:100%;
+            padding:0.5rem 0.75rem;
+            border:1px solid var(--border);
+            border-radius:6px;
+            font-size:0.85rem;
+        }
+        .multi-select-search input:focus{outline:none;border-color:var(--primary)}
+        .multi-select-options{padding:0.5rem}
+        .multi-select-option{
+            display:flex;
+            align-items:center;
+            gap:0.75rem;
+            padding:0.6rem 0.75rem;
+            border-radius:6px;
+            cursor:pointer;
+            transition:background 0.15s;
+            font-size:0.85rem;
+        }
+        .multi-select-option:hover{background:var(--bg-hover)}
+        .multi-select-option input[type="checkbox"]{
+            width:16px;
+            height:16px;
+            cursor:pointer;
+            accent-color:var(--primary);
+        }
+        .multi-select-option-text{flex:1}
+        .multi-select-option-count{
+            font-size:0.75rem;
+            color:var(--text-secondary);
+            padding:0.1rem 0.5rem;
+            background:var(--bg-secondary);
+            border-radius:10px;
+        }
+        .multi-select-option.disabled{
+            opacity:0.4;
+            pointer-events:none;
+        }
+        .multi-select-actions{
+            padding:0.75rem;
+            border-top:1px solid var(--border);
+            display:flex;
+            gap:0.5rem;
+            background:var(--bg-secondary);
+            position:sticky;
+            bottom:0;
+        }
+        .multi-select-actions button{
+            flex:1;
+            padding:0.5rem;
+            border:none;
+            border-radius:6px;
+            font-size:0.75rem;
+            cursor:pointer;
+            font-weight:600;
+            transition:all 0.2s;
+        }
+        .multi-select-actions .btn-clear{
+            background:transparent;
+            color:var(--text-secondary);
+        }
+        .multi-select-actions .btn-clear:hover{background:var(--bg-hover)}
+        .multi-select-actions .btn-apply{
+            background:var(--primary);
+            color:#fff;
+        }
+        .multi-select-actions .btn-apply:hover{opacity:0.9}
+        
         .config-section{display:none}
         .config-section:first-of-type{display:block}
     </style>
@@ -331,21 +486,71 @@
         </div>
     </div>
 
-    <!-- LOGIN -->
+    <!-- LOGIN / REGISTRO -->
     <div class="login-container" id="loginSection">
         <div class="login-card">
             <div class="login-logo">M</div>
             <h1 class="login-title">MAWI v7.0</h1>
             <p class="login-subtitle">Sistema de Gestión Lukers</p>
-            <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="email" id="loginEmail" class="form-input" placeholder="correo@lukers.com">
+            
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="cambiarAuthTab('login')">Iniciar Sesión</button>
+                <button class="auth-tab" onclick="cambiarAuthTab('registro')">Registrarse</button>
             </div>
-            <div class="form-group">
-                <label class="form-label">Contraseña</label>
-                <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+            
+            <!-- Tab Login -->
+            <div id="tabLogin" class="auth-tab-content active">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="loginEmail" class="form-input" placeholder="correo@lukers.pe">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+                </div>
+                <button class="btn btn-primary btn-full btn-lg" onclick="iniciarSesion()">Iniciar Sesión</button>
             </div>
-            <button class="btn btn-primary btn-full btn-lg" onclick="iniciarSesion()">Iniciar Sesión</button>
+            
+            <!-- Tab Registro -->
+            <div id="tabRegistro" class="auth-tab-content">
+                <div class="form-group">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" id="registroNombre" class="form-input" placeholder="Ej: Juan Pérez García">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Corporativo</label>
+                    <input type="email" id="registroEmail" class="form-input" placeholder="usuario@lukers.pe">
+                    <p class="form-help">Debe ser un correo con dominio @lukers.pe</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rol</label>
+                    <select id="registroRol" class="form-select">
+                        <option value="">Selecciona tu rol</option>
+                        <option value="Coordinador">Coordinador</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Producto">Producto</option>
+                        <option value="Jefe">Jefe</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Código de Invitación</label>
+                    <input type="text" id="registroCodigo" class="form-input" placeholder="Ej: COO-A1B2C3D4" style="text-transform:uppercase">
+                    <p class="form-help">Solicita tu código al administrador según tu rol</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" id="registroPassword" class="form-input" placeholder="Mínimo 8 caracteres">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Contraseña</label>
+                    <input type="password" id="registroPasswordConfirm" class="form-input" placeholder="Repite tu contraseña">
+                </div>
+                <button class="btn btn-success btn-full btn-lg" onclick="registrarUsuario()">Crear Cuenta</button>
+                <div style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--text-secondary)">
+                    ¿No tienes código? Contacta al administrador
+                </div>
+            </div>
         </div>
     </div>
 
@@ -383,13 +588,17 @@
                 </div>
             </nav>
             <div class="user-profile">
-                <div class="user-info" onclick="cerrarSesion()">
+                <div class="user-info">
                     <div class="user-avatar" id="userAvatar">U</div>
                     <div>
                         <div class="user-name" id="userName">Usuario</div>
-                        <div class="user-role">Cerrar Sesión</div>
+                        <div class="user-role" id="userRole">Rol</div>
                     </div>
                 </div>
+                <button class="btn btn-outline btn-sm" onclick="cerrarSesion()" style="width:100%;margin-top:0.5rem">
+                    <i data-lucide="log-out" style="width:14px;height:14px"></i>
+                    Cerrar Sesión
+                </button>
             </div>
         </div>
 
@@ -629,23 +838,65 @@
                                     <input type="text" id="searchProductos" placeholder="Buscar..." onkeyup="filtrarProductos()">
                                 </div>
                             </div>
+                            
+                            <!-- Filtro Género Multi-Select -->
                             <div class="filter-group">
                                 <label class="filter-label">Género:</label>
-                                <select id="filtroGenero" onchange="filtrarProductos()">
-                                    <option value="">Todos</option>
-                                </select>
+                                <div class="multi-select-filter" id="filtroGeneroContainer">
+                                    <div class="multi-select-trigger" onclick="toggleMultiSelect('genero')">
+                                        <span id="generoTriggerText">Todos</span>
+                                    </div>
+                                    <div class="multi-select-dropdown" id="generoDropdown">
+                                        <div class="multi-select-search">
+                                            <input type="text" placeholder="Buscar género..." onkeyup="buscarEnMultiSelect('genero', this.value)">
+                                        </div>
+                                        <div class="multi-select-options" id="generoOptions"></div>
+                                        <div class="multi-select-actions">
+                                            <button class="btn-clear" onclick="limpiarMultiSelect('genero')">Limpiar</button>
+                                            <button class="btn-apply" onclick="aplicarMultiSelect('genero')">Aplicar</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            
+                            <!-- Filtro Línea Multi-Select -->
                             <div class="filter-group">
                                 <label class="filter-label">Línea:</label>
-                                <select id="filtroLinea" onchange="filtrarProductos()">
-                                    <option value="">Todas</option>
-                                </select>
+                                <div class="multi-select-filter" id="filtroLineaContainer">
+                                    <div class="multi-select-trigger" onclick="toggleMultiSelect('linea')">
+                                        <span id="lineaTriggerText">Todas</span>
+                                    </div>
+                                    <div class="multi-select-dropdown" id="lineaDropdown">
+                                        <div class="multi-select-search">
+                                            <input type="text" placeholder="Buscar línea..." onkeyup="buscarEnMultiSelect('linea', this.value)">
+                                        </div>
+                                        <div class="multi-select-options" id="lineaOptions"></div>
+                                        <div class="multi-select-actions">
+                                            <button class="btn-clear" onclick="limpiarMultiSelect('linea')">Limpiar</button>
+                                            <button class="btn-apply" onclick="aplicarMultiSelect('linea')">Aplicar</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            
+                            <!-- Filtro Marca Multi-Select -->
                             <div class="filter-group">
                                 <label class="filter-label">Marca:</label>
-                                <select id="filtroMarca" onchange="filtrarProductos()">
-                                    <option value="">Todas</option>
-                                </select>
+                                <div class="multi-select-filter" id="filtroMarcaContainer">
+                                    <div class="multi-select-trigger" onclick="toggleMultiSelect('marca')">
+                                        <span id="marcaTriggerText">Todas</span>
+                                    </div>
+                                    <div class="multi-select-dropdown" id="marcaDropdown">
+                                        <div class="multi-select-search">
+                                            <input type="text" placeholder="Buscar marca..." onkeyup="buscarEnMultiSelect('marca', this.value)">
+                                        </div>
+                                        <div class="multi-select-options" id="marcaOptions"></div>
+                                        <div class="multi-select-actions">
+                                            <button class="btn-clear" onclick="limpiarMultiSelect('marca')">Limpiar</button>
+                                            <button class="btn-apply" onclick="aplicarMultiSelect('marca')">Aplicar</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="table-container"><table><thead><tr><th>Variante</th><th>Código</th><th>Descripción</th><th>Género</th><th>Marca</th><th>Talla</th><th>Kardex</th><th>PVP</th><th>PVP Regular</th></tr></thead><tbody id="tablaProductos"></tbody></table></div>
@@ -781,7 +1032,6 @@
                                     <label class="form-check"><input type="checkbox" value="Kardex" checked> Kardex</label>
                                     <label class="form-check"><input type="checkbox" value="PVP" checked> PVP</label>
                                     <label class="form-check"><input type="checkbox" value="PVP Regular" checked> PVP Regular</label>
-                                    <label class="form-check"><input type="checkbox" value="PVP Oferta" checked> PVP Oferta</label>
                                     <label class="form-check"><input type="checkbox" value="Solicitado" checked> Solicitado</label>
                                     <label class="form-check"><input type="checkbox" value="Encontrado" checked> Encontrado</label>
                                 </div>
@@ -795,6 +1045,7 @@
                                 </h4>
                                 <div id="columnasPackingCheckboxes" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem">
                                     <label class="form-check"><input type="checkbox" value="Parte" checked> Parte</label>
+                                    <label class="form-check"><input type="checkbox" value="Ubicación" checked> Ubicación</label>
                                     <label class="form-check"><input type="checkbox" value="Variante" checked> Variante</label>
                                     <label class="form-check"><input type="checkbox" value="Código Comercial" checked> Código Comercial</label>
                                     <label class="form-check"><input type="checkbox" value="Descripción" checked> Descripción</label>
@@ -1038,7 +1289,7 @@
         inicializarSupabase();
 
         // Lista de tiendas - Flexible con mayúsculas/minúsculas
-        const TIENDAS_BASE = ['LUKERS EL SOL', 'LUKERS TRU PIZARRO', 'LUKERS LA MARINA', 'LUKERS PROLONGACIÓN IQUITOS', 'LUKERS CHI P. RUIZ', 'LUKERS TARAPOTO', 'LUKERS MENDIOLA', 'LUKERS ALFONSO UGARTE', 'LUKERS IQT LORES', 'LUKERS JIRON', 'JR UNION'];
+        const TIENDAS_BASE = ['LUKERS EL SOL', 'LUKERS TRU PIZARRO', 'LUKERS LA MARINA', 'LUKERS PROLONGACIÓN IQUITOS', 'LUKERS CHI P. RUIZ', 'LUKERS TARAPOTO', 'LUKERS MENDIOLA', 'LUKERS ALFONSO UGARTE', 'LUKERS IQT LORES', 'LUKERS JR UNION'];
         
         // Constantes
         const ITEMS_POR_PAGINA = 100;
@@ -1053,6 +1304,18 @@
         let chartEstados, chartMontos, chartEquipos, chartGeneros;
         let ordenActual = null, pickingActual = null, packingActual = null, reclasActual = null, equipoActual = null;
         let tabReclasActual = 'pendientes', tabEquiposActual = 'picking';
+        
+        // Variables para filtros multi-select en cascada
+        let filtrosSeleccionados = {
+            genero: [],
+            linea: [],
+            marca: []
+        };
+        let opcionesDisponibles = {
+            genero: [],
+            linea: [],
+            marca: []
+        };
 
         // ============================================
         // UTILIDADES
@@ -1231,6 +1494,15 @@
             };
             document.getElementById('headerTitle').textContent = titulos[nombre] || 'MAWI';
             document.getElementById('headerBreadcrumb').textContent = titulos[nombre] || 'MAWI';
+            
+            // Actualizar filtros específicos según la vista
+            if (nombre === 'productos') {
+                actualizarFiltrosProductos();
+            } else if (nombre === 'dashboard') {
+                inicializarFiltrosDashboard();
+                actualizarDashboard();
+            }
+            
             lucide.createIcons();
         }
 
@@ -1246,8 +1518,25 @@
             if (session) {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('appSection').style.display = 'flex';
-                document.getElementById('userName').textContent = session.user.email.split('@')[0];
-                document.getElementById('userAvatar').textContent = session.user.email.charAt(0).toUpperCase();
+                
+                // Obtener información del usuario desde usuarios_sistema
+                const { data: userData } = await supabase
+                    .from('usuarios_sistema')
+                    .select('nombre_completo, rol')
+                    .eq('user_id', session.user.id)
+                    .single();
+                
+                // Mostrar nombre y rol
+                if (userData) {
+                    document.getElementById('userName').textContent = userData.nombre_completo;
+                    document.getElementById('userAvatar').textContent = userData.nombre_completo.charAt(0).toUpperCase();
+                    document.getElementById('userRole').textContent = userData.rol;
+                } else {
+                    document.getElementById('userName').textContent = session.user.email.split('@')[0];
+                    document.getElementById('userAvatar').textContent = session.user.email.charAt(0).toUpperCase();
+                    document.getElementById('userRole').textContent = 'Usuario';
+                }
+                
                 await cargarDatos();
             } else {
                 document.getElementById('loginSection').style.display = 'flex';
@@ -1270,6 +1559,194 @@
             await supabase.auth.signOut();
             toast('Sesión cerrada', 'info');
             setTimeout(() => location.reload(), 500);
+        }
+
+        // ============================================
+        // REGISTRO DE USUARIOS
+        // ============================================
+        function cambiarAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-tab-content').forEach(c => c.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelectorAll('.auth-tab')[0].classList.add('active');
+                document.getElementById('tabLogin').classList.add('active');
+            } else {
+                document.querySelectorAll('.auth-tab')[1].classList.add('active');
+                document.getElementById('tabRegistro').classList.add('active');
+            }
+        }
+
+        async function registrarUsuario() {
+            // 1. Obtener y validar datos
+            const nombre = document.getElementById('registroNombre').value.trim();
+            const email = document.getElementById('registroEmail').value.trim().toLowerCase();
+            const rol = document.getElementById('registroRol').value;
+            const codigo = document.getElementById('registroCodigo').value.trim().toUpperCase();
+            const password = document.getElementById('registroPassword').value;
+            const passwordConfirm = document.getElementById('registroPasswordConfirm').value;
+
+            // Validaciones básicas
+            if (!nombre || !email || !rol || !codigo || !password || !passwordConfirm) {
+                toast('Completa todos los campos', 'error');
+                return;
+            }
+
+            if (nombre.length < 3) {
+                toast('El nombre debe tener al menos 3 caracteres', 'error');
+                return;
+            }
+
+            // Validar dominio @lukers.pe
+            if (!email.endsWith('@lukers.pe')) {
+                toast('Debes usar un correo corporativo @lukers.pe', 'error');
+                return;
+            }
+
+            // Validar contraseñas
+            if (password.length < 8) {
+                toast('La contraseña debe tener mínimo 8 caracteres', 'error');
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                toast('Las contraseñas no coinciden', 'error');
+                return;
+            }
+
+            mostrarLoading('Validando código de invitación...');
+
+            try {
+                // 2. Validar código de invitación
+                const { data: codigoData, error: codigoError } = await supabase
+                    .from('codigos_invitacion')
+                    .select('*')
+                    .eq('codigo', codigo)
+                    .eq('rol', rol)
+                    .eq('usado', false)
+                    .eq('activo', true)
+                    .single();
+
+                if (codigoError || !codigoData) {
+                    ocultarLoading();
+                    toast('Código inválido o ya fue usado', 'error');
+                    return;
+                }
+
+                // 3. Crear usuario en Supabase Auth
+                document.getElementById('loadingText').textContent = 'Creando cuenta...';
+                
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            nombre_completo: nombre,
+                            rol: rol
+                        }
+                    }
+                });
+
+                if (authError) {
+                    ocultarLoading();
+                    if (authError.message.includes('already registered')) {
+                        toast('Este correo ya está registrado', 'error');
+                    } else {
+                        toast('Error al crear cuenta: ' + authError.message, 'error');
+                    }
+                    return;
+                }
+
+                // 4. Guardar información adicional en usuarios_sistema
+                document.getElementById('loadingText').textContent = 'Guardando información...';
+                
+                const { error: userError } = await supabase
+                    .from('usuarios_sistema')
+                    .insert([{
+                        user_id: authData.user.id,
+                        nombre_completo: nombre,
+                        email: email,
+                        rol: rol,
+                        codigo_usado: codigo
+                    }]);
+
+                if (userError) {
+                    console.error('Error guardando usuario:', userError);
+                }
+
+                // 5. Marcar código como usado
+                document.getElementById('loadingText').textContent = 'Finalizando registro...';
+                
+                await supabase
+                    .from('codigos_invitacion')
+                    .update({
+                        usado: true,
+                        usado_por: email,
+                        fecha_uso: new Date().toISOString()
+                    })
+                    .eq('codigo', codigo);
+
+                ocultarLoading();
+                
+                // 6. Mostrar mensaje de éxito
+                toast('¡Cuenta creada exitosamente!', 'success');
+                toast('Revisa tu correo para confirmar tu cuenta', 'info');
+                
+                // 7. Limpiar formulario y cambiar a login
+                document.getElementById('registroNombre').value = '';
+                document.getElementById('registroEmail').value = '';
+                document.getElementById('registroRol').value = '';
+                document.getElementById('registroCodigo').value = '';
+                document.getElementById('registroPassword').value = '';
+                document.getElementById('registroPasswordConfirm').value = '';
+                
+                setTimeout(() => {
+                    cambiarAuthTab('login');
+                    document.getElementById('loginEmail').value = email;
+                }, 2000);
+
+            } catch (error) {
+                ocultarLoading();
+                console.error('Error en registro:', error);
+                toast('Error inesperado al registrar: ' + error.message, 'error');
+            }
+        }
+
+        // Función auxiliar para generar códigos (solo para admin)
+        async function generarCodigoInvitacion(rol) {
+            try {
+                const { data, error } = await supabase.rpc('generar_codigo_invitacion', {
+                    p_rol: rol,
+                    p_creado_por: 'ADMIN'
+                });
+
+                if (error) throw error;
+                
+                return data;
+            } catch (error) {
+                console.error('Error generando código:', error);
+                return null;
+            }
+        }
+
+        // Función para listar códigos disponibles (solo para admin)
+        async function listarCodigosDisponibles() {
+            try {
+                const { data, error } = await supabase
+                    .from('codigos_invitacion')
+                    .select('codigo, rol, usado, fecha_creacion')
+                    .eq('activo', true)
+                    .order('rol', { ascending: true })
+                    .order('fecha_creacion', { ascending: false });
+
+                if (error) throw error;
+                
+                console.table(data);
+                return data;
+            } catch (error) {
+                console.error('Error listando códigos:', error);
+                return null;
+            }
         }
 
         // ============================================
@@ -1861,7 +2338,6 @@
                     html += `<div class="detail-item"><div class="detail-label">Kardex</div><div class="detail-value" ${prod.kardex === 0 ? 'style="color:var(--danger)"' : ''}><strong>${prod.kardex || 0}</strong> ${prod.kardex === 0 ? '⚠️' : ''}</div></div>`;
                     html += `<div class="detail-item"><div class="detail-label">PVP</div><div class="detail-value" style="color:var(--success)">${formatMoney(prod.pvp || 0)}</div></div>`;
                     html += `<div class="detail-item"><div class="detail-label">PVP Regular</div><div class="detail-value">${formatMoney(prod.pvp_regular || 0)}</div></div>`;
-                    html += `<div class="detail-item"><div class="detail-label">PVP Oferta</div><div class="detail-value" style="color:var(--warning)">${formatMoney(prod.pvp_oferta || 0)}</div></div>`;
                 } else {
                     html += `<div class="detail-item" style="grid-column:span 2"><div class="alert alert-warning" style="margin:0"><i data-lucide="alert-triangle"></i><span>Este producto NO existe en el catálogo</span></div></div>`;
                 }
@@ -2136,13 +2612,184 @@
         // PRODUCTOS
         // ============================================
         function actualizarFiltrosProductos() {
-            const generos = [...new Set(productos.map(p => p.genero).filter(Boolean))].sort();
-            const lineas = [...new Set(productos.map(p => p.linea).filter(Boolean))].sort();
-            const marcas = [...new Set(productos.map(p => p.marca).filter(Boolean))].sort();
-            document.getElementById('filtroGenero').innerHTML = '<option value="">Todos</option>' + generos.map(g => `<option value="${g}">${g}</option>`).join('');
-            document.getElementById('filtroLinea').innerHTML = '<option value="">Todas</option>' + lineas.map(l => `<option value="${l}">${l}</option>`).join('');
-            document.getElementById('filtroMarca').innerHTML = '<option value="">Todas</option>' + marcas.map(m => `<option value="${m}">${m}</option>`).join('');
+            // Inicializar opciones disponibles desde TODOS los productos
+            opcionesDisponibles.genero = [...new Set(productos.map(p => p.genero).filter(Boolean))].sort();
+            opcionesDisponibles.linea = [...new Set(productos.map(p => p.linea).filter(Boolean))].sort();
+            opcionesDisponibles.marca = [...new Set(productos.map(p => p.marca).filter(Boolean))].sort();
+            
+            // Renderizar todos los filtros
+            renderizarMultiSelect('genero');
+            renderizarMultiSelect('linea');
+            renderizarMultiSelect('marca');
         }
+        
+        function renderizarMultiSelect(tipo) {
+            const container = document.getElementById(`${tipo}Options`);
+            if (!container) return;
+            
+            // Obtener productos filtrados por los OTROS filtros (cascada)
+            let productosFiltradosCascada = productos;
+            
+            if (tipo === 'linea') {
+                // Si hay géneros seleccionados, filtrar por ellos
+                if (filtrosSeleccionados.genero.length > 0) {
+                    productosFiltradosCascada = productosFiltradosCascada.filter(p => 
+                        filtrosSeleccionados.genero.includes(p.genero)
+                    );
+                }
+            } else if (tipo === 'marca') {
+                // Si hay géneros seleccionados, filtrar por ellos
+                if (filtrosSeleccionados.genero.length > 0) {
+                    productosFiltradosCascada = productosFiltradosCascada.filter(p => 
+                        filtrosSeleccionados.genero.includes(p.genero)
+                    );
+                }
+                // Si hay líneas seleccionadas, filtrar por ellas
+                if (filtrosSeleccionados.linea.length > 0) {
+                    productosFiltradosCascada = productosFiltradosCascada.filter(p => 
+                        filtrosSeleccionados.linea.includes(p.linea)
+                    );
+                }
+            }
+            
+            // Obtener opciones disponibles con este filtrado
+            const opcionesDisponiblesCascada = [...new Set(productosFiltradosCascada.map(p => p[tipo]).filter(Boolean))].sort();
+            
+            // Generar HTML de opciones
+            let html = '';
+            opcionesDisponibles[tipo].forEach(opcion => {
+                const count = productosFiltradosCascada.filter(p => p[tipo] === opcion).length;
+                const isSelected = filtrosSeleccionados[tipo].includes(opcion);
+                const isDisabled = count === 0 && !isSelected; // Deshabilitado si no hay productos (excepto si ya está seleccionado)
+                
+                html += `
+                    <div class="multi-select-option ${isDisabled ? 'disabled' : ''}" onclick="toggleOpcion('${tipo}', '${opcion}')">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+                        <span class="multi-select-option-text">${opcion}</span>
+                        <span class="multi-select-option-count">${count}</span>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html || '<div style="padding:1rem;text-align:center;color:var(--text-secondary)">Sin opciones</div>';
+            
+            // Actualizar texto del trigger
+            actualizarTriggerText(tipo);
+        }
+        
+        function toggleOpcion(tipo, valor) {
+            const index = filtrosSeleccionados[tipo].indexOf(valor);
+            if (index > -1) {
+                filtrosSeleccionados[tipo].splice(index, 1);
+            } else {
+                filtrosSeleccionados[tipo].push(valor);
+            }
+            
+            // Re-renderizar checkbox específico (sin cerrar dropdown)
+            renderizarMultiSelect(tipo);
+            
+            // Actualizar filtros en cascada
+            if (tipo === 'genero') {
+                renderizarMultiSelect('linea');
+                renderizarMultiSelect('marca');
+            } else if (tipo === 'linea') {
+                renderizarMultiSelect('marca');
+            }
+        }
+        
+        function toggleMultiSelect(tipo) {
+            const dropdown = document.getElementById(`${tipo}Dropdown`);
+            const trigger = dropdown.previousElementSibling;
+            const isOpen = dropdown.classList.contains('open');
+            
+            // Cerrar todos los otros dropdowns
+            document.querySelectorAll('.multi-select-dropdown').forEach(d => {
+                d.classList.remove('open');
+            });
+            document.querySelectorAll('.multi-select-trigger').forEach(t => {
+                t.classList.remove('open');
+            });
+            
+            // Toggle este dropdown
+            if (!isOpen) {
+                dropdown.classList.add('open');
+                trigger.classList.add('open');
+            }
+        }
+        
+        function aplicarMultiSelect(tipo) {
+            // Cerrar dropdown
+            document.getElementById(`${tipo}Dropdown`).classList.remove('open');
+            document.querySelector(`#${tipo}Dropdown`).previousElementSibling.classList.remove('open');
+            
+            // Aplicar filtros
+            filtrarProductos();
+        }
+        
+        function limpiarMultiSelect(tipo) {
+            filtrosSeleccionados[tipo] = [];
+            renderizarMultiSelect(tipo);
+            
+            // Actualizar cascada
+            if (tipo === 'genero') {
+                renderizarMultiSelect('linea');
+                renderizarMultiSelect('marca');
+            } else if (tipo === 'linea') {
+                renderizarMultiSelect('marca');
+            }
+        }
+        
+        function buscarEnMultiSelect(tipo, query) {
+            const container = document.getElementById(`${tipo}Options`);
+            const opciones = container.querySelectorAll('.multi-select-option');
+            
+            opciones.forEach(opcion => {
+                const texto = opcion.querySelector('.multi-select-option-text').textContent.toLowerCase();
+                if (texto.includes(query.toLowerCase())) {
+                    opcion.style.display = 'flex';
+                } else {
+                    opcion.style.display = 'none';
+                }
+            });
+        }
+        
+        function actualizarTriggerText(tipo) {
+            const selected = filtrosSeleccionados[tipo];
+            const triggerText = document.getElementById(`${tipo}TriggerText`);
+            const trigger = triggerText.parentElement;
+            
+            // Remover badge existente
+            const existingBadge = trigger.querySelector('.multi-select-count');
+            if (existingBadge) existingBadge.remove();
+            
+            if (selected.length === 0) {
+                const labels = { genero: 'Todos', linea: 'Todas', marca: 'Todas' };
+                triggerText.textContent = labels[tipo];
+            } else if (selected.length === 1) {
+                triggerText.textContent = selected[0];
+            } else {
+                const labels = { genero: 'géneros', linea: 'líneas', marca: 'marcas' };
+                triggerText.textContent = `${selected.length} ${labels[tipo]}`;
+                
+                // Agregar badge
+                const badge = document.createElement('span');
+                badge.className = 'multi-select-count';
+                badge.textContent = selected.length;
+                trigger.insertBefore(badge, triggerText);
+            }
+        }
+        
+        // Cerrar dropdowns al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.multi-select-filter')) {
+                document.querySelectorAll('.multi-select-dropdown').forEach(d => {
+                    d.classList.remove('open');
+                });
+                document.querySelectorAll('.multi-select-trigger').forEach(t => {
+                    t.classList.remove('open');
+                });
+            }
+        });
 
         function renderizarProductos() {
             document.getElementById('countProductos').textContent = productosFiltrado.length.toLocaleString();
@@ -2172,14 +2819,29 @@
 
         function filtrarProductos() {
             const search = normalizarTexto(document.getElementById('searchProductos')?.value || '');
-            const gen = document.getElementById('filtroGenero')?.value || '';
-            const lin = document.getElementById('filtroLinea')?.value || '';
-            const mar = document.getElementById('filtroMarca')?.value || '';
             
-            productosFiltrado = productos.filter(p =>
-                (normalizarTexto(p.variante).includes(search) || normalizarTexto(p.descripcion || '').includes(search) || normalizarTexto(p.codigo_comercial || '').includes(search)) &&
-                (!gen || p.genero === gen) && (!lin || p.linea === lin) && (!mar || p.marca === mar)
-            );
+            productosFiltrado = productos.filter(p => {
+                // Filtro de búsqueda por texto
+                const matchSearch = search === '' || 
+                    normalizarTexto(p.variante).includes(search) || 
+                    normalizarTexto(p.descripcion || '').includes(search) || 
+                    normalizarTexto(p.codigo_comercial || '').includes(search);
+                
+                // Filtro por género (multi-select)
+                const matchGenero = filtrosSeleccionados.genero.length === 0 || 
+                    filtrosSeleccionados.genero.includes(p.genero);
+                
+                // Filtro por línea (multi-select)
+                const matchLinea = filtrosSeleccionados.linea.length === 0 || 
+                    filtrosSeleccionados.linea.includes(p.linea);
+                
+                // Filtro por marca (multi-select)
+                const matchMarca = filtrosSeleccionados.marca.length === 0 || 
+                    filtrosSeleccionados.marca.includes(p.marca);
+                
+                return matchSearch && matchGenero && matchLinea && matchMarca;
+            });
+            
             paginaProd = 1;
             renderizarProductos();
         }
@@ -3049,7 +3711,6 @@
                     'Kardex': prod?.kardex || 0,
                     'PVP': prod?.pvp || 0,
                     'PVP Regular': prod?.pvp_regular || 0,
-                    'PVP Oferta': prod?.pvp_oferta || 0,
                     
                     // CANTIDADES
                     'Solicitado': i.cantidad,
@@ -3080,7 +3741,6 @@
                 {wch: 8},  // Kardex
                 {wch: 10}, // PVP
                 {wch: 12}, // PVP Regular
-                {wch: 12}, // PVP Oferta
                 {wch: 10}, // Solicitado
                 {wch: 12}  // Encontrado
             ];
@@ -3301,7 +3961,7 @@
                 '            </div>',
                 '            <div style="margin-top:0.75rem">',
                 '                <strong>Columnas de tiendas:</strong>',
-                '                <div style="margin-top:0.5rem;font-size:0.82rem">EL SOL, TRU PIZARRO, LA MARINA, PROLONGACIÓN IQUITOS, CHI P. RUIZ, TARAPOTO, MENDIOLA, ALFONSO UGARTE, IQT LORES, JIRON, JR UNION</div>',
+                '                <div style="margin-top:0.5rem;font-size:0.82rem">EL SOL, TRU PIZARRO, LA MARINA, PROLONGACIÓN IQUITOS, CHI P. RUIZ, TARAPOTO, MENDIOLA, ALFONSO UGARTE, IQT LORES, JR UNION</div>',
                 '            </div>',
                 '        </div>',
                 '    </div>',
@@ -3561,9 +4221,16 @@
                 // Buscar item original de la orden para obtener distribución
                 const itemOriginal = orden?.items?.find(oi => oi.variante === i.variante);
                 
+                // Buscar ubicación del picking
+                const pickingRelacionado = picking.find(p => p.orden_id === pack.orden_id && p.parte === pack.parte);
+                const itemPicking = pickingRelacionado?.items?.find(pi => pi.variante === i.variante);
+                
                 const row = {
                     // ORDEN (solo PT1, PT2, etc.)
                     'Parte': `PT${pack.parte}`,
+                    
+                    // UBICACIÓN (del picking o del item original)
+                    'Ubicación': i.ubicacion || itemPicking?.ubicacion || itemOriginal?.ubicacion || '',
                     
                     // PRODUCTO COMPLETO
                     'Variante': i.variante,
@@ -3583,13 +4250,24 @@
                     'Encontrado': i.cantidad_encontrada || 0
                 };
                 
-                // Agregar columnas de DISTRIBUCIÓN ORIGINAL de la orden
+                // Primero identificar qué tiendas tienen distribución para este item
+                const tiendasConDistribucion = [];
                 TIENDAS_BASE.forEach(t => {
+                    if (itemOriginal?.distribucion && itemOriginal.distribucion[t] && itemOriginal.distribucion[t] > 0) {
+                        tiendasConDistribucion.push(t);
+                    }
+                });
+                
+                // Si hay distribución, solo agregar esas tiendas
+                // Si no hay distribución, agregar todas con 0
+                const tiendasAMostrar = tiendasConDistribucion.length > 0 ? tiendasConDistribucion : TIENDAS_BASE;
+                
+                tiendasAMostrar.forEach(t => {
                     const nombreTienda = t.replace('LUKERS ', '');
                     if (itemOriginal?.distribucion && itemOriginal.distribucion[t]) {
                         row[nombreTienda] = itemOriginal.distribucion[t];
                     } else {
-                        row[nombreTienda] = '';
+                        row[nombreTienda] = 0; // Poner 0 en lugar de vacío
                     }
                 });
                 
@@ -3601,6 +4279,7 @@
             // Ajustar anchos de columnas
             const colWidths = [
                 {wch: 8},  // Parte
+                {wch: 15}, // Ubicación
                 {wch: 15}, // Variante
                 {wch: 15}, // Código Comercial
                 {wch: 40}, // Descripción
@@ -3616,7 +4295,7 @@
                 {wch: 12}  // Encontrado
             ];
             
-            // Agregar anchos para tiendas (11 tiendas)
+            // Agregar anchos para tiendas (dinámico según TIENDAS_BASE)
             TIENDAS_BASE.forEach(() => colWidths.push({wch: 14}));
             ws['!cols'] = colWidths;
             
@@ -3905,7 +4584,10 @@
         async function guardarConfigTiendas() {
             mostrarLoading('Guardando tiendas...');
             try {
-                // Guardar en Supabase
+                // Guardar primero en localStorage (inmediato)
+                localStorage.setItem('mawi_tiendas', JSON.stringify(TIENDAS_BASE));
+                
+                // Intentar guardar en Supabase
                 const config = {
                     tipo: 'tiendas',
                     data: TIENDAS_BASE,
@@ -3913,7 +4595,7 @@
                 };
                 
                 // Verificar si existe configuración
-                const { data: existing } = await supabase
+                const { data: existing, error: selectError } = await supabase
                     .from('configuraciones')
                     .select('id')
                     .eq('tipo', 'tiendas')
@@ -3921,15 +4603,19 @@
                 
                 if (existing) {
                     // Actualizar
-                    await supabase
+                    const { error: updateError } = await supabase
                         .from('configuraciones')
                         .update({ data: TIENDAS_BASE, fecha_actualizacion: new Date().toISOString() })
                         .eq('tipo', 'tiendas');
+                    
+                    if (updateError) console.warn('Error actualizando en Supabase:', updateError);
                 } else {
                     // Insertar
-                    await supabase
+                    const { error: insertError } = await supabase
                         .from('configuraciones')
                         .insert([config]);
+                    
+                    if (insertError) console.warn('Error insertando en Supabase:', insertError);
                 }
                 
                 ocultarLoading();
@@ -3938,7 +4624,8 @@
             } catch (error) {
                 ocultarLoading();
                 console.error('Error al guardar tiendas:', error);
-                toast('Error al guardar: ' + error.message, 'error');
+                // Aunque falle Supabase, localStorage ya guardó
+                toast('Tiendas guardadas localmente', 'success');
             }
         }
 
@@ -4053,6 +4740,21 @@
                 TIENDAS_BASE.length = 0;
                 TIENDAS_BASE.push(...configTiendas.data);
                 renderizarListaTiendas();
+            } else {
+                // Si no hay en Supabase, intentar cargar de localStorage
+                const localTiendas = localStorage.getItem('mawi_tiendas');
+                if (localTiendas) {
+                    try {
+                        const tiendas = JSON.parse(localTiendas);
+                        if (Array.isArray(tiendas) && tiendas.length > 0) {
+                            TIENDAS_BASE.length = 0;
+                            TIENDAS_BASE.push(...tiendas);
+                            renderizarListaTiendas();
+                        }
+                    } catch (e) {
+                        console.error('Error cargando tiendas de localStorage:', e);
+                    }
+                }
             }
             
             // Aplicar columnas si existen
