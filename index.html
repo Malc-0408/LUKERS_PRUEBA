@@ -545,6 +545,11 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Código de Invitación</label>
+                    <input type="text" id="registroCodigo" class="form-input" placeholder="COO-XXXXXXXX" style="text-transform:uppercase" maxlength="12">
+                    <p class="form-help">Solicita tu código al administrador según tu rol</p>
+                </div>
+                <div class="form-group">
                     <label class="form-label">Contraseña</label>
                     <input type="password" id="registroPassword" class="form-input" placeholder="Mínimo 8 caracteres">
                 </div>
@@ -554,7 +559,7 @@
                 </div>
                 <button class="btn btn-success btn-full btn-lg" onclick="enviarCodigoVerificacion()">Crear Cuenta</button>
                 <div style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--text-secondary)">
-                    Al crear tu cuenta, recibirás un email de confirmación
+                    ¿No tienes código? Contacta al administrador
                 </div>
             </div>
         </div>
@@ -1583,17 +1588,18 @@
             }
         }
 
-        // REGISTRO DE USUARIOS - VERSIÓN SIMPLE CON SUPABASE AUTH
+        // REGISTRO DE USUARIOS CON CÓDIGO DE INVITACIÓN
         async function enviarCodigoVerificacion() {
             // 1. Obtener y validar datos
             const nombre = document.getElementById('registroNombre').value.trim();
             const email = document.getElementById('registroEmail').value.trim().toLowerCase();
             const rol = document.getElementById('registroRol').value;
+            const codigo = document.getElementById('registroCodigo').value.trim().toUpperCase();
             const password = document.getElementById('registroPassword').value;
             const passwordConfirm = document.getElementById('registroPasswordConfirm').value;
 
             // Validaciones básicas
-            if (!nombre || !email || !rol || !password || !passwordConfirm) {
+            if (!nombre || !email || !rol || !codigo || !password || !passwordConfirm) {
                 toast('Completa todos los campos', 'error');
                 return;
             }
@@ -1620,11 +1626,28 @@
                 return;
             }
 
-            mostrarLoading('Creando tu cuenta...');
+            mostrarLoading('Validando código de invitación...');
 
             try {
-                // 2. Crear usuario en Supabase Auth
-                // Supabase enviará automáticamente el email de confirmación
+                // 2. Validar código de invitación
+                const { data: codigoData, error: codigoError } = await supabase
+                    .from('codigos_invitacion')
+                    .select('*')
+                    .eq('codigo', codigo)
+                    .eq('rol', rol)
+                    .eq('usado', false)
+                    .eq('activo', true)
+                    .single();
+
+                if (codigoError || !codigoData) {
+                    ocultarLoading();
+                    toast('Código inválido, ya usado o no corresponde al rol seleccionado', 'error');
+                    return;
+                }
+
+                // 3. Crear usuario en Supabase Auth
+                document.getElementById('loadingText').textContent = 'Creando tu cuenta...';
+                
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: email,
                     password: password,
@@ -1647,7 +1670,9 @@
                     return;
                 }
 
-                // 3. Guardar información adicional en usuarios_sistema
+                // 4. Guardar información adicional en usuarios_sistema
+                document.getElementById('loadingText').textContent = 'Guardando información...';
+                
                 if (authData.user) {
                     const { error: userError } = await supabase
                         .from('usuarios_sistema')
@@ -1655,7 +1680,8 @@
                             user_id: authData.user.id,
                             nombre_completo: nombre,
                             email: email,
-                            rol: rol
+                            rol: rol,
+                            codigo_usado: codigo
                         }]);
 
                     if (userError) {
@@ -1663,20 +1689,33 @@
                     }
                 }
 
+                // 5. Marcar código como usado
+                document.getElementById('loadingText').textContent = 'Finalizando...';
+                
+                await supabase
+                    .from('codigos_invitacion')
+                    .update({
+                        usado: true,
+                        usado_por: email,
+                        fecha_uso: new Date().toISOString()
+                    })
+                    .eq('codigo', codigo);
+
                 ocultarLoading();
                 
-                // 4. Limpiar formulario
+                // 6. Limpiar formulario
                 document.getElementById('registroNombre').value = '';
                 document.getElementById('registroEmail').value = '';
                 document.getElementById('registroRol').value = '';
+                document.getElementById('registroCodigo').value = '';
                 document.getElementById('registroPassword').value = '';
                 document.getElementById('registroPasswordConfirm').value = '';
                 
-                // 5. Mostrar éxito
+                // 7. Mostrar éxito
                 toast('¡Cuenta creada exitosamente!', 'success');
                 toast('Revisa tu correo para confirmar tu cuenta', 'info');
                 
-                // 6. Cambiar a login
+                // 8. Cambiar a login
                 setTimeout(() => {
                     cambiarAuthTab('login');
                     document.getElementById('loginEmail').value = email;
@@ -1689,8 +1728,44 @@
             }
         }
 
-        // Estas funciones ya no son necesarias con el sistema simple
-        // pero las dejamos por compatibilidad
+        // Funciones auxiliares (para usar en consola del navegador)
+        async function generarCodigoInvitacion(rol) {
+            try {
+                const { data, error } = await supabase.rpc('generar_codigo_invitacion', {
+                    p_rol: rol
+                });
+
+                if (error) throw error;
+                
+                console.log('Código generado:', data);
+                return data;
+            } catch (error) {
+                console.error('Error generando código:', error);
+                return null;
+            }
+        }
+
+        async function listarCodigosDisponibles() {
+            try {
+                const { data, error } = await supabase
+                    .from('codigos_invitacion')
+                    .select('codigo, rol, usado, fecha_creacion')
+                    .eq('usado', false)
+                    .eq('activo', true)
+                    .order('rol', { ascending: true })
+                    .order('fecha_creacion', { ascending: false });
+
+                if (error) throw error;
+                
+                console.table(data);
+                return data;
+            } catch (error) {
+                console.error('Error listando códigos:', error);
+                return null;
+            }
+        }
+
+        // Estas funciones ya no son necesarias con el sistema de códigos
         async function verificarCodigoYRegistrar() {
             toast('Función no utilizada en esta versión', 'info');
         }
