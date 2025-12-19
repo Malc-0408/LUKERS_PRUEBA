@@ -3287,55 +3287,68 @@
             packingActual = packing.find(p => p.id === id);
             if (!packingActual) return;
             
-            document.getElementById('packingContent').innerHTML = `
-                <div class="alert alert-info" style="margin-bottom:1rem">
-                    <div style="display:flex;align-items:start;gap:0.75rem">
-                        <i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;margin-top:2px"></i>
-                        <div style="flex:1">
-                            <strong>📋 Columnas requeridas en el archivo Excel:</strong>
-                            <div style="margin-top:0.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.5rem;font-size:0.85rem">
-                                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Variante</code></div>
-                                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Encontrado</code></div>
-                            </div>
-                            <div style="margin-top:0.75rem">
-                                <strong>Columnas de distribución por tienda (al menos una):</strong>
-                                <div style="margin-top:0.5rem;font-size:0.82rem;line-height:1.6">
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS EL SOL</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS TRU PIZARRO</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS LA MARINA</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS PROLONGACIÓN IQUITOS</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS CHI P. RUIZ</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS TARAPOTO</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS MENDIOLA</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS ALFONSO UGARTE</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS IQT LORES</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">LUKERS JIRON</code>
-                                    <code style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px;font-size:0.75rem">JR UNION</code>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="file-upload-container">
-                        <input type="file" id="fileDistribucion" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,&#39;fileDistribucionInfo&#39;)">
-                        <label for="fileDistribucion" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>
-                        <div class="file-selected" id="fileDistribucionInfo">
-                            <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>
-                            <span class="file-selected-name"></span>
-                            <button class="file-selected-remove" onclick="limpiarArchivo(&#39;fileDistribucion&#39;,&#39;fileDistribucionInfo&#39;)"><i data-lucide="x" style="width:16px;height:16px"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('packingFooter').innerHTML = `
-                <button class="btn btn-outline" onclick="cerrarModal(&#39;modalPacking&#39;)">Cancelar</button>
-                <button class="btn btn-primary" onclick="procesarDistribucion()">Procesar</button>
-            `;
+            const contentHTML = [
+                '<div class="alert alert-info" style="margin-bottom:1rem">',
+                '    <div style="display:flex;align-items:start;gap:0.75rem">',
+                '        <i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;margin-top:2px"></i>',
+                '        <div style="flex:1">',
+                '            <strong>📋 Columnas requeridas:</strong>',
+                '            <div style="margin-top:0.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.5rem;font-size:0.85rem">',
+                '                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Variante</code></div>',
+                '                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Encontrado</code></div>',
+                '            </div>',
+                '            <div style="margin-top:0.75rem">',
+                '                <strong>Columnas de tiendas:</strong>',
+                '                <div style="margin-top:0.5rem;font-size:0.82rem">EL SOL, TRU PIZARRO, LA MARINA, PROLONGACIÓN IQUITOS, CHI P. RUIZ, TARAPOTO, MENDIOLA, ALFONSO UGARTE, IQT LORES, JIRON, JR UNION</div>',
+                '            </div>',
+                '        </div>',
+                '    </div>',
+                '</div>',
+                '<div class="form-group">',
+                '    <input type="file" id="fileDistribucion" class="form-file" accept=".xlsx,.xls">',
+                '    <label for="fileDistribucion" class="file-upload-btn"><i data-lucide="file-plus" style="width:16px;height:16px"></i> Seleccionar archivo</label>',
+                '    <div class="file-selected" id="fileDistribucionInfo" style="display:none">',
+                '        <div class="file-selected-icon"><i data-lucide="check" style="width:14px;height:14px"></i></div>',
+                '        <span class="file-selected-name"></span>',
+                '        <button class="file-selected-remove" type="button"><i data-lucide="x" style="width:16px;height:16px"></i></button>',
+                '    </div>',
+                '</div>'
+            ].join('');
+            
+            document.getElementById('packingContent').innerHTML = contentHTML;
+            
+            setTimeout(() => {
+                const fileInput = document.getElementById('fileDistribucion');
+                const btnRemove = document.querySelector('#fileDistribucionInfo .file-selected-remove');
+                
+                if (fileInput) {
+                    fileInput.addEventListener('change', function() {
+                        mostrarArchivoSeleccionado(this, 'fileDistribucionInfo');
+                    });
+                }
+                
+                if (btnRemove) {
+                    btnRemove.addEventListener('click', function() {
+                        limpiarArchivo('fileDistribucion', 'fileDistribucionInfo');
+                    });
+                }
+            }, 100);
+            
+            document.getElementById('packingFooter').innerHTML = '<button class="btn btn-outline" id="btnCancelPacking">Cancelar</button><button class="btn btn-primary" id="btnProcessDist">Procesar</button>';
+            
+            setTimeout(() => {
+                const btnCancel = document.getElementById('btnCancelPacking');
+                const btnProcess = document.getElementById('btnProcessDist');
+                
+                if (btnCancel) btnCancel.addEventListener('click', () => cerrarModal('modalPacking'));
+                if (btnProcess) btnProcess.addEventListener('click', procesarDistribucion);
+            }, 100);
+            
             document.getElementById('tituloModalPacking').textContent = 'Subir Distribución';
             abrirModal('modalPacking');
             lucide.createIcons();
         }
+
 
         async function procesarDistribucion() {
             const file = document.getElementById('fileDistribucion')?.files[0];
