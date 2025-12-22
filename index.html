@@ -5321,12 +5321,17 @@
                 
                 console.log(`✅ ÉXITO: ${packingsData.length} packings encontrados usando: ${estrategiaUsada}`);
                 
-                // Cargar órdenes relacionadas
+                // ============================================
+                // NUEVA SECCIÓN: CARGAR ÓRDENES CON MÚLTIPLES INTENTOS
+                // ============================================
+                
                 const ordenIds = [...new Set(packingsData.map(p => p.orden_id).filter(id => id))];
                 console.log('📋 Cargando', ordenIds.length, 'órdenes relacionadas...');
                 
                 let ordenesData = [];
                 if (ordenIds.length > 0) {
+                    // INTENTO 1: Con items_solicitados
+                    console.log('🔄 Intento 1: Consultando órdenes con items_solicitados');
                     try {
                         const { data, error } = await supabase
                             .from('ordenes')
@@ -5334,13 +5339,67 @@
                             .in('id', ordenIds);
                         
                         if (error) {
-                            console.warn('⚠️ Error cargando órdenes:', error.message);
+                            console.warn('⚠️ Intento 1 falló:', error.message);
                         } else {
                             ordenesData = data || [];
-                            console.log('✅ Órdenes cargadas:', ordenesData.length);
+                            console.log('✅ Intento 1 exitoso:', ordenesData.length, 'órdenes');
                         }
                     } catch (e) {
-                        console.error('❌ Error al cargar órdenes:', e.message);
+                        console.error('❌ Intento 1 excepción:', e.message);
+                    }
+                    
+                    // INTENTO 2: Solo id y nombre (sin items_solicitados)
+                    if (ordenesData.length === 0) {
+                        console.log('🔄 Intento 2: Consultando órdenes sin items_solicitados');
+                        try {
+                            const { data, error } = await supabase
+                                .from('ordenes')
+                                .select('id, nombre')
+                                .in('id', ordenIds);
+                            
+                            if (error) {
+                                console.warn('⚠️ Intento 2 falló:', error.message);
+                            } else {
+                                ordenesData = data || [];
+                                console.log('✅ Intento 2 exitoso:', ordenesData.length, 'órdenes (sin items_solicitados)');
+                            }
+                        } catch (e) {
+                            console.error('❌ Intento 2 excepción:', e.message);
+                        }
+                    }
+                    
+                    // INTENTO 3: Consultar estructura de la tabla ordenes
+                    if (ordenesData.length === 0) {
+                        console.log('🔄 Intento 3: Consultando estructura de tabla ordenes');
+                        try {
+                            const { data, error } = await supabase
+                                .from('ordenes')
+                                .select('*')
+                                .limit(1);
+                            
+                            if (!error && data && data.length > 0) {
+                                console.log('✅ Columnas disponibles en ordenes:', Object.keys(data[0]));
+                                
+                                // Intentar cargar con todas las columnas
+                                const { data: allData, error: allError } = await supabase
+                                    .from('ordenes')
+                                    .select('*')
+                                    .in('id', ordenIds);
+                                
+                                if (!allError) {
+                                    ordenesData = allData || [];
+                                    console.log('✅ Intento 3 exitoso:', ordenesData.length, 'órdenes (todas las columnas)');
+                                }
+                            }
+                        } catch (e) {
+                            console.error('❌ Intento 3 excepción:', e.message);
+                        }
+                    }
+                    
+                    // Si todos los intentos fallan, continuar sin órdenes
+                    if (ordenesData.length === 0) {
+                        console.warn('⚠️ No se pudieron cargar órdenes. Continuando sin datos de órdenes.');
+                        toast('Packings cargados, pero sin información de órdenes', 'warning');
                     }
                 }
                 
@@ -5354,7 +5413,10 @@
                 cubitoPackingsCompletados = packingsData
                     .map(pack => ({
                         ...pack,
-                        ordenes: ordenesMap[pack.orden_id] || null
+                        ordenes: ordenesMap[pack.orden_id] || { 
+                            nombre: `Orden ${pack.orden_id}`,
+                            items_solicitados: []
+                        }
                     }))
                     .sort((a, b) => {
                         const fechaA = a.fecha_completado ? new Date(a.fecha_completado) : new Date(0);
@@ -5423,7 +5485,10 @@
             const selectPacking = document.getElementById('cubitoSelectPacking');
             const packingId = selectPacking.value;
             
+            console.log('🔄 cargarDatosPacking() llamado con ID:', packingId);
+            
             if (!packingId) {
+                console.log('⚠️ No hay packing seleccionado, reseteando vista');
                 document.getElementById('cubitoProcesar').disabled = true;
                 cubitoPackingSeleccionado = null;
                 
@@ -5441,24 +5506,35 @@
             }
 
             mostrarLoading('Cargando datos del packing...');
+            console.log('📦 Buscando packing en lista de', cubitoPackingsCompletados.length, 'packings');
 
             try {
+                // Verificar que cubitoPackingsCompletados no esté vacío
+                if (!cubitoPackingsCompletados || cubitoPackingsCompletados.length === 0) {
+                    throw new Error('La lista de packings está vacía. Intenta recargar la página.');
+                }
+                
                 // Buscar el packing en la lista cargada
                 const pack = cubitoPackingsCompletados.find(p => p.id === packingId);
+                
                 if (!pack) {
-                    throw new Error('Packing no encontrado en la lista');
+                    console.error('❌ Packing no encontrado en la lista');
+                    console.log('📋 IDs disponibles:', cubitoPackingsCompletados.map(p => p.id));
+                    console.log('🔍 ID buscado:', packingId);
+                    throw new Error(`Packing con ID ${packingId} no encontrado en la lista cargada. Intenta seleccionar otro.`);
                 }
 
                 cubitoPackingSeleccionado = pack;
-                
-                console.log('📦 Packing seleccionado:', pack);
+                console.log('✅ Packing encontrado:', pack.id);
                 
                 // Obtener items empacados
                 const itemsEmpacados = pack.items_empacados || [];
+                console.log('📦 Items empacados:', itemsEmpacados.length);
                 
                 if (itemsEmpacados.length === 0) {
                     ocultarLoading();
                     toast('Este packing no tiene items empacados', 'warning');
+                    console.warn('⚠️ Packing sin items empacados');
                     return;
                 }
                 
@@ -5467,6 +5543,7 @@
 
                 console.log('📋 Items empacados:', itemsEmpacados.length);
                 console.log('📋 Items solicitados:', itemsSolicitados.length);
+                console.log('📋 Orden:', orden);
 
                 // Generar resumen por tienda
                 const resumenPorTienda = {};
@@ -5484,6 +5561,8 @@
                             }
                             resumenPorTienda[tienda] += item.cantidad || 0;
                             totalItems += item.cantidad || 0;
+                        } else if (tienda) {
+                            console.warn('⚠️ Tienda no configurada en CUBITO_TIENDA_MAPPING:', tienda);
                         }
                     });
                 } 
@@ -5496,8 +5575,12 @@
                         totalItems += item.cantidad_empacada || 0;
                     });
                     
+                    console.log('📊 Total de items a distribuir:', totalItems);
+                    
                     // Distribuir entre todas las tiendas configuradas
                     const tiendas = Object.keys(CUBITO_TIENDA_MAPPING);
+                    console.log('🏪 Distribuyendo entre', tiendas.length, 'tiendas');
+                    
                     const cantidadPorTienda = Math.floor(totalItems / tiendas.length);
                     let resto = totalItems % tiendas.length;
                     
@@ -5507,14 +5590,27 @@
                             resumenPorTienda[tienda] = cantidad;
                         }
                     });
+                    
+                    console.log('📊 Distribución:', {
+                        cantidadPorTienda,
+                        resto,
+                        tiendas: Object.keys(resumenPorTienda).length
+                    });
                 }
 
-                console.log('📊 Resumen por tienda:', resumenPorTienda);
+                console.log('📊 Resumen por tienda final:', resumenPorTienda);
+                console.log('📊 Total items:', totalItems);
 
                 // Actualizar estadísticas
                 const numTiendas = Object.keys(resumenPorTienda).length;
                 const numProductos = new Set(itemsEmpacados.map(i => i.variante)).size;
                 const numRegistros = itemsEmpacados.length * numTiendas;
+
+                console.log('📊 Estadísticas:', {
+                    tiendas: numTiendas,
+                    productos: numProductos,
+                    registros: numRegistros
+                });
 
                 document.getElementById('cubitoTotalTiendas').textContent = numTiendas;
                 document.getElementById('cubitoTotalProductos').textContent = numProductos;
@@ -5527,12 +5623,17 @@
                 document.getElementById('cubitoProcesar').disabled = false;
 
                 ocultarLoading();
+                console.log('✅ Packing cargado correctamente');
                 toast('✅ Packing cargado correctamente', 'success');
 
             } catch (error) {
-                console.error('❌ Error cargando datos del packing:', error);
+                console.error('❌ Error en cargarDatosPacking:', error);
+                console.error('Tipo:', error.name);
+                console.error('Mensaje:', error.message);
+                console.error('Stack:', error.stack);
+                
                 ocultarLoading();
-                toast('Error al cargar datos del packing: ' + error.message, 'error');
+                toast('Error: ' + error.message, 'error');
                 
                 // Reset estado
                 document.getElementById('cubitoProcesar').disabled = true;
