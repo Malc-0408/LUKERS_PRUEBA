@@ -5433,7 +5433,10 @@
                 
                 select.innerHTML = '<option value="">Selecciona un packing terminado</option>';
                 
-                cubitoPackingsCompletados.forEach(pack => {
+                console.log('📋 Poblando dropdown con', cubitoPackingsCompletados.length, 'packings');
+                console.log('📋 IDs de packings:', cubitoPackingsCompletados.map(p => ({ id: p.id, tipo: typeof p.id })));
+                
+                cubitoPackingsCompletados.forEach((pack, index) => {
                     const orden = pack.ordenes;
                     const nombreOrden = orden?.nombre || `Orden ${pack.orden_id || 'sin ID'}`;
                     const parteNum = pack.parte || '?';
@@ -5452,9 +5455,16 @@
                     }
                     
                     const option = document.createElement('option');
-                    option.value = pack.id;
+                    // Convertir explícitamente a string para asegurar comparación correcta
+                    option.value = String(pack.id);
                     option.textContent = `${nombreOrden} - Parte ${parteNum} (${fecha})`;
+                    
+                    // Agregar data attribute con el índice como respaldo
+                    option.setAttribute('data-index', index);
+                    
                     select.appendChild(option);
+                    
+                    console.log(`  ✓ Opción ${index + 1}: value="${option.value}", ID real="${pack.id}"`);
                 });
                 
                 console.log(`✅✅✅ CARGA EXITOSA: ${cubitoPackingsCompletados.length} packings disponibles`);
@@ -5485,7 +5495,8 @@
             const selectPacking = document.getElementById('cubitoSelectPacking');
             const packingId = selectPacking.value;
             
-            console.log('🔄 cargarDatosPacking() llamado con ID:', packingId);
+            console.log('🔄 cargarDatosPacking() llamado');
+            console.log('  📋 packingId del dropdown:', packingId, 'tipo:', typeof packingId);
             
             if (!packingId) {
                 console.log('⚠️ No hay packing seleccionado, reseteando vista');
@@ -5514,18 +5525,52 @@
                     throw new Error('La lista de packings está vacía. Intenta recargar la página.');
                 }
                 
-                // Buscar el packing en la lista cargada
-                const pack = cubitoPackingsCompletados.find(p => p.id === packingId);
+                // Mostrar IDs disponibles vs buscado
+                const idsDisponibles = cubitoPackingsCompletados.map(p => String(p.id));
+                console.log('  📋 IDs disponibles:', idsDisponibles);
+                console.log('  🔍 ID buscado:', packingId);
+                
+                // MÉTODO 1: Buscar por ID convertido a string
+                let pack = cubitoPackingsCompletados.find(p => String(p.id) === String(packingId));
+                
+                // MÉTODO 2: Si no se encuentra, intentar por índice (data-index)
+                if (!pack) {
+                    console.warn('⚠️ No encontrado por ID, intentando por índice');
+                    const selectedOption = selectPacking.options[selectPacking.selectedIndex];
+                    const dataIndex = selectedOption?.getAttribute('data-index');
+                    
+                    if (dataIndex !== null) {
+                        const index = parseInt(dataIndex);
+                        if (!isNaN(index) && index >= 0 && index < cubitoPackingsCompletados.length) {
+                            pack = cubitoPackingsCompletados[index];
+                            console.log('✅ Encontrado por índice:', index);
+                        }
+                    }
+                }
+                
+                // MÉTODO 3: Buscar comparando sin conversión (último recurso)
+                if (!pack) {
+                    console.warn('⚠️ No encontrado por índice, intentando comparación directa');
+                    pack = cubitoPackingsCompletados.find(p => p.id == packingId); // == en lugar de ===
+                    if (pack) {
+                        console.log('✅ Encontrado con comparación flexible (==)');
+                    }
+                }
                 
                 if (!pack) {
-                    console.error('❌ Packing no encontrado en la lista');
-                    console.log('📋 IDs disponibles:', cubitoPackingsCompletados.map(p => p.id));
-                    console.log('🔍 ID buscado:', packingId);
-                    throw new Error(`Packing con ID ${packingId} no encontrado en la lista cargada. Intenta seleccionar otro.`);
+                    console.error('❌ Packing NO encontrado después de 3 intentos');
+                    console.error('📋 Lista completa de packings:', cubitoPackingsCompletados);
+                    throw new Error(`Packing no encontrado. IDs disponibles: ${idsDisponibles.join(', ')}. ID buscado: ${packingId}`);
                 }
 
                 cubitoPackingSeleccionado = pack;
                 console.log('✅ Packing encontrado:', pack.id);
+                console.log('📦 Datos del packing:', {
+                    id: pack.id,
+                    orden_id: pack.orden_id,
+                    parte: pack.parte,
+                    items_count: pack.items_empacados?.length || 0
+                });
                 
                 // Obtener items empacados
                 const itemsEmpacados = pack.items_empacados || [];
