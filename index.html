@@ -591,6 +591,7 @@
                     <div class="nav-item" data-vista="picking"><i data-lucide="scan"></i><span>Picking</span></div>
                     <div class="nav-item" data-vista="packing"><i data-lucide="box"></i><span>Packing</span></div>
                     <div class="nav-item" data-vista="reclasificacion"><i data-lucide="repeat"></i><span>Reclasificación</span><span class="nav-badge badge-warning" id="badgeReclas">0</span></div>
+                    <div class="nav-item" data-vista="cubito"><i data-lucide="package"></i><span>Cubito Lukers</span></div>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Configuración</div>
@@ -989,6 +990,119 @@
                     </div>
                 </div>
 
+                <!-- VISTA CUBITO LUKERS -->
+                <div id="vista-cubito" class="vista">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i data-lucide="package"></i> Cubito Lukers - Verticalización</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-outline" onclick="exportarVerticalizados()" id="btnExportarCubito" disabled><i data-lucide="download"></i> Descargar Excel</button>
+                            </div>
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;padding:1.5rem">
+                            <!-- Panel izquierdo: Configuración -->
+                            <div>
+                                <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+                                    <h4 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem"><i data-lucide="settings"></i> Configuración</h4>
+                                    
+                                    <!-- Estadísticas -->
+                                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
+                                        <div style="background:linear-gradient(135deg,var(--primary-light),var(--primary));color:white;padding:1rem;border-radius:8px;text-align:center">
+                                            <div style="font-size:0.75rem;opacity:0.9">Tiendas</div>
+                                            <div style="font-size:1.5rem;font-weight:700" id="cubitoTotalTiendas">0</div>
+                                        </div>
+                                        <div style="background:linear-gradient(135deg,var(--success-light),var(--success));color:white;padding:1rem;border-radius:8px;text-align:center">
+                                            <div style="font-size:0.75rem;opacity:0.9">Productos</div>
+                                            <div style="font-size:1.5rem;font-weight:700" id="cubitoTotalProductos">0</div>
+                                        </div>
+                                        <div style="background:linear-gradient(135deg,var(--warning-light),var(--warning));color:white;padding:1rem;border-radius:8px;text-align:center">
+                                            <div style="font-size:0.75rem;opacity:0.9">Registros</div>
+                                            <div style="font-size:1.5rem;font-weight:700" id="cubitoTotalRegistros">0</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Seleccionar Packing Terminado</label>
+                                        <select id="cubitoSelectPacking" class="form-select" onchange="cargarDatosPacking()">
+                                            <option value="">Cargando packings...</option>
+                                        </select>
+                                        <small style="color:var(--text-secondary);margin-top:0.25rem;display:block">Se mostrarán solo los packings con estado "Completado"</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Texto de Cabecera</label>
+                                        <input type="text" id="cubitoTextoCabecera" class="form-input" placeholder="Ingrese texto para la cabecera" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Fecha Actual</label>
+                                        <input type="text" id="cubitoFecha" class="form-input" readonly />
+                                    </div>
+
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                                        <div class="form-group">
+                                            <label>Fecha Entrega R050</label>
+                                            <input type="date" id="cubitoFechaR050" class="form-input" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Fecha Entrega R040</label>
+                                            <input type="date" id="cubitoFechaR040" class="form-input" />
+                                        </div>
+                                    </div>
+
+                                    <button id="cubitoProcesar" class="btn btn-primary btn-block" onclick="procesarVerticalizado()" disabled>
+                                        <i data-lucide="zap"></i> Verticalizar Datos
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Panel derecho: Resumen -->
+                            <div>
+                                <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
+                                    <h4 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem"><i data-lucide="bar-chart"></i> Resumen por Tienda</h4>
+                                    
+                                    <div style="margin-bottom:1rem">
+                                        <input type="text" id="cubitoSearchResumen" class="form-input" placeholder="Buscar tienda..." onkeyup="filtrarResumenTiendas()" />
+                                    </div>
+
+                                    <div class="table-container" style="max-height:500px">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Tienda</th>
+                                                    <th>Sociedad</th>
+                                                    <th>Cantidad</th>
+                                                    <th>% del Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="cubitoTablaResumen">
+                                                <tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">Seleccione un packing para ver el resumen</td></tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="2"><strong>Total</strong></td>
+                                                    <td id="cubitoTotalCantidad"><strong>0</strong></td>
+                                                    <td><strong>100%</strong></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+
+                                    <div class="btn-group" style="margin-top:1.5rem">
+                                        <button id="cubitoVisualizarBtn" class="btn btn-primary" onclick="visualizarDatosVerticalizados()" disabled>
+                                            <i data-lucide="eye"></i> Visualizar Datos
+                                        </button>
+                                        <button id="cubitoCopiarBtn" class="btn btn-outline" onclick="copiarDatosCubito()" disabled>
+                                            <i data-lucide="copy"></i> Copiar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- VISTA EQUIPOS -->
                 <div id="vista-equipos" class="vista">
                     <div class="card">
@@ -1258,6 +1372,35 @@
                 <div class="modal" id="modalCrearEquipo"><div class="modal-content"><div class="modal-header"><h3 class="modal-title" id="tituloModalEquipo">Nuevo Equipo</h3><button class="modal-close" onclick="cerrarModal('modalCrearEquipo')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><label class="form-label">Nombre</label><input type="text" id="equipoNombre" class="form-input"></div><div class="form-group"><label class="form-label">Tipo</label><select id="equipoTipo" class="form-select"><option value="picking">Picking</option><option value="packing">Packing</option></select></div><div class="form-group"><label class="form-label">Integrantes (uno por línea)</label><textarea id="equipoIntegrantes" class="form-textarea" rows="5"></textarea></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalCrearEquipo')">Cancelar</button><button class="btn btn-primary" onclick="guardarEquipo()">Guardar</button></div></div></div>
 
                 <div class="modal" id="modalHistorialOrden"><div class="modal-content xl"><div class="modal-header"><h3 class="modal-title">Historial de Orden</h3><button class="modal-close" onclick="cerrarModal('modalHistorialOrden')"><i data-lucide="x"></i></button></div><div class="modal-body" id="historialOrdenBody"></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalHistorialOrden')">Cerrar</button></div></div></div>
+
+                <!-- Modal Visualización Cubito -->
+                <div class="modal" id="modalCubitoVisualizacion">
+                    <div class="modal-content" style="width:98vw;max-width:98vw;height:95vh;max-height:95vh">
+                        <div class="modal-header">
+                            <h3 class="modal-title"><i data-lucide="table"></i> Datos Verticalizados - Vista Excel</h3>
+                            <div style="display:flex;gap:0.5rem;align-items:center">
+                                <input type="text" id="cubitoSearchModal" class="form-input" placeholder="Buscar..." style="width:200px" onkeyup="filtrarTablaModal()" />
+                                <button class="btn btn-outline" onclick="copiarDatosCubitoModal()"><i data-lucide="copy"></i> Copiar</button>
+                                <button class="btn btn-outline" onclick="exportarVerticalizados()"><i data-lucide="download"></i> Exportar</button>
+                                <button class="modal-close" onclick="cerrarModal('modalCubitoVisualizacion')"><i data-lucide="x"></i></button>
+                            </div>
+                        </div>
+                        <div class="modal-body" style="padding:0;overflow:auto">
+                            <div style="width:100%;height:100%;overflow:auto;background:#ffffff">
+                                <table id="cubitoTablaModal" style="width:100%;border-collapse:collapse;font-size:11px;font-family:Arial,sans-serif">
+                                    <thead style="position:sticky;top:0;background:#e0e0e0;z-index:10">
+                                        <tr>
+                                            <th style="border:1px solid #c0c0c0;padding:4px;text-align:left;font-weight:bold">No hay datos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td style="text-align:center;padding:2rem;color:#666">Procese un packing para ver los datos</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1315,6 +1458,26 @@
         let chartEstados, chartMontos, chartEquipos, chartGeneros;
         let ordenActual = null, pickingActual = null, packingActual = null, reclasActual = null, equipoActual = null;
         let tabReclasActual = 'pendientes', tabEquiposActual = 'picking';
+        
+        // Variables para CUBITO LUKERS
+        let cubitoOutputData = [];
+        let cubitoCurrentFilteredData = [];
+        let cubitoPackingSeleccionado = null;
+        let cubitoPackingsCompletados = [];
+        
+        // Mapeo de tiendas para CUBITO
+        const CUBITO_TIENDA_MAPPING = {
+            "LUKERS EL SOL": { Clase: "Z009", Proveedor: "RD50", OrgCompra: "R050", GrupoCompra: "104", Sociedad: "R050", CondPago: "", PrecioNeto: "", CentroTienda: "R501", Almacen: "PT01", Solicitante: "R501", AlmacenProcedencia: "PT01" },
+            "LUKERS JR UNION": { Clase: "Z009", Proveedor: "RD50", OrgCompra: "R050", GrupoCompra: "104", Sociedad: "R050", CondPago: "", PrecioNeto: "", CentroTienda: "R511", Almacen: "PT01", Solicitante: "R511", AlmacenProcedencia: "PT01" },
+            "LUKERS MENDIOLA": { Clase: "Z009", Proveedor: "RD50", OrgCompra: "R050", GrupoCompra: "104", Sociedad: "R050", CondPago: "", PrecioNeto: "", CentroTienda: "R502", Almacen: "PT01", Solicitante: "R502", AlmacenProcedencia: "PT01" },
+            "LUKERS PROLONGACIÓN IQUITOS": { Clase: "Z009", Proveedor: "RD50", OrgCompra: "R050", GrupoCompra: "104", Sociedad: "R050", CondPago: "", PrecioNeto: "", CentroTienda: "R504", Almacen: "PT01", Solicitante: "R504", AlmacenProcedencia: "PT01" },
+            "LUKERS LA MARINA": { Clase: "Z009", Proveedor: "RD50", OrgCompra: "R050", GrupoCompra: "104", Sociedad: "R050", CondPago: "", PrecioNeto: "", CentroTienda: "R503", Almacen: "PT01", Solicitante: "R503", AlmacenProcedencia: "PT01" },
+            "LUKERS ALFONSO UGARTE": { Clase: "Z009", Proveedor: "RD50", OrgCompra: "R050", GrupoCompra: "104", Sociedad: "R050", CondPago: "", PrecioNeto: "", CentroTienda: "R505", Almacen: "PT01", Solicitante: "R505", AlmacenProcedencia: "PT01" },
+            "LUKERS TRU PIZARRO": { Clase: "Z009", Proveedor: "RD50", OrgCompra: "R050", GrupoCompra: "104", Sociedad: "R050", CondPago: "", PrecioNeto: "", CentroTienda: "R506", Almacen: "PT01", Solicitante: "R506", AlmacenProcedencia: "PT01" },
+            "LUKERS TARAPOTO": { Clase: "Z008", Proveedor: "RD50", OrgCompra: "R040", GrupoCompra: "104", Sociedad: "R040", CondPago: "P030", PrecioNeto: "", CentroTienda: "R402", Almacen: "PT01", Solicitante: "R402", AlmacenProcedencia: "PT01" },
+            "LUKERS IQT LORES": { Clase: "Z008", Proveedor: "RD50", OrgCompra: "R040", GrupoCompra: "104", Sociedad: "R040", CondPago: "P030", PrecioNeto: "", CentroTienda: "R401", Almacen: "PT01", Solicitante: "R401", AlmacenProcedencia: "PT01" },
+            "LUKERS CHI P. RUIZ": { Clase: "Z009", Proveedor: "RD50", OrgCompra: "R050", GrupoCompra: "104", Sociedad: "R050", CondPago: "", PrecioNeto: "", CentroTienda: "R510", Almacen: "PT01", Solicitante: "R510", AlmacenProcedencia: "PT01" }
+        };
         
         // Variables para filtros multi-select en cascada
         let filtrosSeleccionados = {
@@ -1501,7 +1664,7 @@
             const titulos = {
                 dashboard: 'Dashboard', inventario: 'Inventario', productos: 'Productos',
                 ordenes: 'Órdenes', picking: 'Picking', packing: 'Packing',
-                reclasificacion: 'Reclasificación', equipos: 'Equipos', configuracion: 'Configuración'
+                reclasificacion: 'Reclasificación', cubito: 'Cubito Lukers', equipos: 'Equipos', configuracion: 'Configuración'
             };
             document.getElementById('headerTitle').textContent = titulos[nombre] || 'MAWI';
             document.getElementById('headerBreadcrumb').textContent = titulos[nombre] || 'MAWI';
@@ -1512,6 +1675,9 @@
             } else if (nombre === 'dashboard') {
                 inicializarFiltrosDashboard();
                 actualizarDashboard();
+            } else if (nombre === 'cubito') {
+                inicializarCubito();
+                cargarPackingsCompletados();
             }
             
             lucide.createIcons();
@@ -4937,6 +5103,469 @@
             
             console.log('✅ Sistema inicializado correctamente');
         });
+
+        // ============================================
+        // CUBITO LUKERS - VERTICALIZACIÓN
+        // ============================================
+
+        // Funciones auxiliares para CUBITO
+        function cubitoFormatDate(date, format = "DD.MM.YYYY") {
+            const d = date instanceof Date ? date : new Date(date);
+            const dd = String(d.getDate()).padStart(2, "0");
+            const mm = String(d.getMonth() + 1).padStart(2, "0");
+            const yyyy = d.getFullYear();
+            switch (format) {
+                case "YYYY-MM-DD": return `${yyyy}-${mm}-${dd}`;
+                case "MM/DD/YYYY": return `${mm}/${dd}/${yyyy}`;
+                case "DD.MM.YYYY":
+                default: return `${dd}.${mm}.${yyyy}`;
+            }
+        }
+
+        function cubitoAddDaysToDate(date, days) {
+            const result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
+
+        // Cargar lista de packings completados
+        async function cargarPackingsCompletados() {
+            try {
+                const { data, error } = await supabase
+                    .from('packing')
+                    .select(`
+                        *,
+                        ordenes:orden_id (
+                            nombre,
+                            items_solicitados
+                        )
+                    `)
+                    .eq('estado', 'Completado')
+                    .order('fecha_completado', { ascending: false });
+
+                if (error) throw error;
+
+                cubitoPackingsCompletados = data || [];
+                
+                const select = document.getElementById('cubitoSelectPacking');
+                select.innerHTML = '<option value="">Selecciona un packing terminado</option>';
+                
+                cubitoPackingsCompletados.forEach(pack => {
+                    const orden = pack.ordenes;
+                    const nombreOrden = orden?.nombre || `Orden ${pack.orden_id}`;
+                    const fecha = pack.fecha_completado ? new Date(pack.fecha_completado).toLocaleDateString() : 'N/A';
+                    
+                    const option = document.createElement('option');
+                    option.value = pack.id;
+                    option.textContent = `${nombreOrden} - Parte ${pack.parte} (${fecha})`;
+                    select.appendChild(option);
+                });
+
+                console.log(`✅ ${cubitoPackingsCompletados.length} packings completados cargados`);
+            } catch (error) {
+                console.error('Error cargando packings:', error);
+                toast('Error al cargar packings completados', 'error');
+            }
+        }
+
+        // Cargar datos del packing seleccionado
+        async function cargarDatosPacking() {
+            const selectPacking = document.getElementById('cubitoSelectPacking');
+            const packingId = selectPacking.value;
+            
+            if (!packingId) {
+                document.getElementById('cubitoProcesar').disabled = true;
+                cubitoPackingSeleccionado = null;
+                return;
+            }
+
+            mostrarLoading('Cargando datos del packing...');
+
+            try {
+                // Buscar el packing en la lista cargada
+                const pack = cubitoPackingsCompletados.find(p => p.id === packingId);
+                if (!pack) {
+                    throw new Error('Packing no encontrado');
+                }
+
+                cubitoPackingSeleccionado = pack;
+                
+                // Obtener items empacados
+                const itemsEmpacados = pack.items_empacados || [];
+                const orden = pack.ordenes;
+                const itemsSolicitados = orden?.items_solicitados || [];
+
+                // Generar resumen por tienda si la orden tiene distribución
+                const resumenPorTienda = {};
+                let totalItems = 0;
+
+                // Contar totales por variante
+                itemsEmpacados.forEach(item => {
+                    totalItems += item.cantidad_empacada || 0;
+                });
+
+                // Si hay distribución en items_solicitados, usarla
+                if (itemsSolicitados.length > 0) {
+                    itemsSolicitados.forEach(item => {
+                        const tienda = item.tienda || 'Sin tienda';
+                        if (!resumenPorTienda[tienda]) {
+                            resumenPorTienda[tienda] = 0;
+                        }
+                        resumenPorTienda[tienda] += item.cantidad || 0;
+                    });
+                } else {
+                    // Distribución equitativa entre todas las tiendas
+                    const tiendas = Object.keys(CUBITO_TIENDA_MAPPING);
+                    const cantidadPorTienda = Math.floor(totalItems / tiendas.length);
+                    tiendas.forEach(tienda => {
+                        resumenPorTienda[tienda] = cantidadPorTienda;
+                    });
+                }
+
+                // Actualizar estadísticas
+                const numTiendas = Object.keys(resumenPorTienda).length;
+                const numProductos = new Set(itemsEmpacados.map(i => i.variante)).size;
+                const numRegistros = itemsEmpacados.length;
+
+                document.getElementById('cubitoTotalTiendas').textContent = numTiendas;
+                document.getElementById('cubitoTotalProductos').textContent = numProductos;
+                document.getElementById('cubitoTotalRegistros').textContent = numRegistros;
+
+                // Actualizar resumen en tabla
+                actualizarResumenTiendas(resumenPorTienda);
+
+                // Habilitar botón de procesar
+                document.getElementById('cubitoProcesar').disabled = false;
+
+                ocultarLoading();
+                toast('Packing cargado correctamente', 'success');
+
+            } catch (error) {
+                console.error('Error cargando datos del packing:', error);
+                ocultarLoading();
+                toast('Error al cargar datos del packing', 'error');
+            }
+        }
+
+        // Actualizar tabla de resumen de tiendas
+        function actualizarResumenTiendas(resumenPorTienda) {
+            const tbody = document.getElementById('cubitoTablaResumen');
+            tbody.innerHTML = '';
+            
+            const totalCantidad = Object.values(resumenPorTienda).reduce((sum, cant) => sum + cant, 0);
+            
+            Object.entries(resumenPorTienda)
+                .sort((a, b) => b[1] - a[1])
+                .forEach(([tienda, cantidad]) => {
+                    const sociedad = CUBITO_TIENDA_MAPPING[tienda]?.Sociedad || 'N/A';
+                    const porcentaje = totalCantidad > 0 ? ((cantidad / totalCantidad) * 100).toFixed(2) : 0;
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${tienda}</td>
+                        <td><span class="badge" style="background:${sociedad === 'R050' ? 'var(--primary)' : 'var(--secondary)'}">${sociedad}</span></td>
+                        <td><strong>${cantidad}</strong></td>
+                        <td><strong>${porcentaje}%</strong></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            
+            document.getElementById('cubitoTotalCantidad').innerHTML = `<strong>${totalCantidad}</strong>`;
+        }
+
+        // Filtrar tabla de resumen
+        function filtrarResumenTiendas() {
+            const searchTerm = document.getElementById('cubitoSearchResumen').value.toLowerCase();
+            const rows = document.querySelectorAll('#cubitoTablaResumen tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Procesar verticalización
+        async function procesarVerticalizado() {
+            if (!cubitoPackingSeleccionado) {
+                toast('No hay packing seleccionado', 'error');
+                return;
+            }
+
+            mostrarLoading('Verticalizando datos...');
+
+            try {
+                const textoCabecera = document.getElementById('cubitoTextoCabecera').value.trim();
+                const fechaActual = document.getElementById('cubitoFecha').value;
+                let fechaEntregaR050 = document.getElementById('cubitoFechaR050').value;
+                let fechaEntregaR040 = document.getElementById('cubitoFechaR040').value;
+
+                // Calcular fechas si no están definidas
+                if (!fechaEntregaR050) {
+                    fechaEntregaR050 = cubitoFormatDate(cubitoAddDaysToDate(new Date(), 15), "YYYY-MM-DD");
+                    document.getElementById('cubitoFechaR050').value = fechaEntregaR050;
+                }
+                if (!fechaEntregaR040) {
+                    fechaEntregaR040 = cubitoFormatDate(cubitoAddDaysToDate(new Date(), 26), "YYYY-MM-DD");
+                    document.getElementById('cubitoFechaR040').value = fechaEntregaR040;
+                }
+
+                const itemsEmpacados = cubitoPackingSeleccionado.items_empacados || [];
+                const orden = cubitoPackingSeleccionado.ordenes;
+                const itemsSolicitados = orden?.items_solicitados || [];
+
+                // Crear estructura de datos para verticalización
+                cubitoOutputData = [];
+
+                // Agrupar items por variante y tienda
+                const distribucionPorVariante = {};
+
+                // Si hay items_solicitados con tiendas, usar esa distribución
+                if (itemsSolicitados.length > 0 && itemsSolicitados.some(i => i.tienda)) {
+                    itemsSolicitados.forEach(item => {
+                        const variante = item.variante;
+                        const tienda = item.tienda;
+                        const cantidad = item.cantidad || 0;
+
+                        if (!distribucionPorVariante[variante]) {
+                            distribucionPorVariante[variante] = {};
+                        }
+                        if (!distribucionPorVariante[variante][tienda]) {
+                            distribucionPorVariante[variante][tienda] = 0;
+                        }
+                        distribucionPorVariante[variante][tienda] += cantidad;
+                    });
+                } else {
+                    // Distribución automática: dividir equitativamente entre tiendas configuradas
+                    const tiendas = Object.keys(CUBITO_TIENDA_MAPPING);
+                    
+                    itemsEmpacados.forEach(item => {
+                        const variante = item.variante;
+                        const cantidadTotal = item.cantidad_empacada || 0;
+                        const cantidadPorTienda = Math.floor(cantidadTotal / tiendas.length);
+                        let resto = cantidadTotal % tiendas.length;
+
+                        if (!distribucionPorVariante[variante]) {
+                            distribucionPorVariante[variante] = {};
+                        }
+
+                        tiendas.forEach((tienda, index) => {
+                            const cantidad = cantidadPorTienda + (index < resto ? 1 : 0);
+                            if (cantidad > 0) {
+                                distribucionPorVariante[variante][tienda] = cantidad;
+                            }
+                        });
+                    });
+                }
+
+                // Generar registros verticalizados
+                Object.entries(distribucionPorVariante).forEach(([variante, tiendas]) => {
+                    Object.entries(tiendas).forEach(([tienda, cantidad]) => {
+                        if (cantidad > 0 && CUBITO_TIENDA_MAPPING[tienda]) {
+                            const config = CUBITO_TIENDA_MAPPING[tienda];
+                            const fechaEntrega = config.Sociedad === "R050"
+                                ? cubitoFormatDate(new Date(fechaEntregaR050), "DD.MM.YYYY")
+                                : cubitoFormatDate(new Date(fechaEntregaR040), "DD.MM.YYYY");
+
+                            cubitoOutputData.push({
+                                TIENDAS: tienda,
+                                Ind: "",
+                                Clase: config.Clase,
+                                Proveedor: config.Proveedor,
+                                FechaDocCompra: fechaActual,
+                                OrgCompra: config.OrgCompra,
+                                GrupoCompra: config.GrupoCompra,
+                                Sociedad: config.Sociedad,
+                                CondPago: config.CondPago,
+                                TextoCabecera: textoCabecera,
+                                Material: variante,
+                                Cantidad: cantidad,
+                                PrecioNeto: config.PrecioNeto,
+                                CentroTienda: config.CentroTienda,
+                                Almacen: config.Almacen,
+                                Solicitante: config.Solicitante,
+                                AlmacenProcedencia: config.AlmacenProcedencia,
+                                FechaEntrega: fechaEntrega
+                            });
+                        }
+                    });
+                });
+
+                // Ordenar por tienda
+                cubitoOutputData.sort((a, b) => a.TIENDAS.localeCompare(b.TIENDAS));
+
+                // Marcar indicadores H/D
+                let currentTienda = "";
+                cubitoOutputData.forEach(row => {
+                    row.Ind = row.TIENDAS !== currentTienda ? "H" : "D";
+                    currentTienda = row.TIENDAS;
+                });
+
+                // Habilitar botones
+                document.getElementById('cubitoVisualizarBtn').disabled = false;
+                document.getElementById('cubitoCopiarBtn').disabled = false;
+                document.getElementById('btnExportarCubito').disabled = false;
+
+                ocultarLoading();
+                toast(`✅ ${cubitoOutputData.length} registros verticalizados correctamente`, 'success');
+
+            } catch (error) {
+                console.error('Error al verticalizar:', error);
+                ocultarLoading();
+                toast('Error al procesar verticalización', 'error');
+            }
+        }
+
+        // Visualizar datos verticalizados
+        function visualizarDatosVerticalizados() {
+            if (cubitoOutputData.length === 0) {
+                toast('No hay datos para visualizar', 'warning');
+                return;
+            }
+
+            // Preparar tabla modal
+            const table = document.getElementById('cubitoTablaModal');
+            const headers = Object.keys(cubitoOutputData[0]);
+            
+            const headerRow = headers.map(h => `<th style="border:1px solid #c0c0c0;padding:3px 4px;background:#e0e0e0;font-weight:bold;font-size:8px">${h}</th>`).join("");
+            const dataRows = cubitoOutputData.map(row => 
+                `<tr>${headers.map(h => `<td style="border:1px solid #c0c0c0;padding:2px 4px;font-size:8px">${row[h]}</td>`).join("")}</tr>`
+            ).join("");
+            
+            table.innerHTML = `
+                <thead style="position:sticky;top:0;background:#e0e0e0;z-index:10"><tr>${headerRow}</tr></thead>
+                <tbody>${dataRows}</tbody>
+            `;
+
+            cubitoCurrentFilteredData = cubitoOutputData;
+            abrirModal('modalCubitoVisualizacion');
+        }
+
+        // Filtrar tabla modal
+        function filtrarTablaModal() {
+            const searchTerm = document.getElementById('cubitoSearchModal').value.toLowerCase();
+            const rows = document.querySelectorAll('#cubitoTablaModal tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Copiar datos del cubito
+        function copiarDatosCubito() {
+            if (cubitoOutputData.length === 0) {
+                toast('No hay datos para copiar', 'warning');
+                return;
+            }
+
+            try {
+                const headers = Object.keys(cubitoOutputData[0]);
+                const dataHeaders = headers.slice(1); // Sin columna TIENDAS
+                
+                let tableText = "";
+                cubitoOutputData.forEach(row => {
+                    const values = dataHeaders.map(h => row[h] || '');
+                    tableText += values.join("\t") + "\n";
+                });
+
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(tableText).then(() => {
+                        toast("✅ Datos copiados al portapapeles (sin tiendas)", "success");
+                    }).catch(() => {
+                        fallbackCopyTextCubito(tableText);
+                    });
+                } else {
+                    fallbackCopyTextCubito(tableText);
+                }
+            } catch (error) {
+                console.error('Error copiando datos:', error);
+                toast('Error al copiar datos', 'error');
+            }
+        }
+
+        // Copiar datos del modal
+        function copiarDatosCubitoModal() {
+            if (cubitoCurrentFilteredData.length === 0) {
+                toast('No hay datos para copiar', 'warning');
+                return;
+            }
+
+            try {
+                const headers = Object.keys(cubitoCurrentFilteredData[0]);
+                const dataHeaders = headers.slice(1);
+                
+                let tableText = "";
+                cubitoCurrentFilteredData.forEach(row => {
+                    const values = dataHeaders.map(h => row[h] || '');
+                    tableText += values.join("\t") + "\n";
+                });
+
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(tableText).then(() => {
+                        toast("✅ Datos copiados al portapapeles", "success");
+                    }).catch(() => {
+                        fallbackCopyTextCubito(tableText);
+                    });
+                } else {
+                    fallbackCopyTextCubito(tableText);
+                }
+            } catch (error) {
+                console.error('Error copiando datos:', error);
+                toast('Error al copiar datos', 'error');
+            }
+        }
+
+        // Fallback para copiar texto
+        function fallbackCopyTextCubito(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.top = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand("copy");
+                toast("✅ Datos copiados al portapapeles", "success");
+            } catch (error) {
+                toast('No se pudieron copiar los datos', 'error');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // Exportar datos verticalizados
+        function exportarVerticalizados() {
+            if (cubitoOutputData.length === 0) {
+                toast('No hay datos para exportar', 'warning');
+                return;
+            }
+
+            try {
+                const ws = XLSX.utils.json_to_sheet(cubitoOutputData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Datos Verticalizados");
+                
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
+                const nombreOrden = cubitoPackingSeleccionado?.ordenes?.nombre || 'Packing';
+                XLSX.writeFile(wb, `Cubito_${nombreOrden}_${timestamp}.xlsx`);
+                
+                toast('✅ Archivo Excel descargado correctamente', 'success');
+            } catch (error) {
+                console.error('Error exportando:', error);
+                toast('Error al exportar archivo', 'error');
+            }
+        }
+
+        // Inicializar fecha actual del cubito
+        function inicializarCubito() {
+            const hoy = new Date();
+            document.getElementById('cubitoFecha').value = cubitoFormatDate(hoy, "DD.MM.YYYY");
+            
+            // Calcular fechas de entrega
+            const r050Input = document.getElementById("cubitoFechaR050");
+            const r040Input = document.getElementById("cubitoFechaR040");
+            if (!r050Input.value) r050Input.value = cubitoFormatDate(cubitoAddDaysToDate(hoy, 15), "YYYY-MM-DD");
+            if (!r040Input.value) r040Input.value = cubitoFormatDate(cubitoAddDaysToDate(hoy, 26), "YYYY-MM-DD");
+        }
 
         console.log('✅ MAWI v7.0 - Sistema Integrado Completo con funcionalidades principales');
     </script>
