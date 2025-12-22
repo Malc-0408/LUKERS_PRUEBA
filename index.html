@@ -993,65 +993,72 @@
                 <!-- VISTA CUBITO LUKERS -->
                 <div id="vista-cubito" class="vista">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title"><i data-lucide="package"></i> Cubito Lukers - Verticalización</h3>
+                        <div class="card-header" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white">
+                            <h3 class="card-title" style="color:white"><i data-lucide="package"></i> Cubito Lukers - Verticalización Automática</h3>
                             <div class="card-actions">
-                                <button class="btn btn-outline" onclick="exportarVerticalizados()" id="btnExportarCubito" disabled><i data-lucide="download"></i> Descargar Excel</button>
+                                <button class="btn btn-outline" onclick="exportarVerticalizados()" id="btnExportarCubito" disabled style="border-color:white;color:white"><i data-lucide="download"></i> Descargar Excel</button>
                             </div>
                         </div>
                         
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;padding:1.5rem">
+                        <!-- Estadísticas Destacadas -->
+                        <div style="padding:1.5rem;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%)">
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem">
+                                <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);text-align:center;transition:transform 0.3s" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="font-size:2rem;margin-bottom:0.5rem">🏪</div>
+                                    <div style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem">Tiendas</div>
+                                    <div style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="cubitoTotalTiendas">0</div>
+                                </div>
+                                <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);text-align:center;transition:transform 0.3s" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="font-size:2rem;margin-bottom:0.5rem">📦</div>
+                                    <div style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem">Productos</div>
+                                    <div style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="cubitoTotalProductos">0</div>
+                                </div>
+                                <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);text-align:center;transition:transform 0.3s" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="font-size:2rem;margin-bottom:0.5rem">📊</div>
+                                    <div style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem">Registros</div>
+                                    <div style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="cubitoTotalRegistros">0</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;padding:2rem">
                             <!-- Panel izquierdo: Configuración -->
                             <div>
-                                <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-                                    <h4 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem"><i data-lucide="settings"></i> Configuración</h4>
+                                <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:2rem;box-shadow:0 4px 6px rgba(0,0,0,0.05)">
+                                    <h4 style="margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:1.1rem"><i data-lucide="settings" style="color:#667eea"></i> Configuración del Cubito</h4>
                                     
-                                    <!-- Estadísticas -->
-                                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
-                                        <div style="background:linear-gradient(135deg,var(--primary-light),var(--primary));color:white;padding:1rem;border-radius:8px;text-align:center">
-                                            <div style="font-size:0.75rem;opacity:0.9">Tiendas</div>
-                                            <div style="font-size:1.5rem;font-weight:700" id="cubitoTotalTiendas">0</div>
-                                        </div>
-                                        <div style="background:linear-gradient(135deg,var(--success-light),var(--success));color:white;padding:1rem;border-radius:8px;text-align:center">
-                                            <div style="font-size:0.75rem;opacity:0.9">Productos</div>
-                                            <div style="font-size:1.5rem;font-weight:700" id="cubitoTotalProductos">0</div>
-                                        </div>
-                                        <div style="background:linear-gradient(135deg,var(--warning-light),var(--warning));color:white;padding:1rem;border-radius:8px;text-align:center">
-                                            <div style="font-size:0.75rem;opacity:0.9">Registros</div>
-                                            <div style="font-size:1.5rem;font-weight:700" id="cubitoTotalRegistros">0</div>
-                                        </div>
-                                    </div>
-
                                     <div class="form-group">
-                                        <label>Seleccionar Packing Terminado</label>
-                                        <select id="cubitoSelectPacking" class="form-select" onchange="cargarDatosPacking()">
+                                        <label style="display:flex;align-items:center;gap:0.5rem"><i data-lucide="list" style="width:16px;height:16px"></i> Packing Terminado</label>
+                                        <select id="cubitoSelectPacking" class="form-select" onchange="cargarDatosPacking()" style="border:2px solid #e2e8f0;border-radius:8px;font-weight:500">
                                             <option value="">Cargando packings...</option>
                                         </select>
-                                        <small style="color:var(--text-secondary);margin-top:0.25rem;display:block">Se mostrarán solo los packings con estado "Completado"</small>
+                                        <small style="color:var(--text-secondary);margin-top:0.5rem;display:block;display:flex;align-items:center;gap:0.25rem"><i data-lucide="info" style="width:14px;height:14px"></i> Solo packings con estado "Completado"</small>
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Texto de Cabecera</label>
-                                        <input type="text" id="cubitoTextoCabecera" class="form-input" placeholder="Ingrese texto para la cabecera" />
+                                        <label style="display:flex;align-items:center;gap:0.5rem"><i data-lucide="file-text" style="width:16px;height:16px"></i> Texto de Cabecera <span style="color:#94a3b8">(Opcional)</span></label>
+                                        <input type="text" id="cubitoTextoCabecera" class="form-input" placeholder="Ej: Pedido Especial Navidad 2024" style="border:2px solid #e2e8f0;border-radius:8px" />
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Fecha Actual</label>
-                                        <input type="text" id="cubitoFecha" class="form-input" readonly />
+                                        <label style="display:flex;align-items:center;gap:0.5rem"><i data-lucide="calendar" style="width:16px;height:16px"></i> Fecha Documento</label>
+                                        <input type="text" id="cubitoFecha" class="form-input" readonly style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;font-weight:600" />
                                     </div>
 
                                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
                                         <div class="form-group">
-                                            <label>Fecha Entrega R050</label>
-                                            <input type="date" id="cubitoFechaR050" class="form-input" />
+                                            <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem"><i data-lucide="truck" style="width:14px;height:14px"></i> Entrega R050</label>
+                                            <input type="date" id="cubitoFechaR050" class="form-input" style="border:2px solid #e2e8f0;border-radius:8px" />
+                                            <small style="color:#10b981;font-size:0.75rem">+15 días</small>
                                         </div>
                                         <div class="form-group">
-                                            <label>Fecha Entrega R040</label>
-                                            <input type="date" id="cubitoFechaR040" class="form-input" />
+                                            <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem"><i data-lucide="truck" style="width:14px;height:14px"></i> Entrega R040</label>
+                                            <input type="date" id="cubitoFechaR040" class="form-input" style="border:2px solid #e2e8f0;border-radius:8px" />
+                                            <small style="color:#f59e0b;font-size:0.75rem">+26 días</small>
                                         </div>
                                     </div>
 
-                                    <button id="cubitoProcesar" class="btn btn-primary btn-block" onclick="procesarVerticalizado()" disabled>
+                                    <button id="cubitoProcesar" class="btn btn-primary btn-block" onclick="procesarVerticalizado()" disabled style="margin-top:1.5rem;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;padding:1rem;font-size:1rem;font-weight:600;transition:all 0.3s" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                                         <i data-lucide="zap"></i> Verticalizar Datos
                                     </button>
                                 </div>
@@ -1059,41 +1066,41 @@
 
                             <!-- Panel derecho: Resumen -->
                             <div>
-                                <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:1.5rem">
-                                    <h4 style="margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem"><i data-lucide="bar-chart"></i> Resumen por Tienda</h4>
+                                <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:2rem;box-shadow:0 4px 6px rgba(0,0,0,0.05)">
+                                    <h4 style="margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:1.1rem"><i data-lucide="bar-chart" style="color:#667eea"></i> Resumen por Tienda</h4>
                                     
                                     <div style="margin-bottom:1rem">
-                                        <input type="text" id="cubitoSearchResumen" class="form-input" placeholder="Buscar tienda..." onkeyup="filtrarResumenTiendas()" />
+                                        <input type="text" id="cubitoSearchResumen" class="form-input" placeholder="🔍 Buscar tienda..." onkeyup="filtrarResumenTiendas()" style="border:2px solid #e2e8f0;border-radius:8px" />
                                     </div>
 
-                                    <div class="table-container" style="max-height:500px">
-                                        <table>
-                                            <thead>
+                                    <div class="table-container" style="max-height:380px;border:1px solid #e2e8f0;border-radius:8px;overflow:auto">
+                                        <table style="font-size:0.9rem">
+                                            <thead style="background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);position:sticky;top:0;z-index:10">
                                                 <tr>
-                                                    <th>Tienda</th>
-                                                    <th>Sociedad</th>
-                                                    <th>Cantidad</th>
-                                                    <th>% del Total</th>
+                                                    <th style="padding:0.75rem">Tienda</th>
+                                                    <th style="padding:0.75rem">Sociedad</th>
+                                                    <th style="padding:0.75rem">Cantidad</th>
+                                                    <th style="padding:0.75rem">% Total</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="cubitoTablaResumen">
-                                                <tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">Seleccione un packing para ver el resumen</td></tr>
+                                                <tr><td colspan="4" style="text-align:center;color:var(--text-secondary);padding:2rem">Seleccione un packing para ver el resumen</td></tr>
                                             </tbody>
-                                            <tfoot>
+                                            <tfoot style="background:#f8fafc;font-weight:700">
                                                 <tr>
-                                                    <td colspan="2"><strong>Total</strong></td>
-                                                    <td id="cubitoTotalCantidad"><strong>0</strong></td>
-                                                    <td><strong>100%</strong></td>
+                                                    <td colspan="2" style="padding:0.75rem"><strong>Total</strong></td>
+                                                    <td id="cubitoTotalCantidad" style="padding:0.75rem"><strong>0</strong></td>
+                                                    <td style="padding:0.75rem"><strong>100%</strong></td>
                                                 </tr>
                                             </tfoot>
                                         </table>
                                     </div>
 
                                     <div class="btn-group" style="margin-top:1.5rem">
-                                        <button id="cubitoVisualizarBtn" class="btn btn-primary" onclick="visualizarDatosVerticalizados()" disabled>
-                                            <i data-lucide="eye"></i> Visualizar Datos
+                                        <button id="cubitoVisualizarBtn" class="btn btn-primary" onclick="visualizarDatosVerticalizados()" disabled style="flex:1">
+                                            <i data-lucide="eye"></i> Visualizar
                                         </button>
-                                        <button id="cubitoCopiarBtn" class="btn btn-outline" onclick="copiarDatosCubito()" disabled>
+                                        <button id="cubitoCopiarBtn" class="btn btn-outline" onclick="copiarDatosCubito()" disabled style="flex:1">
                                             <i data-lucide="copy"></i> Copiar
                                         </button>
                                     </div>
@@ -1375,26 +1382,40 @@
 
                 <!-- Modal Visualización Cubito -->
                 <div class="modal" id="modalCubitoVisualizacion">
-                    <div class="modal-content" style="width:98vw;max-width:98vw;height:95vh;max-height:95vh">
-                        <div class="modal-header">
-                            <h3 class="modal-title"><i data-lucide="table"></i> Datos Verticalizados - Vista Excel</h3>
-                            <div style="display:flex;gap:0.5rem;align-items:center">
-                                <input type="text" id="cubitoSearchModal" class="form-input" placeholder="Buscar..." style="width:200px" onkeyup="filtrarTablaModal()" />
-                                <button class="btn btn-outline" onclick="copiarDatosCubitoModal()"><i data-lucide="copy"></i> Copiar</button>
-                                <button class="btn btn-outline" onclick="exportarVerticalizados()"><i data-lucide="download"></i> Exportar</button>
-                                <button class="modal-close" onclick="cerrarModal('modalCubitoVisualizacion')"><i data-lucide="x"></i></button>
+                    <div class="modal-content" style="width:98vw;max-width:98vw;height:95vh;max-height:95vh;border-radius:16px;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25)">
+                        <div class="modal-header" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:1.5rem;border-bottom:none">
+                            <h3 class="modal-title" style="color:white;display:flex;align-items:center;gap:0.75rem;font-size:1.3rem">
+                                <i data-lucide="table" style="width:28px;height:28px"></i> 
+                                Datos Verticalizados - Vista Excel
+                                <span style="background:rgba(255,255,255,0.2);padding:0.25rem 0.75rem;border-radius:12px;font-size:0.85rem;font-weight:600" id="cubitoContadorRegistros"></span>
+                            </h3>
+                            <div style="display:flex;gap:0.75rem;align-items:center">
+                                <input type="text" id="cubitoSearchModal" class="form-input" placeholder="🔍 Buscar en los datos..." style="width:250px;border:2px solid white;background:rgba(255,255,255,0.2);color:white;backdrop-filter:blur(10px)" onkeyup="filtrarTablaModal()" />
+                                <button class="btn btn-outline" onclick="copiarDatosCubitoModal()" style="border-color:white;color:white;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px)" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                                    <i data-lucide="copy"></i> Copiar
+                                </button>
+                                <button class="btn btn-outline" onclick="exportarVerticalizados()" style="border-color:white;color:white;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px)" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                                    <i data-lucide="download"></i> Exportar
+                                </button>
+                                <button class="modal-close" onclick="cerrarModal('modalCubitoVisualizacion')" style="background:rgba(255,255,255,0.2);color:white;border:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                                    <i data-lucide="x" style="width:24px;height:24px"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="modal-body" style="padding:0;overflow:auto">
-                            <div style="width:100%;height:100%;overflow:auto;background:#ffffff">
-                                <table id="cubitoTablaModal" style="width:100%;border-collapse:collapse;font-size:11px;font-family:Arial,sans-serif">
-                                    <thead style="position:sticky;top:0;background:#e0e0e0;z-index:10">
+                        <div class="modal-body" style="padding:0;overflow:auto;background:#f8fafc">
+                            <div style="width:100%;height:100%;overflow:auto">
+                                <table id="cubitoTablaModal" style="width:100%;border-collapse:collapse;font-family:Consolas,Monaco,monospace;background:white">
+                                    <thead>
                                         <tr>
-                                            <th style="border:1px solid #c0c0c0;padding:4px;text-align:left;font-weight:bold">No hay datos</th>
+                                            <th style="border:1px solid #c0c0c0;padding:8px;text-align:left;background:#e0e0e0;font-weight:bold">No hay datos</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td style="text-align:center;padding:2rem;color:#666">Procese un packing para ver los datos</td></tr>
+                                        <tr><td style="text-align:center;padding:3rem;color:#64748b;font-family:Inter,sans-serif">
+                                            <div style="font-size:3rem;margin-bottom:1rem">📦</div>
+                                            <div style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem">No hay datos verticalizados</div>
+                                            <div style="font-size:0.9rem;color:#94a3b8">Procese un packing para ver los datos aquí</div>
+                                        </td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -5131,29 +5152,61 @@
         // Cargar lista de packings completados
         async function cargarPackingsCompletados() {
             try {
-                const { data, error } = await supabase
+                // Consulta corregida: solo campos que existen en la tabla packing
+                const { data: packingsData, error: packError } = await supabase
                     .from('packing')
-                    .select(`
-                        *,
-                        ordenes:orden_id (
-                            nombre,
-                            items_solicitados
-                        )
-                    `)
+                    .select('*')
                     .eq('estado', 'Completado')
                     .order('fecha_completado', { ascending: false });
 
-                if (error) throw error;
+                if (packError) {
+                    console.error('Error en consulta packing:', packError);
+                    throw packError;
+                }
 
-                cubitoPackingsCompletados = data || [];
+                // Cargar información de órdenes por separado
+                const ordenIds = [...new Set(packingsData.map(p => p.orden_id))];
+                const { data: ordenesData, error: ordenError } = await supabase
+                    .from('ordenes')
+                    .select('id, nombre, items_solicitados')
+                    .in('id', ordenIds);
+
+                if (ordenError) {
+                    console.error('Error cargando órdenes:', ordenError);
+                }
+
+                // Mapear órdenes a un objeto para búsqueda rápida
+                const ordenesMap = {};
+                if (ordenesData) {
+                    ordenesData.forEach(orden => {
+                        ordenesMap[orden.id] = orden;
+                    });
+                }
+
+                // Combinar datos
+                cubitoPackingsCompletados = packingsData.map(pack => ({
+                    ...pack,
+                    ordenes: ordenesMap[pack.orden_id] || null
+                }));
                 
                 const select = document.getElementById('cubitoSelectPacking');
+                if (!select) {
+                    console.error('Elemento cubitoSelectPacking no encontrado');
+                    return;
+                }
+
                 select.innerHTML = '<option value="">Selecciona un packing terminado</option>';
+                
+                if (cubitoPackingsCompletados.length === 0) {
+                    select.innerHTML = '<option value="">No hay packings completados</option>';
+                    toast('No hay packings completados disponibles', 'info');
+                    return;
+                }
                 
                 cubitoPackingsCompletados.forEach(pack => {
                     const orden = pack.ordenes;
                     const nombreOrden = orden?.nombre || `Orden ${pack.orden_id}`;
-                    const fecha = pack.fecha_completado ? new Date(pack.fecha_completado).toLocaleDateString() : 'N/A';
+                    const fecha = pack.fecha_completado ? new Date(pack.fecha_completado).toLocaleDateString('es-PE') : 'Sin fecha';
                     
                     const option = document.createElement('option');
                     option.value = pack.id;
@@ -5162,9 +5215,14 @@
                 });
 
                 console.log(`✅ ${cubitoPackingsCompletados.length} packings completados cargados`);
+                toast(`${cubitoPackingsCompletados.length} packings disponibles`, 'success');
             } catch (error) {
                 console.error('Error cargando packings:', error);
-                toast('Error al cargar packings completados', 'error');
+                const select = document.getElementById('cubitoSelectPacking');
+                if (select) {
+                    select.innerHTML = '<option value="">Error al cargar packings</option>';
+                }
+                toast('Error al cargar packings completados. Revisa la consola.', 'error');
             }
         }
 
@@ -5176,6 +5234,17 @@
             if (!packingId) {
                 document.getElementById('cubitoProcesar').disabled = true;
                 cubitoPackingSeleccionado = null;
+                
+                // Reset estadísticas
+                document.getElementById('cubitoTotalTiendas').textContent = '0';
+                document.getElementById('cubitoTotalProductos').textContent = '0';
+                document.getElementById('cubitoTotalRegistros').textContent = '0';
+                
+                // Reset tabla
+                const tbody = document.getElementById('cubitoTablaResumen');
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">Seleccione un packing para ver el resumen</td></tr>';
+                document.getElementById('cubitoTotalCantidad').innerHTML = '<strong>0</strong>';
+                
                 return;
             }
 
@@ -5185,47 +5254,75 @@
                 // Buscar el packing en la lista cargada
                 const pack = cubitoPackingsCompletados.find(p => p.id === packingId);
                 if (!pack) {
-                    throw new Error('Packing no encontrado');
+                    throw new Error('Packing no encontrado en la lista');
                 }
 
                 cubitoPackingSeleccionado = pack;
                 
+                console.log('📦 Packing seleccionado:', pack);
+                
                 // Obtener items empacados
                 const itemsEmpacados = pack.items_empacados || [];
+                
+                if (itemsEmpacados.length === 0) {
+                    ocultarLoading();
+                    toast('Este packing no tiene items empacados', 'warning');
+                    return;
+                }
+                
                 const orden = pack.ordenes;
                 const itemsSolicitados = orden?.items_solicitados || [];
 
-                // Generar resumen por tienda si la orden tiene distribución
+                console.log('📋 Items empacados:', itemsEmpacados.length);
+                console.log('📋 Items solicitados:', itemsSolicitados.length);
+
+                // Generar resumen por tienda
                 const resumenPorTienda = {};
                 let totalItems = 0;
 
-                // Contar totales por variante
-                itemsEmpacados.forEach(item => {
-                    totalItems += item.cantidad_empacada || 0;
-                });
-
-                // Si hay distribución en items_solicitados, usarla
-                if (itemsSolicitados.length > 0) {
+                // Estrategia 1: Si hay distribución en items_solicitados, usarla
+                if (itemsSolicitados.length > 0 && itemsSolicitados.some(i => i.tienda)) {
+                    console.log('✅ Usando distribución de la orden');
+                    
                     itemsSolicitados.forEach(item => {
-                        const tienda = item.tienda || 'Sin tienda';
-                        if (!resumenPorTienda[tienda]) {
-                            resumenPorTienda[tienda] = 0;
+                        const tienda = item.tienda;
+                        if (tienda && CUBITO_TIENDA_MAPPING[tienda]) {
+                            if (!resumenPorTienda[tienda]) {
+                                resumenPorTienda[tienda] = 0;
+                            }
+                            resumenPorTienda[tienda] += item.cantidad || 0;
+                            totalItems += item.cantidad || 0;
                         }
-                        resumenPorTienda[tienda] += item.cantidad || 0;
                     });
-                } else {
-                    // Distribución equitativa entre todas las tiendas
+                } 
+                // Estrategia 2: Distribución equitativa automática
+                else {
+                    console.log('⚡ Usando distribución automática equitativa');
+                    
+                    // Contar total de items empacados
+                    itemsEmpacados.forEach(item => {
+                        totalItems += item.cantidad_empacada || 0;
+                    });
+                    
+                    // Distribuir entre todas las tiendas configuradas
                     const tiendas = Object.keys(CUBITO_TIENDA_MAPPING);
                     const cantidadPorTienda = Math.floor(totalItems / tiendas.length);
-                    tiendas.forEach(tienda => {
-                        resumenPorTienda[tienda] = cantidadPorTienda;
+                    let resto = totalItems % tiendas.length;
+                    
+                    tiendas.forEach((tienda, index) => {
+                        const cantidad = cantidadPorTienda + (index < resto ? 1 : 0);
+                        if (cantidad > 0) {
+                            resumenPorTienda[tienda] = cantidad;
+                        }
                     });
                 }
+
+                console.log('📊 Resumen por tienda:', resumenPorTienda);
 
                 // Actualizar estadísticas
                 const numTiendas = Object.keys(resumenPorTienda).length;
                 const numProductos = new Set(itemsEmpacados.map(i => i.variante)).size;
-                const numRegistros = itemsEmpacados.length;
+                const numRegistros = itemsEmpacados.length * numTiendas;
 
                 document.getElementById('cubitoTotalTiendas').textContent = numTiendas;
                 document.getElementById('cubitoTotalProductos').textContent = numProductos;
@@ -5238,12 +5335,16 @@
                 document.getElementById('cubitoProcesar').disabled = false;
 
                 ocultarLoading();
-                toast('Packing cargado correctamente', 'success');
+                toast('✅ Packing cargado correctamente', 'success');
 
             } catch (error) {
-                console.error('Error cargando datos del packing:', error);
+                console.error('❌ Error cargando datos del packing:', error);
                 ocultarLoading();
-                toast('Error al cargar datos del packing', 'error');
+                toast('Error al cargar datos del packing: ' + error.message, 'error');
+                
+                // Reset estado
+                document.getElementById('cubitoProcesar').disabled = true;
+                cubitoPackingSeleccionado = null;
             }
         }
 
@@ -5254,23 +5355,55 @@
             
             const totalCantidad = Object.values(resumenPorTienda).reduce((sum, cant) => sum + cant, 0);
             
+            if (totalCantidad === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-secondary);padding:2rem">No hay datos para mostrar</td></tr>';
+                document.getElementById('cubitoTotalCantidad').innerHTML = '<strong>0</strong>';
+                return;
+            }
+            
             Object.entries(resumenPorTienda)
                 .sort((a, b) => b[1] - a[1])
-                .forEach(([tienda, cantidad]) => {
-                    const sociedad = CUBITO_TIENDA_MAPPING[tienda]?.Sociedad || 'N/A';
-                    const porcentaje = totalCantidad > 0 ? ((cantidad / totalCantidad) * 100).toFixed(2) : 0;
+                .forEach(([tienda, cantidad], index) => {
+                    const config = CUBITO_TIENDA_MAPPING[tienda];
+                    if (!config) return;
+                    
+                    const sociedad = config.Sociedad;
+                    const porcentaje = ((cantidad / totalCantidad) * 100).toFixed(2);
+                    
+                    // Colores por sociedad
+                    const badgeColor = sociedad === 'R050' 
+                        ? 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)' 
+                        : 'background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)';
                     
                     const tr = document.createElement('tr');
+                    tr.style.transition = 'all 0.3s';
+                    tr.onmouseover = function() { this.style.background = '#f0f4ff'; this.style.transform = 'translateX(5px)'; };
+                    tr.onmouseout = function() { this.style.background = ''; this.style.transform = 'translateX(0)'; };
+                    
                     tr.innerHTML = `
-                        <td>${tienda}</td>
-                        <td><span class="badge" style="background:${sociedad === 'R050' ? 'var(--primary)' : 'var(--secondary)'}">${sociedad}</span></td>
-                        <td><strong>${cantidad}</strong></td>
-                        <td><strong>${porcentaje}%</strong></td>
+                        <td style="padding:0.75rem">
+                            <div style="display:flex;align-items:center;gap:0.5rem">
+                                <span style="font-size:1.2rem">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏪'}</span>
+                                <strong>${tienda}</strong>
+                            </div>
+                        </td>
+                        <td style="padding:0.75rem">
+                            <span style="${badgeColor};color:white;padding:0.25rem 0.75rem;border-radius:12px;font-size:0.75rem;font-weight:600">${sociedad}</span>
+                        </td>
+                        <td style="padding:0.75rem"><strong style="color:#667eea;font-size:1.1rem">${cantidad.toLocaleString()}</strong></td>
+                        <td style="padding:0.75rem">
+                            <div style="display:flex;align-items:center;gap:0.5rem">
+                                <div style="flex:1;background:#e2e8f0;height:8px;border-radius:4px;overflow:hidden">
+                                    <div style="background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);height:100%;width:${porcentaje}%;transition:width 0.5s"></div>
+                                </div>
+                                <strong style="font-size:0.9rem">${porcentaje}%</strong>
+                            </div>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
             
-            document.getElementById('cubitoTotalCantidad').innerHTML = `<strong>${totalCantidad}</strong>`;
+            document.getElementById('cubitoTotalCantidad').innerHTML = `<strong style="color:#667eea;font-size:1.1rem">${totalCantidad.toLocaleString()}</strong>`;
         }
 
         // Filtrar tabla de resumen
@@ -5292,6 +5425,7 @@
             }
 
             mostrarLoading('Verticalizando datos...');
+            console.log('🔄 Iniciando verticalización...');
 
             try {
                 const textoCabecera = document.getElementById('cubitoTextoCabecera').value.trim();
@@ -5299,7 +5433,7 @@
                 let fechaEntregaR050 = document.getElementById('cubitoFechaR050').value;
                 let fechaEntregaR040 = document.getElementById('cubitoFechaR040').value;
 
-                // Calcular fechas si no están definidas
+                // Validar y calcular fechas si no están definidas
                 if (!fechaEntregaR050) {
                     fechaEntregaR050 = cubitoFormatDate(cubitoAddDaysToDate(new Date(), 15), "YYYY-MM-DD");
                     document.getElementById('cubitoFechaR050').value = fechaEntregaR050;
@@ -5309,9 +5443,20 @@
                     document.getElementById('cubitoFechaR040').value = fechaEntregaR040;
                 }
 
+                console.log('📅 Fechas configuradas:');
+                console.log('  - Actual:', fechaActual);
+                console.log('  - R050:', fechaEntregaR050);
+                console.log('  - R040:', fechaEntregaR040);
+
                 const itemsEmpacados = cubitoPackingSeleccionado.items_empacados || [];
                 const orden = cubitoPackingSeleccionado.ordenes;
                 const itemsSolicitados = orden?.items_solicitados || [];
+
+                if (itemsEmpacados.length === 0) {
+                    throw new Error('No hay items empacados en este packing');
+                }
+
+                console.log('📦 Items a procesar:', itemsEmpacados.length);
 
                 // Crear estructura de datos para verticalización
                 cubitoOutputData = [];
@@ -5319,28 +5464,41 @@
                 // Agrupar items por variante y tienda
                 const distribucionPorVariante = {};
 
-                // Si hay items_solicitados con tiendas, usar esa distribución
+                // Estrategia 1: Si hay items_solicitados con tiendas, usar esa distribución
                 if (itemsSolicitados.length > 0 && itemsSolicitados.some(i => i.tienda)) {
+                    console.log('✅ Usando distribución de la orden');
+                    
                     itemsSolicitados.forEach(item => {
                         const variante = item.variante;
                         const tienda = item.tienda;
                         const cantidad = item.cantidad || 0;
 
-                        if (!distribucionPorVariante[variante]) {
-                            distribucionPorVariante[variante] = {};
+                        if (tienda && CUBITO_TIENDA_MAPPING[tienda]) {
+                            if (!distribucionPorVariante[variante]) {
+                                distribucionPorVariante[variante] = {};
+                            }
+                            if (!distribucionPorVariante[variante][tienda]) {
+                                distribucionPorVariante[variante][tienda] = 0;
+                            }
+                            distribucionPorVariante[variante][tienda] += cantidad;
                         }
-                        if (!distribucionPorVariante[variante][tienda]) {
-                            distribucionPorVariante[variante][tienda] = 0;
-                        }
-                        distribucionPorVariante[variante][tienda] += cantidad;
                     });
-                } else {
-                    // Distribución automática: dividir equitativamente entre tiendas configuradas
+                } 
+                // Estrategia 2: Distribución automática equitativa
+                else {
+                    console.log('⚡ Usando distribución automática');
+                    
                     const tiendas = Object.keys(CUBITO_TIENDA_MAPPING);
                     
                     itemsEmpacados.forEach(item => {
                         const variante = item.variante;
                         const cantidadTotal = item.cantidad_empacada || 0;
+                        
+                        if (!variante) {
+                            console.warn('⚠️ Item sin variante:', item);
+                            return;
+                        }
+                        
                         const cantidadPorTienda = Math.floor(cantidadTotal / tiendas.length);
                         let resto = cantidadTotal % tiendas.length;
 
@@ -5357,7 +5515,11 @@
                     });
                 }
 
+                console.log('📊 Distribución generada:', Object.keys(distribucionPorVariante).length, 'variantes');
+
                 // Generar registros verticalizados
+                let registrosGenerados = 0;
+                
                 Object.entries(distribucionPorVariante).forEach(([variante, tiendas]) => {
                     Object.entries(tiendas).forEach(([tienda, cantidad]) => {
                         if (cantidad > 0 && CUBITO_TIENDA_MAPPING[tienda]) {
@@ -5386,12 +5548,23 @@
                                 AlmacenProcedencia: config.AlmacenProcedencia,
                                 FechaEntrega: fechaEntrega
                             });
+                            registrosGenerados++;
                         }
                     });
                 });
 
-                // Ordenar por tienda
-                cubitoOutputData.sort((a, b) => a.TIENDAS.localeCompare(b.TIENDAS));
+                console.log('📝 Registros generados:', registrosGenerados);
+
+                if (cubitoOutputData.length === 0) {
+                    throw new Error('No se generaron registros. Verifica la distribución.');
+                }
+
+                // Ordenar por tienda y material
+                cubitoOutputData.sort((a, b) => {
+                    const tiendaCmp = a.TIENDAS.localeCompare(b.TIENDAS);
+                    if (tiendaCmp !== 0) return tiendaCmp;
+                    return a.Material.localeCompare(b.Material);
+                });
 
                 // Marcar indicadores H/D
                 let currentTienda = "";
@@ -5399,6 +5572,8 @@
                     row.Ind = row.TIENDAS !== currentTienda ? "H" : "D";
                     currentTienda = row.TIENDAS;
                 });
+
+                console.log('✅ Verticalización completada:', cubitoOutputData.length, 'registros');
 
                 // Habilitar botones
                 document.getElementById('cubitoVisualizarBtn').disabled = false;
@@ -5409,9 +5584,9 @@
                 toast(`✅ ${cubitoOutputData.length} registros verticalizados correctamente`, 'success');
 
             } catch (error) {
-                console.error('Error al verticalizar:', error);
+                console.error('❌ Error al verticalizar:', error);
                 ocultarLoading();
-                toast('Error al procesar verticalización', 'error');
+                toast('Error al procesar verticalización: ' + error.message, 'error');
             }
         }
 
@@ -5422,22 +5597,62 @@
                 return;
             }
 
+            console.log('👁️ Visualizando', cubitoOutputData.length, 'registros');
+
             // Preparar tabla modal
             const table = document.getElementById('cubitoTablaModal');
             const headers = Object.keys(cubitoOutputData[0]);
             
-            const headerRow = headers.map(h => `<th style="border:1px solid #c0c0c0;padding:3px 4px;background:#e0e0e0;font-weight:bold;font-size:8px">${h}</th>`).join("");
-            const dataRows = cubitoOutputData.map(row => 
-                `<tr>${headers.map(h => `<td style="border:1px solid #c0c0c0;padding:2px 4px;font-size:8px">${row[h]}</td>`).join("")}</tr>`
-            ).join("");
+            // Crear encabezados con estilos mejorados
+            const headerRow = headers.map(h => `
+                <th style="
+                    border:1px solid #c0c0c0;
+                    padding:6px 8px;
+                    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+                    color:white;
+                    font-weight:700;
+                    font-size:10px;
+                    text-transform:uppercase;
+                    letter-spacing:0.5px;
+                    white-space:nowrap;
+                    position:sticky;
+                    top:0;
+                    z-index:10
+                ">${h}</th>
+            `).join("");
+            
+            // Crear filas con estilos alternados
+            const dataRows = cubitoOutputData.map((row, index) => {
+                const bgColor = index % 2 === 0 ? '#ffffff' : '#f8fafc';
+                return `<tr style="background:${bgColor}" onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='${bgColor}'">
+                    ${headers.map(h => `
+                        <td style="
+                            border:1px solid #e2e8f0;
+                            padding:4px 6px;
+                            font-size:9px;
+                            font-family:Consolas,Monaco,monospace;
+                            white-space:nowrap
+                        ">${row[h] || ''}</td>
+                    `).join("")}
+                </tr>`;
+            }).join("");
             
             table.innerHTML = `
-                <thead style="position:sticky;top:0;background:#e0e0e0;z-index:10"><tr>${headerRow}</tr></thead>
+                <thead><tr>${headerRow}</tr></thead>
                 <tbody>${dataRows}</tbody>
             `;
 
-            cubitoCurrentFilteredData = cubitoOutputData;
+            cubitoCurrentFilteredData = [...cubitoOutputData];
             abrirModal('modalCubitoVisualizacion');
+            
+            // Actualizar contador inicial
+            const contador = document.getElementById('cubitoContadorRegistros');
+            if (contador) {
+                contador.textContent = `${cubitoOutputData.length} registros`;
+            }
+            
+            // Reiniciar lucide icons para el modal
+            setTimeout(() => lucide.createIcons(), 100);
         }
 
         // Filtrar tabla modal
@@ -5445,10 +5660,23 @@
             const searchTerm = document.getElementById('cubitoSearchModal').value.toLowerCase();
             const rows = document.querySelectorAll('#cubitoTablaModal tbody tr');
             
+            let visibleCount = 0;
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+                const isVisible = text.includes(searchTerm);
+                row.style.display = isVisible ? '' : 'none';
+                if (isVisible) visibleCount++;
             });
+            
+            // Actualizar contador
+            const contador = document.getElementById('cubitoContadorRegistros');
+            if (contador) {
+                if (searchTerm) {
+                    contador.textContent = `${visibleCount} de ${rows.length} registros`;
+                } else {
+                    contador.textContent = `${rows.length} registros`;
+                }
+            }
         }
 
         // Copiar datos del cubito
