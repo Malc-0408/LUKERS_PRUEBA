@@ -5149,80 +5149,272 @@
             return result;
         }
 
-        // Cargar lista de packings completados
-        async function cargarPackingsCompletados() {
+        // Función de diagnóstico para probar diferentes consultas
+        async function diagnosticarProblemaPackings() {
+            console.log('🔍 ============ DIAGNÓSTICO CUBITO ============');
+            
+            // Prueba 1: Obtener estructura de tabla (columnas disponibles)
+            console.log('\n📋 Prueba 1: Listando primeros registros sin filtro...');
             try {
-                // Consulta corregida: solo campos que existen en la tabla packing
-                const { data: packingsData, error: packError } = await supabase
+                const { data, error } = await supabase
                     .from('packing')
                     .select('*')
-                    .eq('estado', 'Completado')
-                    .order('fecha_completado', { ascending: false });
-
-                if (packError) {
-                    console.error('Error en consulta packing:', packError);
-                    throw packError;
-                }
-
-                // Cargar información de órdenes por separado
-                const ordenIds = [...new Set(packingsData.map(p => p.orden_id))];
-                const { data: ordenesData, error: ordenError } = await supabase
-                    .from('ordenes')
-                    .select('id, nombre, items_solicitados')
-                    .in('id', ordenIds);
-
-                if (ordenError) {
-                    console.error('Error cargando órdenes:', ordenError);
-                }
-
-                // Mapear órdenes a un objeto para búsqueda rápida
-                const ordenesMap = {};
-                if (ordenesData) {
-                    ordenesData.forEach(orden => {
-                        ordenesMap[orden.id] = orden;
-                    });
-                }
-
-                // Combinar datos
-                cubitoPackingsCompletados = packingsData.map(pack => ({
-                    ...pack,
-                    ordenes: ordenesMap[pack.orden_id] || null
-                }));
+                    .limit(3);
                 
+                if (error) {
+                    console.error('❌ Error en Prueba 1:', error.message || error);
+                } else if (data && data.length > 0) {
+                    console.log('✅ Columnas disponibles:', Object.keys(data[0]));
+                    console.log('✅ Primer registro:', data[0]);
+                } else {
+                    console.warn('⚠️ No hay registros en la tabla packing');
+                }
+            } catch (e) {
+                console.error('❌ Excepción en Prueba 1:', e.message);
+            }
+            
+            // Prueba 2: Verificar valores del campo "estado"
+            console.log('\n📊 Prueba 2: Valores únicos de estado...');
+            try {
+                const { data, error } = await supabase
+                    .from('packing')
+                    .select('estado')
+                    .limit(20);
+                
+                if (error) {
+                    console.error('❌ Error en Prueba 2:', error.message || error);
+                } else {
+                    const estados = [...new Set(data.map(p => p.estado))];
+                    console.log('✅ Estados encontrados:', estados);
+                }
+            } catch (e) {
+                console.error('❌ Excepción en Prueba 2:', e.message);
+            }
+            
+            // Prueba 3: Contar registros totales
+            console.log('\n🔢 Prueba 3: Contando registros totales...');
+            try {
+                const { count, error } = await supabase
+                    .from('packing')
+                    .select('*', { count: 'exact', head: true });
+                
+                if (error) {
+                    console.error('❌ Error en Prueba 3:', error.message || error);
+                } else {
+                    console.log('✅ Total de registros en packing:', count);
+                }
+            } catch (e) {
+                console.error('❌ Excepción en Prueba 3:', e.message);
+            }
+            
+            console.log('\n🔍 ============ FIN DIAGNÓSTICO ============\n');
+        }
+
+        // Cargar packings con múltiples estrategias
+        async function cargarPackingsCompletados() {
+            try {
+                console.log('🔄 Iniciando carga de packings...');
+                
+                let packingsData = [];
+                let estrategiaUsada = '';
+                
+                // ESTRATEGIA 1: Intentar con "Completado" (con mayúscula)
+                console.log('📦 Estrategia 1: Buscando estado = "Completado"');
+                try {
+                    const { data, error } = await supabase
+                        .from('packing')
+                        .select('*')
+                        .eq('estado', 'Completado');
+                    
+                    if (error) {
+                        console.warn('⚠️ Estrategia 1 falló:', error.message || error);
+                    } else if (data && data.length > 0) {
+                        packingsData = data;
+                        estrategiaUsada = 'estado="Completado"';
+                        console.log('✅ Estrategia 1 exitosa:', packingsData.length, 'registros');
+                    } else {
+                        console.log('⚠️ Estrategia 1: Sin resultados');
+                    }
+                } catch (e) {
+                    console.error('❌ Estrategia 1 excepción:', e.message);
+                }
+                
+                // ESTRATEGIA 2: Intentar con "completado" (minúsculas)
+                if (packingsData.length === 0) {
+                    console.log('📦 Estrategia 2: Buscando estado = "completado"');
+                    try {
+                        const { data, error } = await supabase
+                            .from('packing')
+                            .select('*')
+                            .eq('estado', 'completado');
+                        
+                        if (!error && data && data.length > 0) {
+                            packingsData = data;
+                            estrategiaUsada = 'estado="completado"';
+                            console.log('✅ Estrategia 2 exitosa:', packingsData.length, 'registros');
+                        }
+                    } catch (e) {
+                        console.error('❌ Estrategia 2 excepción:', e.message);
+                    }
+                }
+                
+                // ESTRATEGIA 3: Intentar con ILIKE (case insensitive)
+                if (packingsData.length === 0) {
+                    console.log('📦 Estrategia 3: Buscando con ILIKE "%completado%"');
+                    try {
+                        const { data, error } = await supabase
+                            .from('packing')
+                            .select('*')
+                            .ilike('estado', '%completado%');
+                        
+                        if (!error && data && data.length > 0) {
+                            packingsData = data;
+                            estrategiaUsada = 'estado ILIKE "%completado%"';
+                            console.log('✅ Estrategia 3 exitosa:', packingsData.length, 'registros');
+                        }
+                    } catch (e) {
+                        console.error('❌ Estrategia 3 excepción:', e.message);
+                    }
+                }
+                
+                // ESTRATEGIA 4: Traer TODOS los registros y filtrar manualmente
+                if (packingsData.length === 0) {
+                    console.log('📦 Estrategia 4: Cargando TODOS los registros (sin filtro)');
+                    try {
+                        const { data, error } = await supabase
+                            .from('packing')
+                            .select('*')
+                            .limit(100);
+                        
+                        if (!error && data && data.length > 0) {
+                            // Filtrar manualmente por estado
+                            packingsData = data.filter(p => 
+                                p.estado && 
+                                p.estado.toLowerCase().includes('completado')
+                            );
+                            estrategiaUsada = 'Sin filtro + filtrado manual';
+                            console.log('✅ Estrategia 4: Filtrados', packingsData.length, 'de', data.length, 'registros');
+                            
+                            // Mostrar estados encontrados
+                            const estadosUnicos = [...new Set(data.map(p => p.estado))];
+                            console.log('📊 Estados únicos encontrados:', estadosUnicos);
+                        }
+                    } catch (e) {
+                        console.error('❌ Estrategia 4 excepción:', e.message);
+                    }
+                }
+                
+                // Si ninguna estrategia funcionó, ejecutar diagnóstico
+                if (packingsData.length === 0) {
+                    console.error('❌ TODAS LAS ESTRATEGIAS FALLARON');
+                    console.log('🔧 Ejecutando diagnóstico completo...');
+                    await diagnosticarProblemaPackings();
+                    
+                    const select = document.getElementById('cubitoSelectPacking');
+                    if (select) {
+                        select.innerHTML = '<option value="">No hay packings completados (ver consola)</option>';
+                    }
+                    toast('No se encontraron packings. Revisa la consola para diagnóstico.', 'warning');
+                    cubitoPackingsCompletados = [];
+                    return;
+                }
+                
+                console.log(`✅ ÉXITO: ${packingsData.length} packings encontrados usando: ${estrategiaUsada}`);
+                
+                // Cargar órdenes relacionadas
+                const ordenIds = [...new Set(packingsData.map(p => p.orden_id).filter(id => id))];
+                console.log('📋 Cargando', ordenIds.length, 'órdenes relacionadas...');
+                
+                let ordenesData = [];
+                if (ordenIds.length > 0) {
+                    try {
+                        const { data, error } = await supabase
+                            .from('ordenes')
+                            .select('id, nombre, items_solicitados')
+                            .in('id', ordenIds);
+                        
+                        if (error) {
+                            console.warn('⚠️ Error cargando órdenes:', error.message);
+                        } else {
+                            ordenesData = data || [];
+                            console.log('✅ Órdenes cargadas:', ordenesData.length);
+                        }
+                    } catch (e) {
+                        console.error('❌ Error al cargar órdenes:', e.message);
+                    }
+                }
+                
+                // Mapear órdenes
+                const ordenesMap = {};
+                ordenesData.forEach(orden => {
+                    ordenesMap[orden.id] = orden;
+                });
+                
+                // Combinar y ordenar datos
+                cubitoPackingsCompletados = packingsData
+                    .map(pack => ({
+                        ...pack,
+                        ordenes: ordenesMap[pack.orden_id] || null
+                    }))
+                    .sort((a, b) => {
+                        const fechaA = a.fecha_completado ? new Date(a.fecha_completado) : new Date(0);
+                        const fechaB = b.fecha_completado ? new Date(b.fecha_completado) : new Date(0);
+                        return fechaB - fechaA;
+                    });
+                
+                // Poblar dropdown
                 const select = document.getElementById('cubitoSelectPacking');
                 if (!select) {
-                    console.error('Elemento cubitoSelectPacking no encontrado');
+                    console.error('❌ Elemento cubitoSelectPacking no encontrado en el DOM');
                     return;
                 }
-
-                select.innerHTML = '<option value="">Selecciona un packing terminado</option>';
                 
-                if (cubitoPackingsCompletados.length === 0) {
-                    select.innerHTML = '<option value="">No hay packings completados</option>';
-                    toast('No hay packings completados disponibles', 'info');
-                    return;
-                }
+                select.innerHTML = '<option value="">Selecciona un packing terminado</option>';
                 
                 cubitoPackingsCompletados.forEach(pack => {
                     const orden = pack.ordenes;
-                    const nombreOrden = orden?.nombre || `Orden ${pack.orden_id}`;
-                    const fecha = pack.fecha_completado ? new Date(pack.fecha_completado).toLocaleDateString('es-PE') : 'Sin fecha';
+                    const nombreOrden = orden?.nombre || `Orden ${pack.orden_id || 'sin ID'}`;
+                    const parteNum = pack.parte || '?';
+                    
+                    let fecha = 'Sin fecha';
+                    if (pack.fecha_completado) {
+                        try {
+                            fecha = new Date(pack.fecha_completado).toLocaleDateString('es-PE', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            });
+                        } catch (e) {
+                            fecha = 'Fecha inválida';
+                        }
+                    }
                     
                     const option = document.createElement('option');
                     option.value = pack.id;
-                    option.textContent = `${nombreOrden} - Parte ${pack.parte} (${fecha})`;
+                    option.textContent = `${nombreOrden} - Parte ${parteNum} (${fecha})`;
                     select.appendChild(option);
                 });
-
-                console.log(`✅ ${cubitoPackingsCompletados.length} packings completados cargados`);
-                toast(`${cubitoPackingsCompletados.length} packings disponibles`, 'success');
+                
+                console.log(`✅✅✅ CARGA EXITOSA: ${cubitoPackingsCompletados.length} packings disponibles`);
+                toast(`✅ ${cubitoPackingsCompletados.length} packings cargados (${estrategiaUsada})`, 'success');
+                
             } catch (error) {
-                console.error('Error cargando packings:', error);
+                console.error('❌❌❌ ERROR CRÍTICO en cargarPackingsCompletados');
+                console.error('Error:', error);
+                console.error('Mensaje:', error.message);
+                console.error('Stack:', error.stack);
+                
+                // Ejecutar diagnóstico
+                console.log('🔧 Ejecutando diagnóstico de emergencia...');
+                await diagnosticarProblemaPackings();
+                
                 const select = document.getElementById('cubitoSelectPacking');
                 if (select) {
-                    select.innerHTML = '<option value="">Error al cargar packings</option>';
+                    select.innerHTML = '<option value="">Error crítico (ver consola)</option>';
                 }
-                toast('Error al cargar packings completados. Revisa la consola.', 'error');
+                
+                cubitoPackingsCompletados = [];
+                toast('Error crítico al cargar packings. Revisa la consola.', 'error');
             }
         }
 
