@@ -5583,75 +5583,91 @@
                     return;
                 }
                 
-                const orden = pack.ordenes;
-                const itemsSolicitados = orden?.items_solicitados || [];
+                // Mostrar estructura del primer item
+                console.log('🔍 Estructura del primer item:', itemsEmpacados[0]);
+                console.log('🔑 Campos disponibles:', Object.keys(itemsEmpacados[0]));
 
-                console.log('📋 Items empacados:', itemsEmpacados.length);
-                console.log('📋 Items solicitados:', itemsSolicitados.length);
-                console.log('📋 Orden:', orden);
-
-                // Generar resumen por tienda
+                // =================================================================
+                // LEER DIRECTAMENTE items_empacados con variante+tienda+cantidad
+                // Los items YA VIENEN con la distribución hecha por Packing
+                // =================================================================
+                console.log('📊 LEYENDO DISTRIBUCIÓN EXISTENTE DEL PACKING');
+                
                 const resumenPorTienda = {};
                 let totalItems = 0;
+                let itemsValidos = 0;
+                let itemsInvalidos = 0;
 
-                // Estrategia 1: Si hay distribución en items_solicitados, usarla
-                if (itemsSolicitados.length > 0 && itemsSolicitados.some(i => i.tienda)) {
-                    console.log('✅ Usando distribución de la orden');
+                itemsEmpacados.forEach((item, index) => {
+                    // Detectar campos (pueden tener diferentes nombres)
+                    const tienda = item.tienda || item.Tienda || item.TIENDA;
+                    const cantidad = Number(item.cantidad || item.Cantidad || item.cantidad_empacada || 0);
+                    const variante = item.variante || item.Variante || item.VARIANTE || item.codigo;
                     
-                    itemsSolicitados.forEach(item => {
-                        const tienda = item.tienda;
-                        if (tienda && CUBITO_TIENDA_MAPPING[tienda]) {
-                            if (!resumenPorTienda[tienda]) {
-                                resumenPorTienda[tienda] = 0;
-                            }
-                            resumenPorTienda[tienda] += item.cantidad || 0;
-                            totalItems += item.cantidad || 0;
-                        } else if (tienda) {
-                            console.warn('⚠️ Tienda no configurada en CUBITO_TIENDA_MAPPING:', tienda);
+                    console.log(`  📋 Item ${index + 1}:`, {
+                        tienda,
+                        variante,
+                        cantidad,
+                        campos: Object.keys(item)
+                    });
+
+                    // Validar item
+                    if (tienda && cantidad > 0 && CUBITO_TIENDA_MAPPING[tienda]) {
+                        if (!resumenPorTienda[tienda]) {
+                            resumenPorTienda[tienda] = 0;
                         }
-                    });
-                } 
-                // Estrategia 2: Distribución equitativa automática
-                else {
-                    console.log('⚡ Usando distribución automática equitativa');
-                    
-                    // Contar total de items empacados
-                    itemsEmpacados.forEach(item => {
-                        totalItems += item.cantidad_empacada || 0;
-                    });
-                    
-                    console.log('📊 Total de items a distribuir:', totalItems);
-                    
-                    // Distribuir entre todas las tiendas configuradas
-                    const tiendas = Object.keys(CUBITO_TIENDA_MAPPING);
-                    console.log('🏪 Distribuyendo entre', tiendas.length, 'tiendas');
-                    
-                    const cantidadPorTienda = Math.floor(totalItems / tiendas.length);
-                    let resto = totalItems % tiendas.length;
-                    
-                    tiendas.forEach((tienda, index) => {
-                        const cantidad = cantidadPorTienda + (index < resto ? 1 : 0);
-                        if (cantidad > 0) {
-                            resumenPorTienda[tienda] = cantidad;
+                        resumenPorTienda[tienda] += cantidad;
+                        totalItems += cantidad;
+                        itemsValidos++;
+                        
+                        console.log(`    ✅ Válido: ${tienda} → ${cantidad} unidades de ${variante}`);
+                    } else {
+                        itemsInvalidos++;
+                        
+                        if (!tienda) {
+                            console.warn(`    ⚠️ Item ${index + 1}: Sin tienda`);
+                        } else if (!CUBITO_TIENDA_MAPPING[tienda]) {
+                            console.warn(`    ⚠️ Item ${index + 1}: Tienda "${tienda}" no está en CUBITO_TIENDA_MAPPING`);
+                            console.warn(`    📋 Tiendas válidas:`, Object.keys(CUBITO_TIENDA_MAPPING));
+                        } else if (cantidad <= 0) {
+                            console.warn(`    ⚠️ Item ${index + 1}: Cantidad inválida: ${cantidad}`);
                         }
-                    });
+                    }
+                });
+
+                console.log('📊 Resumen de procesamiento:');
+                console.log(`  ✅ Items válidos: ${itemsValidos}`);
+                console.log(`  ⚠️ Items inválidos: ${itemsInvalidos}`);
+                console.log(`  📦 Total unidades: ${totalItems}`);
+                console.log('📊 Resumen por tienda:', resumenPorTienda);
+
+                // Validar que hay datos válidos
+                if (Object.keys(resumenPorTienda).length === 0 || totalItems === 0) {
+                    ocultarLoading();
                     
-                    console.log('📊 Distribución:', {
-                        cantidadPorTienda,
-                        resto,
-                        tiendas: Object.keys(resumenPorTienda).length
-                    });
+                    let errorMsg = `No se encontraron items válidos.\n\n`;
+                    errorMsg += `Items procesados: ${itemsEmpacados.length}\n`;
+                    errorMsg += `Items válidos: ${itemsValidos}\n`;
+                    errorMsg += `Items inválidos: ${itemsInvalidos}\n\n`;
+                    
+                    if (itemsInvalidos > 0) {
+                        errorMsg += 'Revisa la consola para ver detalles.';
+                    }
+                    
+                    toast(errorMsg, 'error');
+                    console.error('❌ No hay items válidos');
+                    return;
                 }
-
-                console.log('📊 Resumen por tienda final:', resumenPorTienda);
-                console.log('📊 Total items:', totalItems);
 
                 // Actualizar estadísticas
                 const numTiendas = Object.keys(resumenPorTienda).length;
-                const numProductos = new Set(itemsEmpacados.map(i => i.variante)).size;
-                const numRegistros = itemsEmpacados.length * numTiendas;
+                const numProductos = new Set(itemsEmpacados
+                    .map(i => i.variante || i.Variante || i.VARIANTE || i.codigo)
+                    .filter(v => v)
+                ).size;
+                const numRegistros = itemsValidos;
 
-                console.log('📊 Estadísticas:', {
+                console.log('📊 Estadísticas finales:', {
                     tiendas: numTiendas,
                     productos: numProductos,
                     registros: numRegistros
@@ -5669,7 +5685,7 @@
 
                 ocultarLoading();
                 console.log('✅ Packing cargado correctamente');
-                toast('✅ Packing cargado correctamente', 'success');
+                toast(`✅ Packing cargado: ${itemsValidos} registros válidos de ${itemsEmpacados.length}`, 'success');
 
             } catch (error) {
                 console.error('❌ Error en cargarDatosPacking:', error);
@@ -5799,99 +5815,88 @@
                 // Crear estructura de datos para verticalización
                 cubitoOutputData = [];
 
-                // Agrupar items por variante y tienda
-                const distribucionPorVariante = {};
+                // =================================================================
+                // LEER DIRECTAMENTE items_empacados que YA TIENEN variante+tienda+cantidad
+                // No necesitamos redistribuir, solo generar registros SAP
+                // =================================================================
+                console.log('📊 GENERANDO REGISTROS SAP DESDE DISTRIBUCIÓN EXISTENTE');
 
-                // Estrategia 1: Si hay items_solicitados con tiendas, usar esa distribución
-                if (itemsSolicitados.length > 0 && itemsSolicitados.some(i => i.tienda)) {
-                    console.log('✅ Usando distribución de la orden');
-                    
-                    itemsSolicitados.forEach(item => {
-                        const variante = item.variante;
-                        const tienda = item.tienda;
-                        const cantidad = item.cantidad || 0;
-
-                        if (tienda && CUBITO_TIENDA_MAPPING[tienda]) {
-                            if (!distribucionPorVariante[variante]) {
-                                distribucionPorVariante[variante] = {};
-                            }
-                            if (!distribucionPorVariante[variante][tienda]) {
-                                distribucionPorVariante[variante][tienda] = 0;
-                            }
-                            distribucionPorVariante[variante][tienda] += cantidad;
-                        }
-                    });
-                } 
-                // Estrategia 2: Distribución automática equitativa
-                else {
-                    console.log('⚡ Usando distribución automática');
-                    
-                    const tiendas = Object.keys(CUBITO_TIENDA_MAPPING);
-                    
-                    itemsEmpacados.forEach(item => {
-                        const variante = item.variante;
-                        const cantidadTotal = item.cantidad_empacada || 0;
-                        
-                        if (!variante) {
-                            console.warn('⚠️ Item sin variante:', item);
-                            return;
-                        }
-                        
-                        const cantidadPorTienda = Math.floor(cantidadTotal / tiendas.length);
-                        let resto = cantidadTotal % tiendas.length;
-
-                        if (!distribucionPorVariante[variante]) {
-                            distribucionPorVariante[variante] = {};
-                        }
-
-                        tiendas.forEach((tienda, index) => {
-                            const cantidad = cantidadPorTienda + (index < resto ? 1 : 0);
-                            if (cantidad > 0) {
-                                distribucionPorVariante[variante][tienda] = cantidad;
-                            }
-                        });
-                    });
-                }
-
-                console.log('📊 Distribución generada:', Object.keys(distribucionPorVariante).length, 'variantes');
-
-                // Generar registros verticalizados
                 let registrosGenerados = 0;
+                let registrosInvalidos = 0;
                 
-                Object.entries(distribucionPorVariante).forEach(([variante, tiendas]) => {
-                    Object.entries(tiendas).forEach(([tienda, cantidad]) => {
-                        if (cantidad > 0 && CUBITO_TIENDA_MAPPING[tienda]) {
-                            const config = CUBITO_TIENDA_MAPPING[tienda];
-                            const fechaEntrega = config.Sociedad === "R050"
-                                ? cubitoFormatDate(new Date(fechaEntregaR050), "DD.MM.YYYY")
-                                : cubitoFormatDate(new Date(fechaEntregaR040), "DD.MM.YYYY");
+                itemsEmpacados.forEach((item, index) => {
+                    // Detectar campos con diferentes nombres posibles
+                    const tienda = item.tienda || item.Tienda || item.TIENDA;
+                    const variante = item.variante || item.Variante || item.VARIANTE || item.codigo;
+                    const cantidad = Number(item.cantidad || item.Cantidad || item.cantidad_empacada || 0);
+                    
+                    // Validar item
+                    if (!variante) {
+                        console.warn(`⚠️ Item ${index + 1}: Sin variante`, item);
+                        registrosInvalidos++;
+                        return;
+                    }
+                    
+                    if (!tienda) {
+                        console.warn(`⚠️ Item ${index + 1}: Sin tienda`, item);
+                        registrosInvalidos++;
+                        return;
+                    }
+                    
+                    if (!CUBITO_TIENDA_MAPPING[tienda]) {
+                        console.warn(`⚠️ Item ${index + 1}: Tienda "${tienda}" no configurada`, item);
+                        registrosInvalidos++;
+                        return;
+                    }
+                    
+                    if (cantidad <= 0) {
+                        console.warn(`⚠️ Item ${index + 1}: Cantidad inválida: ${cantidad}`, item);
+                        registrosInvalidos++;
+                        return;
+                    }
+                    
+                    // Generar registro SAP
+                    const config = CUBITO_TIENDA_MAPPING[tienda];
+                    const fechaEntrega = config.Sociedad === "R050"
+                        ? cubitoFormatDate(new Date(fechaEntregaR050), "DD.MM.YYYY")
+                        : cubitoFormatDate(new Date(fechaEntregaR040), "DD.MM.YYYY");
 
-                            cubitoOutputData.push({
-                                TIENDAS: tienda,
-                                Ind: "",
-                                Clase: config.Clase,
-                                Proveedor: config.Proveedor,
-                                FechaDocCompra: fechaActual,
-                                OrgCompra: config.OrgCompra,
-                                GrupoCompra: config.GrupoCompra,
-                                Sociedad: config.Sociedad,
-                                CondPago: config.CondPago,
-                                TextoCabecera: textoCabecera,
-                                Material: variante,
-                                Cantidad: cantidad,
-                                PrecioNeto: config.PrecioNeto,
-                                CentroTienda: config.CentroTienda,
-                                Almacen: config.Almacen,
-                                Solicitante: config.Solicitante,
-                                AlmacenProcedencia: config.AlmacenProcedencia,
-                                FechaEntrega: fechaEntrega
-                            });
-                            registrosGenerados++;
-                        }
+                    cubitoOutputData.push({
+                        TIENDAS: tienda,
+                        Ind: "",
+                        Clase: config.Clase,
+                        Proveedor: config.Proveedor,
+                        FechaDocCompra: fechaActual,
+                        OrgCompra: config.OrgCompra,
+                        GrupoCompra: config.GrupoCompra,
+                        Sociedad: config.Sociedad,
+                        CondPago: config.CondPago,
+                        TextoCabecera: textoCabecera,
+                        Material: variante,
+                        Cantidad: cantidad,
+                        PrecioNeto: config.PrecioNeto,
+                        CentroTienda: config.CentroTienda,
+                        Almacen: config.Almacen,
+                        Solicitante: config.Solicitante,
+                        AlmacenProcedencia: config.AlmacenProcedencia,
+                        FechaEntrega: fechaEntrega
                     });
+                    
+                    registrosGenerados++;
+                    
+                    if (index < 5) {  // Mostrar primeros 5 para debugging
+                        console.log(`  ✅ Registro ${index + 1}:`, {
+                            tienda,
+                            variante,
+                            cantidad,
+                            sociedad: config.Sociedad
+                        });
+                    }
                 });
 
-                console.log('📝 Registros generados:', registrosGenerados);
+                console.log('📊 Resumen de generación:');
+                console.log(`  ✅ Registros generados: ${registrosGenerados}`);
+                console.log(`  ⚠️ Registros inválidos: ${registrosInvalidos}`);
 
                 if (cubitoOutputData.length === 0) {
                     throw new Error('No se generaron registros. Verifica la distribución.');
