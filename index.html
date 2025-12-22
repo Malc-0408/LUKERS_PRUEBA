@@ -5419,9 +5419,14 @@
                         }
                     }))
                     .sort((a, b) => {
-                        const fechaA = a.fecha_completado ? new Date(a.fecha_completado) : new Date(0);
-                        const fechaB = b.fecha_completado ? new Date(b.fecha_completado) : new Date(0);
-                        return fechaB - fechaA;
+                        // Usar fecha_completado si existe, sino usar created_at
+                        const fechaA = a.fecha_completado 
+                            ? new Date(a.fecha_completado) 
+                            : (a.created_at ? new Date(a.created_at) : new Date(0));
+                        const fechaB = b.fecha_completado 
+                            ? new Date(b.fecha_completado) 
+                            : (b.created_at ? new Date(b.created_at) : new Date(0));
+                        return fechaB - fechaA;  // Más reciente primero
                     });
                 
                 // Poblar dropdown
@@ -5442,13 +5447,19 @@
                     const parteNum = pack.parte || '?';
                     
                     let fecha = 'Sin fecha';
-                    if (pack.fecha_completado) {
+                    // Usar fecha_completado si existe, sino usar created_at
+                    const fechaAUsar = pack.fecha_completado || pack.created_at;
+                    if (fechaAUsar) {
                         try {
-                            fecha = new Date(pack.fecha_completado).toLocaleDateString('es-PE', {
+                            fecha = new Date(fechaAUsar).toLocaleDateString('es-PE', {
                                 day: '2-digit',
                                 month: '2-digit',
                                 year: 'numeric'
                             });
+                            // Agregar indicador si es fecha de creación en lugar de completado
+                            if (!pack.fecha_completado && pack.created_at) {
+                                fecha += ' (creado)';
+                            }
                         } catch (e) {
                             fecha = 'Fecha inválida';
                         }
@@ -5588,10 +5599,9 @@
                 console.log('🔑 Campos disponibles:', Object.keys(itemsEmpacados[0]));
 
                 // =================================================================
-                // LEER DIRECTAMENTE items_empacados con variante+tienda+cantidad
-                // Los items YA VIENEN con la distribución hecha por Packing
+                // LEER items_empacados con estructura: distribucion: {tienda: cantidad}
                 // =================================================================
-                console.log('📊 LEYENDO DISTRIBUCIÓN EXISTENTE DEL PACKING');
+                console.log('📊 LEYENDO DISTRIBUCIÓN DESDE item.distribucion');
                 
                 const resumenPorTienda = {};
                 let totalItems = 0;
@@ -5599,45 +5609,57 @@
                 let itemsInvalidos = 0;
 
                 itemsEmpacados.forEach((item, index) => {
-                    // Detectar campos (pueden tener diferentes nombres)
-                    const tienda = item.tienda || item.Tienda || item.TIENDA;
-                    const cantidad = Number(item.cantidad || item.Cantidad || item.cantidad_empacada || 0);
-                    const variante = item.variante || item.Variante || item.VARIANTE || item.codigo;
+                    const variante = item.variante || item.Variante || item.VARIANTE;
+                    const distribucion = item.distribucion || item.Distribucion || item.DISTRIBUCION || {};
                     
                     console.log(`  📋 Item ${index + 1}:`, {
-                        tienda,
                         variante,
-                        cantidad,
-                        campos: Object.keys(item)
+                        cantidad_total: item.cantidad,
+                        num_tiendas: Object.keys(distribucion).length,
+                        distribucion
                     });
 
-                    // Validar item
-                    if (tienda && cantidad > 0 && CUBITO_TIENDA_MAPPING[tienda]) {
-                        if (!resumenPorTienda[tienda]) {
-                            resumenPorTienda[tienda] = 0;
-                        }
-                        resumenPorTienda[tienda] += cantidad;
-                        totalItems += cantidad;
-                        itemsValidos++;
+                    // Verificar que tenga distribución
+                    if (!distribucion || Object.keys(distribucion).length === 0) {
+                        console.warn(`    ⚠️ Item ${index + 1}: Sin distribución`);
+                        itemsInvalidos++;
+                        return;
+                    }
+
+                    // Recorrer cada tienda en la distribución
+                    let itemTieneAlgunaValida = false;
+                    Object.entries(distribucion).forEach(([tienda, cantidad]) => {
+                        const cantidadNum = Number(cantidad);
                         
-                        console.log(`    ✅ Válido: ${tienda} → ${cantidad} unidades de ${variante}`);
+                        // Validar tienda y cantidad
+                        if (CUBITO_TIENDA_MAPPING[tienda] && cantidadNum > 0) {
+                            if (!resumenPorTienda[tienda]) {
+                                resumenPorTienda[tienda] = 0;
+                            }
+                            resumenPorTienda[tienda] += cantidadNum;
+                            totalItems += cantidadNum;
+                            itemTieneAlgunaValida = true;
+                            
+                            console.log(`    ✅ ${tienda} → ${cantidadNum} unidades de ${variante}`);
+                        } else {
+                            if (!CUBITO_TIENDA_MAPPING[tienda]) {
+                                console.warn(`    ⚠️ Tienda "${tienda}" no está en CUBITO_TIENDA_MAPPING`);
+                            } else if (cantidadNum <= 0) {
+                                console.warn(`    ⚠️ Cantidad inválida para ${tienda}: ${cantidad}`);
+                            }
+                        }
+                    });
+
+                    if (itemTieneAlgunaValida) {
+                        itemsValidos++;
                     } else {
                         itemsInvalidos++;
-                        
-                        if (!tienda) {
-                            console.warn(`    ⚠️ Item ${index + 1}: Sin tienda`);
-                        } else if (!CUBITO_TIENDA_MAPPING[tienda]) {
-                            console.warn(`    ⚠️ Item ${index + 1}: Tienda "${tienda}" no está en CUBITO_TIENDA_MAPPING`);
-                            console.warn(`    📋 Tiendas válidas:`, Object.keys(CUBITO_TIENDA_MAPPING));
-                        } else if (cantidad <= 0) {
-                            console.warn(`    ⚠️ Item ${index + 1}: Cantidad inválida: ${cantidad}`);
-                        }
                     }
                 });
 
                 console.log('📊 Resumen de procesamiento:');
-                console.log(`  ✅ Items válidos: ${itemsValidos}`);
-                console.log(`  ⚠️ Items inválidos: ${itemsInvalidos}`);
+                console.log(`  ✅ Items con distribución válida: ${itemsValidos}`);
+                console.log(`  ⚠️ Items sin distribución válida: ${itemsInvalidos}`);
                 console.log(`  📦 Total unidades: ${totalItems}`);
                 console.log('📊 Resumen por tienda:', resumenPorTienda);
 
@@ -5647,11 +5669,15 @@
                     
                     let errorMsg = `No se encontraron items válidos.\n\n`;
                     errorMsg += `Items procesados: ${itemsEmpacados.length}\n`;
-                    errorMsg += `Items válidos: ${itemsValidos}\n`;
-                    errorMsg += `Items inválidos: ${itemsInvalidos}\n\n`;
+                    errorMsg += `Items con distribución válida: ${itemsValidos}\n`;
+                    errorMsg += `Items sin distribución válida: ${itemsInvalidos}\n\n`;
                     
                     if (itemsInvalidos > 0) {
-                        errorMsg += 'Revisa la consola para ver detalles.';
+                        errorMsg += 'Revisa la consola para ver detalles.\n\n';
+                        errorMsg += 'Posibles causas:\n';
+                        errorMsg += '- Tiendas no configuradas en CUBITO_TIENDA_MAPPING\n';
+                        errorMsg += '- Cantidades en 0 o negativas\n';
+                        errorMsg += '- Campo "distribucion" vacío o inexistente';
                     }
                     
                     toast(errorMsg, 'error');
@@ -5662,10 +5688,20 @@
                 // Actualizar estadísticas
                 const numTiendas = Object.keys(resumenPorTienda).length;
                 const numProductos = new Set(itemsEmpacados
-                    .map(i => i.variante || i.Variante || i.VARIANTE || i.codigo)
+                    .map(i => i.variante || i.Variante || i.VARIANTE)
                     .filter(v => v)
                 ).size;
-                const numRegistros = itemsValidos;
+                
+                // Contar registros totales (cada variante x cada tienda donde está)
+                let numRegistros = 0;
+                itemsEmpacados.forEach(item => {
+                    const distribucion = item.distribucion || {};
+                    Object.entries(distribucion).forEach(([tienda, cantidad]) => {
+                        if (CUBITO_TIENDA_MAPPING[tienda] && Number(cantidad) > 0) {
+                            numRegistros++;
+                        }
+                    });
+                });
 
                 console.log('📊 Estadísticas finales:', {
                     tiendas: numTiendas,
@@ -5685,7 +5721,7 @@
 
                 ocultarLoading();
                 console.log('✅ Packing cargado correctamente');
-                toast(`✅ Packing cargado: ${itemsValidos} registros válidos de ${itemsEmpacados.length}`, 'success');
+                toast(`✅ Packing cargado: ${numRegistros} registros de ${numProductos} productos en ${numTiendas} tiendas`, 'success');
 
             } catch (error) {
                 console.error('❌ Error en cargarDatosPacking:', error);
@@ -5816,82 +5852,87 @@
                 cubitoOutputData = [];
 
                 // =================================================================
-                // LEER DIRECTAMENTE items_empacados que YA TIENEN variante+tienda+cantidad
-                // No necesitamos redistribuir, solo generar registros SAP
+                // LEER items_empacados con estructura: item.distribucion = {tienda: cantidad}
                 // =================================================================
-                console.log('📊 GENERANDO REGISTROS SAP DESDE DISTRIBUCIÓN EXISTENTE');
+                console.log('📊 GENERANDO REGISTROS SAP DESDE item.distribucion');
 
                 let registrosGenerados = 0;
                 let registrosInvalidos = 0;
                 
                 itemsEmpacados.forEach((item, index) => {
-                    // Detectar campos con diferentes nombres posibles
-                    const tienda = item.tienda || item.Tienda || item.TIENDA;
-                    const variante = item.variante || item.Variante || item.VARIANTE || item.codigo;
-                    const cantidad = Number(item.cantidad || item.Cantidad || item.cantidad_empacada || 0);
+                    const variante = item.variante || item.Variante || item.VARIANTE;
+                    const distribucion = item.distribucion || item.Distribucion || item.DISTRIBUCION || {};
                     
-                    // Validar item
+                    // Validar que tenga variante
                     if (!variante) {
                         console.warn(`⚠️ Item ${index + 1}: Sin variante`, item);
                         registrosInvalidos++;
                         return;
                     }
                     
-                    if (!tienda) {
-                        console.warn(`⚠️ Item ${index + 1}: Sin tienda`, item);
+                    // Validar que tenga distribución
+                    if (!distribucion || Object.keys(distribucion).length === 0) {
+                        console.warn(`⚠️ Item ${index + 1}: Sin distribución`, item);
                         registrosInvalidos++;
                         return;
                     }
                     
-                    if (!CUBITO_TIENDA_MAPPING[tienda]) {
-                        console.warn(`⚠️ Item ${index + 1}: Tienda "${tienda}" no configurada`, item);
-                        registrosInvalidos++;
-                        return;
-                    }
-                    
-                    if (cantidad <= 0) {
-                        console.warn(`⚠️ Item ${index + 1}: Cantidad inválida: ${cantidad}`, item);
-                        registrosInvalidos++;
-                        return;
-                    }
-                    
-                    // Generar registro SAP
-                    const config = CUBITO_TIENDA_MAPPING[tienda];
-                    const fechaEntrega = config.Sociedad === "R050"
-                        ? cubitoFormatDate(new Date(fechaEntregaR050), "DD.MM.YYYY")
-                        : cubitoFormatDate(new Date(fechaEntregaR040), "DD.MM.YYYY");
+                    // Procesar cada tienda en la distribución
+                    Object.entries(distribucion).forEach(([tienda, cantidad]) => {
+                        const cantidadNum = Number(cantidad);
+                        
+                        // Validar tienda
+                        if (!CUBITO_TIENDA_MAPPING[tienda]) {
+                            console.warn(`⚠️ Item ${index + 1}: Tienda "${tienda}" no configurada`);
+                            registrosInvalidos++;
+                            return;
+                        }
+                        
+                        // Validar cantidad
+                        if (cantidadNum <= 0) {
+                            console.warn(`⚠️ Item ${index + 1}: Cantidad inválida para ${tienda}: ${cantidad}`);
+                            registrosInvalidos++;
+                            return;
+                        }
+                        
+                        // Generar registro SAP
+                        const config = CUBITO_TIENDA_MAPPING[tienda];
+                        const fechaEntrega = config.Sociedad === "R050"
+                            ? cubitoFormatDate(new Date(fechaEntregaR050), "DD.MM.YYYY")
+                            : cubitoFormatDate(new Date(fechaEntregaR040), "DD.MM.YYYY");
 
-                    cubitoOutputData.push({
-                        TIENDAS: tienda,
-                        Ind: "",
-                        Clase: config.Clase,
-                        Proveedor: config.Proveedor,
-                        FechaDocCompra: fechaActual,
-                        OrgCompra: config.OrgCompra,
-                        GrupoCompra: config.GrupoCompra,
-                        Sociedad: config.Sociedad,
-                        CondPago: config.CondPago,
-                        TextoCabecera: textoCabecera,
-                        Material: variante,
-                        Cantidad: cantidad,
-                        PrecioNeto: config.PrecioNeto,
-                        CentroTienda: config.CentroTienda,
-                        Almacen: config.Almacen,
-                        Solicitante: config.Solicitante,
-                        AlmacenProcedencia: config.AlmacenProcedencia,
-                        FechaEntrega: fechaEntrega
-                    });
-                    
-                    registrosGenerados++;
-                    
-                    if (index < 5) {  // Mostrar primeros 5 para debugging
-                        console.log(`  ✅ Registro ${index + 1}:`, {
-                            tienda,
-                            variante,
-                            cantidad,
-                            sociedad: config.Sociedad
+                        cubitoOutputData.push({
+                            TIENDAS: tienda,
+                            Ind: "",
+                            Clase: config.Clase,
+                            Proveedor: config.Proveedor,
+                            FechaDocCompra: fechaActual,
+                            OrgCompra: config.OrgCompra,
+                            GrupoCompra: config.GrupoCompra,
+                            Sociedad: config.Sociedad,
+                            CondPago: config.CondPago,
+                            TextoCabecera: textoCabecera,
+                            Material: variante,
+                            Cantidad: cantidadNum,
+                            PrecioNeto: config.PrecioNeto,
+                            CentroTienda: config.CentroTienda,
+                            Almacen: config.Almacen,
+                            Solicitante: config.Solicitante,
+                            AlmacenProcedencia: config.AlmacenProcedencia,
+                            FechaEntrega: fechaEntrega
                         });
-                    }
+                        
+                        registrosGenerados++;
+                        
+                        if (registrosGenerados <= 5) {  // Mostrar primeros 5 para debugging
+                            console.log(`  ✅ Registro ${registrosGenerados}:`, {
+                                tienda,
+                                variante,
+                                cantidad: cantidadNum,
+                                sociedad: config.Sociedad
+                            });
+                        }
+                    });
                 });
 
                 console.log('📊 Resumen de generación:');
