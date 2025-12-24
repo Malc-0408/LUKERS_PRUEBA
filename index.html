@@ -994,9 +994,13 @@
                 <div id="vista-cubito" class="vista">
                     <div class="card">
                         <div class="card-header" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white">
-                            <h3 class="card-title" style="color:white"><i data-lucide="package"></i> Cubito Lukers - Verticalización Automática</h3>
+                            <h3 class="card-title" style="color:white;font-size:1.6rem;font-weight:700;display:flex;align-items:center;gap:0.75rem">
+                                <i data-lucide="package" style="width:32px;height:32px"></i> Cubito Lukers - Verticalización Automática
+                            </h3>
                             <div class="card-actions">
-                                <button class="btn btn-outline" onclick="exportarVerticalizados()" id="btnExportarCubito" disabled style="border-color:white;color:white"><i data-lucide="download"></i> Descargar Excel</button>
+                                <button class="btn btn-outline" onclick="exportarVerticalizados()" id="btnExportarCubito" disabled style="border-color:white;color:white;padding:0.75rem 1.5rem;font-weight:600;transition:all 0.3s" onmouseover="if(!this.disabled){this.style.background='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'}" onmouseout="this.style.background='transparent';this.style.transform='translateY(0)'">
+                                    <i data-lucide="download"></i> Descargar Excel
+                                </button>
                             </div>
                         </div>
                         
@@ -1383,21 +1387,22 @@
                 <!-- Modal Visualización Cubito -->
                 <div class="modal" id="modalCubitoVisualizacion">
                     <div class="modal-content" style="width:98vw;max-width:98vw;height:95vh;max-height:95vh;border-radius:16px;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25)">
-                        <div class="modal-header" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:1.5rem;border-bottom:none">
-                            <h3 class="modal-title" style="color:white;display:flex;align-items:center;gap:0.75rem;font-size:1.3rem">
-                                <i data-lucide="table" style="width:28px;height:28px"></i> 
-                                Datos Verticalizados - Vista Excel
-                                <span style="background:rgba(255,255,255,0.2);padding:0.25rem 0.75rem;border-radius:12px;font-size:0.85rem;font-weight:600" id="cubitoContadorRegistros"></span>
-                            </h3>
+                        <div class="modal-header" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:1.5rem 2rem;border-bottom:none;display:flex;justify-content:space-between;align-items:center">
+                            <div>
+                                <h3 class="modal-title" style="color:white;display:flex;align-items:center;gap:0.75rem;font-size:1.4rem;margin:0">
+                                    <i data-lucide="eye" style="width:32px;height:32px"></i> 
+                                    Vista Previa - Registros SAP
+                                </h3>
+                                <p style="margin:0.5rem 0 0 0;font-size:0.95rem;opacity:0.95">Datos separados por sociedad (R050 y R040)</p>
+                            </div>
                             <div style="display:flex;gap:0.75rem;align-items:center">
-                                <input type="text" id="cubitoSearchModal" class="form-input" placeholder="🔍 Buscar en los datos..." style="width:250px;border:2px solid white;background:rgba(255,255,255,0.2);color:white;backdrop-filter:blur(10px)" onkeyup="filtrarTablaModal()" />
-                                <button class="btn btn-outline" onclick="copiarDatosCubitoModal()" style="border-color:white;color:white;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px)" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
-                                    <i data-lucide="copy"></i> Copiar
+                                <button class="btn btn-outline" onclick="copiarDatosCubitoModal()" style="border-color:white;color:white;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:0.75rem 1.5rem;font-weight:600;transition:all 0.3s" onmouseover="this.style.background='rgba(255,255,255,0.25)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255,255,255,0.1)';this.style.transform='translateY(0)'">
+                                    <i data-lucide="copy" style="width:18px;height:18px"></i> Copiar
                                 </button>
-                                <button class="btn btn-outline" onclick="exportarVerticalizados()" style="border-color:white;color:white;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px)" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
-                                    <i data-lucide="download"></i> Exportar
+                                <button class="btn btn-outline" onclick="exportarVerticalizados()" style="border-color:white;color:white;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:0.75rem 1.5rem;font-weight:600;transition:all 0.3s" onmouseover="this.style.background='rgba(255,255,255,0.25)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(255,255,255,0.1)';this.style.transform='translateY(0)'">
+                                    <i data-lucide="download" style="width:18px;height:18px"></i> Exportar
                                 </button>
-                                <button class="modal-close" onclick="cerrarModal('modalCubitoVisualizacion')" style="background:rgba(255,255,255,0.2);color:white;border:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                                <button class="modal-close" onclick="cerrarModal('modalCubitoVisualizacion')" style="background:rgba(255,255,255,0.2);color:white;border:none;width:45px;height:45px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s" onmouseover="this.style.background='rgba(255,255,255,0.35)';this.style.transform='rotate(90deg)'" onmouseout="this.style.background='rgba(255,255,255,0.2)';this.style.transform='rotate(0deg)'" title="Cerrar">
                                     <i data-lucide="x" style="width:24px;height:24px"></i>
                                 </button>
                             </div>
@@ -5983,60 +5988,178 @@
 
             console.log('👁️ Visualizando', cubitoOutputData.length, 'registros');
 
+            // Separar datos por sociedad
+            const datosR050 = cubitoOutputData.filter(row => row.Sociedad === 'R050');
+            const datosR040 = cubitoOutputData.filter(row => row.Sociedad === 'R040');
+            
+            console.log(`📊 R050: ${datosR050.length} registros | R040: ${datosR040.length} registros`);
+
             // Preparar tabla modal
             const table = document.getElementById('cubitoTablaModal');
             const headers = Object.keys(cubitoOutputData[0]);
             
-            // Crear encabezados con estilos mejorados
-            const headerRow = headers.map(h => `
+            // Función para crear encabezado
+            const crearEncabezado = (color) => headers.map(h => `
                 <th style="
                     border:1px solid #c0c0c0;
-                    padding:6px 8px;
-                    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+                    padding:8px 10px;
+                    background:${color};
                     color:white;
                     font-weight:700;
-                    font-size:10px;
+                    font-size:11px;
                     text-transform:uppercase;
                     letter-spacing:0.5px;
                     white-space:nowrap;
                     position:sticky;
                     top:0;
-                    z-index:10
+                    z-index:10;
+                    text-align:left
                 ">${h}</th>
             `).join("");
             
-            // Crear filas con estilos alternados
-            const dataRows = cubitoOutputData.map((row, index) => {
+            // Función para crear filas
+            const crearFilas = (datos, colorAccent) => datos.map((row, index) => {
                 const bgColor = index % 2 === 0 ? '#ffffff' : '#f8fafc';
-                return `<tr style="background:${bgColor}" onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='${bgColor}'">
-                    ${headers.map(h => `
-                        <td style="
-                            border:1px solid #e2e8f0;
-                            padding:4px 6px;
-                            font-size:9px;
-                            font-family:Consolas,Monaco,monospace;
-                            white-space:nowrap
-                        ">${row[h] || ''}</td>
-                    `).join("")}
+                const hoverColor = colorAccent === 'R050' ? '#e0f2fe' : '#fef3c7';
+                return `<tr style="background:${bgColor};transition:all 0.2s" onmouseover="this.style.background='${hoverColor}'" onmouseout="this.style.background='${bgColor}'">
+                    ${headers.map(h => {
+                        let cellStyle = 'border:1px solid #e2e8f0;padding:6px 8px;font-size:10px;font-family:Consolas,Monaco,monospace;white-space:nowrap';
+                        let content = row[h] || '';
+                        
+                        // Resaltar columnas importantes
+                        if (h === 'TIENDAS') {
+                            cellStyle += ';font-weight:700;color:#1e40af';
+                        } else if (h === 'Material') {
+                            cellStyle += ';font-weight:600;color:#7c3aed';
+                        } else if (h === 'Cantidad') {
+                            cellStyle += ';font-weight:700;color:#059669;text-align:right';
+                        } else if (h === 'Sociedad') {
+                            const badgeColor = row[h] === 'R050' 
+                                ? 'background:linear-gradient(135deg,#3b82f6 0%,#1e40af 100%);color:white;padding:2px 8px;border-radius:4px;font-weight:700'
+                                : 'background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:white;padding:2px 8px;border-radius:4px;font-weight:700';
+                            content = `<span style="${badgeColor}">${row[h]}</span>`;
+                        } else if (h === 'Ind') {
+                            const indStyle = row[h] === 'H' 
+                                ? 'background:#10b981;color:white;padding:2px 6px;border-radius:3px;font-weight:700;font-size:9px'
+                                : 'background:#6b7280;color:white;padding:2px 6px;border-radius:3px;font-weight:600;font-size:9px';
+                            content = row[h] ? `<span style="${indStyle}">${row[h]}</span>` : '';
+                        }
+                        
+                        return `<td style="${cellStyle}">${content}</td>`;
+                    }).join("")}
                 </tr>`;
             }).join("");
             
+            // Construir HTML completo con pestañas
             table.innerHTML = `
-                <thead><tr>${headerRow}</tr></thead>
-                <tbody>${dataRows}</tbody>
+                <div style="background:#f8fafc;padding:1rem;border-bottom:2px solid #e2e8f0;position:sticky;top:0;z-index:20">
+                    <div style="display:flex;gap:1rem;align-items:center;justify-content:space-between">
+                        <div style="display:flex;gap:0.5rem">
+                            <button onclick="mostrarSociedad('R050')" id="btnSociedadR050" style="padding:0.75rem 1.5rem;border:2px solid #3b82f6;background:linear-gradient(135deg,#3b82f6 0%,#1e40af 100%);color:white;border-radius:8px;font-weight:700;cursor:pointer;transition:all 0.3s;font-size:14px">
+                                <i data-lucide="building" style="width:16px;height:16px;vertical-align:middle"></i> R050 (${datosR050.length})
+                            </button>
+                            <button onclick="mostrarSociedad('R040')" id="btnSociedadR040" style="padding:0.75rem 1.5rem;border:2px solid #f59e0b;background:white;color:#f59e0b;border-radius:8px;font-weight:700;cursor:pointer;transition:all 0.3s;font-size:14px">
+                                <i data-lucide="building-2" style="width:16px;height:16px;vertical-align:middle"></i> R040 (${datosR040.length})
+                            </button>
+                            <button onclick="mostrarSociedad('TODAS')" id="btnSociedadTODAS" style="padding:0.75rem 1.5rem;border:2px solid #6b7280;background:white;color:#6b7280;border-radius:8px;font-weight:700;cursor:pointer;transition:all 0.3s;font-size:14px">
+                                <i data-lucide="layout-grid" style="width:16px;height:16px;vertical-align:middle"></i> TODAS (${cubitoOutputData.length})
+                            </button>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:1rem">
+                            <span id="cubitoContadorRegistros" style="font-weight:600;color:#64748b;font-size:14px">${cubitoOutputData.length} registros</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tablaSociedadR050" style="display:block">
+                    <div style="background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);padding:1rem;margin:0;border-bottom:3px solid #3b82f6">
+                        <h3 style="margin:0;color:#1e40af;font-size:18px;font-weight:700;display:flex;align-items:center;gap:0.5rem">
+                            <i data-lucide="building" style="width:24px;height:24px"></i>
+                            Sociedad R050 - ${datosR050.length} Registros
+                        </h3>
+                    </div>
+                    <div style="overflow:auto;max-height:600px">
+                        <table style="width:100%;border-collapse:collapse;font-family:Consolas,Monaco,monospace">
+                            <thead><tr>${crearEncabezado('linear-gradient(135deg,#3b82f6 0%,#1e40af 100%)')}</tr></thead>
+                            <tbody>${datosR050.length > 0 ? crearFilas(datosR050, 'R050') : '<tr><td colspan="100%" style="padding:2rem;text-align:center;color:#94a3b8">No hay registros R050</td></tr>'}</tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="tablaSociedadR040" style="display:none">
+                    <div style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);padding:1rem;margin:0;border-bottom:3px solid #f59e0b">
+                        <h3 style="margin:0;color:#d97706;font-size:18px;font-weight:700;display:flex;align-items:center;gap:0.5rem">
+                            <i data-lucide="building-2" style="width:24px;height:24px"></i>
+                            Sociedad R040 - ${datosR040.length} Registros
+                        </h3>
+                    </div>
+                    <div style="overflow:auto;max-height:600px">
+                        <table style="width:100%;border-collapse:collapse;font-family:Consolas,Monaco,monospace">
+                            <thead><tr>${crearEncabezado('linear-gradient(135deg,#f59e0b 0%,#d97706 100%)')}</tr></thead>
+                            <tbody>${datosR040.length > 0 ? crearFilas(datosR040, 'R040') : '<tr><td colspan="100%" style="padding:2rem;text-align:center;color:#94a3b8">No hay registros R040</td></tr>'}</tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="tablaSociedadTODAS" style="display:none">
+                    <div style="background:linear-gradient(135deg,#f3f4f6 0%,#e5e7eb 100%);padding:1rem;margin:0;border-bottom:3px solid #6b7280">
+                        <h3 style="margin:0;color:#374151;font-size:18px;font-weight:700;display:flex;align-items:center;gap:0.5rem">
+                            <i data-lucide="layout-grid" style="width:24px;height:24px"></i>
+                            Todas las Sociedades - ${cubitoOutputData.length} Registros
+                        </h3>
+                    </div>
+                    <div style="overflow:auto;max-height:600px">
+                        <table style="width:100%;border-collapse:collapse;font-family:Consolas,Monaco,monospace">
+                            <thead><tr>${crearEncabezado('linear-gradient(135deg,#6b7280 0%,#374151 100%)')}</tr></thead>
+                            <tbody>${crearFilas(cubitoOutputData, 'TODAS')}</tbody>
+                        </table>
+                    </div>
+                </div>
             `;
 
             cubitoCurrentFilteredData = [...cubitoOutputData];
             abrirModal('modalCubitoVisualizacion');
             
-            // Actualizar contador inicial
-            const contador = document.getElementById('cubitoContadorRegistros');
-            if (contador) {
-                contador.textContent = `${cubitoOutputData.length} registros`;
-            }
-            
             // Reiniciar lucide icons para el modal
             setTimeout(() => lucide.createIcons(), 100);
+        }
+        
+        // Función para cambiar entre sociedades
+        function mostrarSociedad(sociedad) {
+            // Ocultar todas las tablas
+            document.getElementById('tablaSociedadR050').style.display = 'none';
+            document.getElementById('tablaSociedadR040').style.display = 'none';
+            document.getElementById('tablaSociedadTODAS').style.display = 'none';
+            
+            // Resetear estilos de botones
+            const btnR050 = document.getElementById('btnSociedadR050');
+            const btnR040 = document.getElementById('btnSociedadR040');
+            const btnTODAS = document.getElementById('btnSociedadTODAS');
+            
+            btnR050.style.background = 'white';
+            btnR050.style.color = '#3b82f6';
+            btnR040.style.background = 'white';
+            btnR040.style.color = '#f59e0b';
+            btnTODAS.style.background = 'white';
+            btnTODAS.style.color = '#6b7280';
+            
+            // Mostrar tabla seleccionada y resaltar botón
+            if (sociedad === 'R050') {
+                document.getElementById('tablaSociedadR050').style.display = 'block';
+                btnR050.style.background = 'linear-gradient(135deg,#3b82f6 0%,#1e40af 100%)';
+                btnR050.style.color = 'white';
+            } else if (sociedad === 'R040') {
+                document.getElementById('tablaSociedadR040').style.display = 'block';
+                btnR040.style.background = 'linear-gradient(135deg,#f59e0b 0%,#d97706 100%)';
+                btnR040.style.color = 'white';
+            } else {
+                document.getElementById('tablaSociedadTODAS').style.display = 'block';
+                btnTODAS.style.background = 'linear-gradient(135deg,#6b7280 0%,#374151 100%)';
+                btnTODAS.style.color = 'white';
+            }
+            
+            // Reiniciar lucide icons
+            setTimeout(() => lucide.createIcons(), 50);
         }
 
         // Filtrar tabla modal
