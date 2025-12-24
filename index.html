@@ -993,119 +993,165 @@
                 <!-- VISTA CUBITO LUKERS -->
                 <div id="vista-cubito" class="vista">
                     <div class="card">
-                        <div class="card-header" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white">
-                            <h3 class="card-title" style="color:white;font-size:1.6rem;font-weight:700;display:flex;align-items:center;gap:0.75rem">
-                                <i data-lucide="package" style="width:32px;height:32px"></i> Cubito Lukers - Verticalización Automática
+                        <!-- Header ORIGINAL con gradiente morado -->
+                        <div class="card-header" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:1.5rem 2rem">
+                            <h3 class="card-title" style="color:white;font-size:1.6rem;font-weight:700;display:flex;align-items:center;gap:0.75rem;margin:0">
+                                <i data-lucide="package" style="width:32px;height:32px"></i> 
+                                Cubito Lukers - Verticalización Automática
                             </h3>
                             <div class="card-actions">
-                                <button class="btn btn-outline" onclick="exportarVerticalizados()" id="btnExportarCubito" disabled style="border-color:white;color:white;padding:0.75rem 1.5rem;font-weight:600;transition:all 0.3s" onmouseover="if(!this.disabled){this.style.background='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'}" onmouseout="this.style.background='transparent';this.style.transform='translateY(0)'">
+                                <button class="btn btn-outline" onclick="exportarVerticalizados()" id="btnExportarCubito" disabled style="border-color:white;color:white;background:rgba(255,255,255,0.1);padding:0.75rem 1.5rem;font-weight:600;transition:all 0.3s;border-radius:8px" onmouseover="if(!this.disabled){this.style.background='rgba(255,255,255,0.2)';this.style.transform='translateY(-2px)'}" onmouseout="this.style.background='rgba(255,255,255,0.1)';this.style.transform='translateY(0)'">
                                     <i data-lucide="download"></i> Descargar Excel
                                 </button>
                             </div>
                         </div>
                         
-                        <!-- Estadísticas Destacadas -->
+                        <!-- Estadísticas ORIGINALES con gradientes -->
                         <div style="padding:1.5rem;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%)">
                             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem">
+                                <!-- Card Tiendas con gradiente morado -->
                                 <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);text-align:center;transition:transform 0.3s" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                                     <div style="font-size:2rem;margin-bottom:0.5rem">🏪</div>
-                                    <div style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem">Tiendas</div>
+                                    <div style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;font-weight:600">Tiendas</div>
                                     <div style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="cubitoTotalTiendas">0</div>
                                 </div>
+                                <!-- Card Productos con gradiente rosa -->
                                 <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);text-align:center;transition:transform 0.3s" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                                     <div style="font-size:2rem;margin-bottom:0.5rem">📦</div>
-                                    <div style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem">Productos</div>
+                                    <div style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;font-weight:600">Productos</div>
                                     <div style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="cubitoTotalProductos">0</div>
                                 </div>
+                                <!-- Card Registros con gradiente azul -->
                                 <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);text-align:center;transition:transform 0.3s" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                                     <div style="font-size:2rem;margin-bottom:0.5rem">📊</div>
-                                    <div style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem">Registros</div>
+                                    <div style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;font-weight:600">Registros SAP</div>
                                     <div style="font-size:2rem;font-weight:700;background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="cubitoTotalRegistros">0</div>
                                 </div>
                             </div>
                         </div>
 
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;padding:2rem">
-                            <!-- Panel izquierdo: Configuración -->
+                            <!-- Panel izquierdo: Configuración ORIGINAL -->
                             <div>
-                                <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:2rem;box-shadow:0 4px 6px rgba(0,0,0,0.05)">
-                                    <h4 style="margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:1.1rem"><i data-lucide="settings" style="color:#667eea"></i> Configuración del Cubito</h4>
+                                <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:2rem;box-shadow:0 4px 6px rgba(0,0,0,0.05)">
+                                    <h4 style="margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:1.1rem;font-weight:700;color:#0f172a">
+                                        <i data-lucide="settings" style="color:#667eea;width:20px;height:20px"></i> 
+                                        Configuración del Cubito
+                                    </h4>
                                     
+                                    <!-- Packing Terminado -->
                                     <div class="form-group">
-                                        <label style="display:flex;align-items:center;gap:0.5rem"><i data-lucide="list" style="width:16px;height:16px"></i> Packing Terminado</label>
+                                        <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.875rem;font-weight:600;color:#334155;margin-bottom:0.5rem">
+                                            <i data-lucide="list" style="width:16px;height:16px"></i> 
+                                            Packing Terminado
+                                        </label>
                                         <select id="cubitoSelectPacking" class="form-select" onchange="cargarDatosPacking()" style="border:2px solid #e2e8f0;border-radius:8px;font-weight:500">
                                             <option value="">Cargando packings...</option>
                                         </select>
-                                        <small style="color:var(--text-secondary);margin-top:0.5rem;display:block;display:flex;align-items:center;gap:0.25rem"><i data-lucide="info" style="width:14px;height:14px"></i> Solo packings con estado "Completado"</small>
+                                        <small style="color:#64748b;margin-top:0.5rem;display:flex;align-items:center;gap:0.25rem;font-size:0.75rem">
+                                            <i data-lucide="info" style="width:14px;height:14px"></i> 
+                                            Solo packings con estado "Completado"
+                                        </small>
                                     </div>
 
+                                    <!-- Texto de Cabecera -->
                                     <div class="form-group">
-                                        <label style="display:flex;align-items:center;gap:0.5rem"><i data-lucide="file-text" style="width:16px;height:16px"></i> Texto de Cabecera <span style="color:#94a3b8">(Opcional)</span></label>
+                                        <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.875rem;font-weight:600;color:#334155;margin-bottom:0.5rem">
+                                            <i data-lucide="file-text" style="width:16px;height:16px"></i> 
+                                            Texto de Cabecera 
+                                            <span style="color:#94a3b8;font-weight:400">(Opcional)</span>
+                                        </label>
                                         <input type="text" id="cubitoTextoCabecera" class="form-input" placeholder="Ej: Pedido Especial Navidad 2024" style="border:2px solid #e2e8f0;border-radius:8px" />
                                     </div>
 
+                                    <!-- Fecha Documento -->
                                     <div class="form-group">
-                                        <label style="display:flex;align-items:center;gap:0.5rem"><i data-lucide="calendar" style="width:16px;height:16px"></i> Fecha Documento</label>
+                                        <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.875rem;font-weight:600;color:#334155;margin-bottom:0.5rem">
+                                            <i data-lucide="calendar" style="width:16px;height:16px"></i> 
+                                            Fecha Documento
+                                        </label>
                                         <input type="text" id="cubitoFecha" class="form-input" readonly style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:8px;font-weight:600" />
                                     </div>
 
+                                    <!-- Fechas de Entrega R050 y R040 -->
                                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
                                         <div class="form-group">
-                                            <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem"><i data-lucide="truck" style="width:14px;height:14px"></i> Entrega R050</label>
+                                            <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;font-weight:600;color:#334155;margin-bottom:0.5rem">
+                                                <i data-lucide="truck" style="width:14px;height:14px"></i> 
+                                                Entrega R050
+                                            </label>
                                             <input type="date" id="cubitoFechaR050" class="form-input" style="border:2px solid #e2e8f0;border-radius:8px" />
-                                            <small style="color:#10b981;font-size:0.75rem">+15 días</small>
+                                            <small style="color:#10b981;font-size:0.75rem;font-weight:600;margin-top:0.25rem;display:block">+15 días</small>
                                         </div>
                                         <div class="form-group">
-                                            <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem"><i data-lucide="truck" style="width:14px;height:14px"></i> Entrega R040</label>
+                                            <label style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;font-weight:600;color:#334155;margin-bottom:0.5rem">
+                                                <i data-lucide="truck" style="width:14px;height:14px"></i> 
+                                                Entrega R040
+                                            </label>
                                             <input type="date" id="cubitoFechaR040" class="form-input" style="border:2px solid #e2e8f0;border-radius:8px" />
-                                            <small style="color:#f59e0b;font-size:0.75rem">+26 días</small>
+                                            <small style="color:#f59e0b;font-size:0.75rem;font-weight:600;margin-top:0.25rem;display:block">+26 días</small>
                                         </div>
                                     </div>
 
-                                    <button id="cubitoProcesar" class="btn btn-primary btn-block" onclick="procesarVerticalizado()" disabled style="margin-top:1.5rem;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;padding:1rem;font-size:1rem;font-weight:600;transition:all 0.3s" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-                                        <i data-lucide="zap"></i> Verticalizar Datos
+                                    <!-- Botón Verticalizar con gradiente -->
+                                    <button id="cubitoProcesar" class="btn btn-primary btn-full" onclick="procesarVerticalizado()" disabled style="margin-top:1.5rem;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;padding:1rem;font-size:1rem;font-weight:600;transition:all 0.3s" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                                        <i data-lucide="zap"></i> 
+                                        Verticalizar Datos
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Panel derecho: Resumen -->
+                            <!-- Panel derecho: Resumen ORIGINAL -->
                             <div>
-                                <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:2rem;box-shadow:0 4px 6px rgba(0,0,0,0.05)">
-                                    <h4 style="margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:1.1rem"><i data-lucide="bar-chart" style="color:#667eea"></i> Resumen por Tienda</h4>
+                                <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:2rem;box-shadow:0 4px 6px rgba(0,0,0,0.05)">
+                                    <h4 style="margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:1.1rem;font-weight:700;color:#0f172a">
+                                        <i data-lucide="bar-chart" style="color:#667eea;width:20px;height:20px"></i> 
+                                        Resumen por Tienda
+                                    </h4>
                                     
+                                    <!-- Búsqueda -->
                                     <div style="margin-bottom:1rem">
                                         <input type="text" id="cubitoSearchResumen" class="form-input" placeholder="🔍 Buscar tienda..." onkeyup="filtrarResumenTiendas()" style="border:2px solid #e2e8f0;border-radius:8px" />
                                     </div>
 
+                                    <!-- Tabla Resumen -->
                                     <div class="table-container" style="max-height:380px;border:1px solid #e2e8f0;border-radius:8px;overflow:auto">
-                                        <table style="font-size:0.9rem">
+                                        <table style="font-size:0.9rem;width:100%;border-collapse:collapse">
                                             <thead style="background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);position:sticky;top:0;z-index:10">
                                                 <tr>
-                                                    <th style="padding:0.75rem">Tienda</th>
-                                                    <th style="padding:0.75rem">Sociedad</th>
-                                                    <th style="padding:0.75rem">Cantidad</th>
-                                                    <th style="padding:0.75rem">% Total</th>
+                                                    <th style="padding:0.75rem;text-align:left;font-weight:700;color:#334155">Tienda</th>
+                                                    <th style="padding:0.75rem;text-align:center;font-weight:700;color:#334155">Sociedad</th>
+                                                    <th style="padding:0.75rem;text-align:right;font-weight:700;color:#334155">Cantidad</th>
+                                                    <th style="padding:0.75rem;text-align:right;font-weight:700;color:#334155">% Total</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="cubitoTablaResumen">
-                                                <tr><td colspan="4" style="text-align:center;color:var(--text-secondary);padding:2rem">Seleccione un packing para ver el resumen</td></tr>
+                                                <tr>
+                                                    <td colspan="4" style="text-align:center;color:#94a3b8;padding:2rem">
+                                                        <div style="font-size:2rem;margin-bottom:0.5rem;opacity:0.5">📦</div>
+                                                        <div>Seleccione un packing para ver el resumen</div>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                             <tfoot style="background:#f8fafc;font-weight:700">
                                                 <tr>
-                                                    <td colspan="2" style="padding:0.75rem"><strong>Total</strong></td>
-                                                    <td id="cubitoTotalCantidad" style="padding:0.75rem"><strong>0</strong></td>
-                                                    <td style="padding:0.75rem"><strong>100%</strong></td>
+                                                    <td colspan="2" style="padding:0.75rem;color:#334155"><strong>Total</strong></td>
+                                                    <td id="cubitoTotalCantidad" style="padding:0.75rem;text-align:right;color:#334155"><strong>0</strong></td>
+                                                    <td style="padding:0.75rem;text-align:right;color:#334155"><strong>100%</strong></td>
                                                 </tr>
                                             </tfoot>
                                         </table>
                                     </div>
 
-                                    <div class="btn-group" style="margin-top:1.5rem">
-                                        <button id="cubitoVisualizarBtn" class="btn btn-primary" onclick="visualizarDatosVerticalizados()" disabled style="flex:1">
-                                            <i data-lucide="eye"></i> Visualizar
+                                    <!-- Botones Visualizar y Copiar -->
+                                    <div class="btn-group" style="margin-top:1.5rem;display:flex;gap:0.75rem">
+                                        <button id="cubitoVisualizarBtn" class="btn btn-primary" onclick="visualizarDatosVerticalizados()" disabled style="flex:1;padding:0.75rem;font-weight:600">
+                                            <i data-lucide="eye"></i> 
+                                            Visualizar
                                         </button>
-                                        <button id="cubitoCopiarBtn" class="btn btn-outline" onclick="copiarDatosCubito()" disabled style="flex:1">
-                                            <i data-lucide="copy"></i> Copiar
+                                        <button id="cubitoCopiarBtn" class="btn btn-outline" onclick="copiarDatosCubito()" disabled style="flex:1;padding:0.75rem;font-weight:600">
+                                            <i data-lucide="copy"></i> 
+                                            Copiar
                                         </button>
                                     </div>
                                 </div>
