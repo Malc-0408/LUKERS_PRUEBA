@@ -1017,13 +1017,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Área de carga -->
-                            <div style="text-align:center;padding:2rem;border:2px dashed #cbd5e0;border-radius:8px;background:#f7fafc;margin-bottom:1.5rem">
-                                <div style="font-size:3rem;margin-bottom:0.5rem">📁</div>
-                                <div style="font-size:0.9rem;color:#4a5568;font-weight:500">Arrastra tu archivo Excel aquí</div>
-                                <div style="font-size:0.85rem;color:#718096;margin-top:0.25rem">o haz clic para seleccionar</div>
-                            </div>
-                            
                             <!-- Selector de Hoja -->
                             <div style="margin-bottom:1.25rem">
                                 <label style="display:block;font-size:0.8rem;font-weight:600;color:#2d3748;margin-bottom:0.5rem">
@@ -1091,22 +1084,22 @@
                                     <thead style="background:#f7fafc">
                                         <tr>
                                             <th style="padding:0.75rem;text-align:left;font-weight:700;color:#4a5568;border-bottom:1px solid #e2e8f0">
-                                                <i data-lucide="home" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> TIENDA
+                                                <i data-lucide="home" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:0.25rem"></i> TIENDA
                                             </th>
                                             <th style="padding:0.75rem;text-align:center;font-weight:700;color:#4a5568;border-bottom:1px solid #e2e8f0">
-                                                <i data-lucide="building" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> SOCIEDAD
+                                                <i data-lucide="building" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:0.25rem"></i> SOCIEDAD
                                             </th>
                                             <th style="padding:0.75rem;text-align:center;font-weight:700;color:#4a5568;border-bottom:1px solid #e2e8f0">
-                                                <i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> CANTIDAD
+                                                <i data-lucide="package" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:0.25rem"></i> CANTIDAD
                                             </th>
                                             <th style="padding:0.75rem;text-align:center;font-weight:700;color:#4a5568;border-bottom:1px solid #e2e8f0">
-                                                <i data-lucide="percent" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> % DEL TOTAL
+                                                <i data-lucide="percent" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:0.25rem"></i> % DEL TOTAL
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody id="cubitoTablaResumen" style="max-height:400px;overflow-y:auto;display:block">
-                                        <tr style="display:table;width:100%">
-                                            <td colspan="4" style="text-align:center;padding:3rem;color:#a0aec0">
+                                    <tbody id="cubitoTablaResumen">
+                                        <tr>
+                                            <td colspan="4" style="text-align:center;padding:3rem;color:#a0aec0;background:white">
                                                 <div style="font-size:2rem;margin-bottom:0.5rem">ℹ️</div>
                                                 <div style="font-size:0.9rem">No hay datos disponibles</div>
                                             </td>
@@ -1115,7 +1108,7 @@
                                     <tfoot style="background:#fef9e7;border-top:2px solid #f0b429">
                                         <tr>
                                             <td colspan="2" style="padding:0.75rem;font-weight:700;color:#2d3748">
-                                                <i data-lucide="calculator" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> Total
+                                                <i data-lucide="calculator" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:0.25rem"></i> Total
                                             </td>
                                             <td id="cubitoTotalCantidad" style="padding:0.75rem;text-align:center;font-weight:700;color:#2d3748">0</td>
                                             <td style="padding:0.75rem;text-align:center;font-weight:700;color:#2d3748">100%</td>
@@ -1125,20 +1118,20 @@
                             </div>
                             
                             <!-- Sección Acciones -->
-                            <div style="text-align:center;margin-bottom:1.5rem">
-                                <div style="font-size:0.9rem;font-weight:700;color:#2d3748;margin-bottom:1rem">
-                                    <i data-lucide="settings" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> Acciones Disponibles
+                            <div style="text-align:center;margin-bottom:1rem">
+                                <div style="font-size:0.9rem;font-weight:700;color:#2d3748;margin-bottom:0rem;display:flex;align-items:center;justify-content:center;gap:0.5rem">
+                                    <i data-lucide="settings" style="width:16px;height:16px"></i> Acciones Disponibles
                                 </div>
                             </div>
                             
                             <!-- Botones -->
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
-                                <button id="cubitoVisualizarBtn" onclick="abrirModalSeleccionSociedad()" disabled style="padding:0.9rem;background:#718ba5;color:white;border:none;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="if(!this.disabled){this.style.background='#5a7186'}" onmouseout="this.style.background='#718ba5'">
-                                    <i data-lucide="eye" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> 
+                                <button id="cubitoVisualizarBtn" onclick="abrirModalSeleccionSociedad()" disabled style="padding:0.9rem;background:#718ba5;color:white;border:none;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:0.5rem" onmouseover="if(!this.disabled){this.style.background='#5a7186'}" onmouseout="this.style.background='#718ba5'">
+                                    <i data-lucide="eye" style="width:16px;height:16px"></i> 
                                     Visualizar Datos
                                 </button>
-                                <button onclick="exportarVerticalizados()" id="btnExportarCubito" disabled style="padding:0.9rem;background:#718ba5;color:white;border:none;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="if(!this.disabled){this.style.background='#5a7186'}" onmouseout="this.style.background='#718ba5'">
-                                    <i data-lucide="download" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> 
+                                <button onclick="exportarVerticalizados()" id="btnExportarCubito" disabled style="padding:0.9rem;background:#718ba5;color:white;border:none;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:0.5rem" onmouseover="if(!this.disabled){this.style.background='#5a7186'}" onmouseout="this.style.background='#718ba5'">
+                                    <i data-lucide="download" style="width:16px;height:16px"></i> 
                                     Descargar Archivo
                                 </button>
                             </div>
@@ -5818,54 +5811,51 @@
             const totalCantidad = Object.values(resumenPorTienda).reduce((sum, cant) => sum + cant, 0);
             
             if (totalCantidad === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-secondary);padding:2rem">No hay datos para mostrar</td></tr>';
-                document.getElementById('cubitoTotalCantidad').innerHTML = '<strong>0</strong>';
+                tbody.innerHTML = `<tr>
+                    <td colspan="4" style="text-align:center;padding:3rem;color:#a0aec0;background:white">
+                        <div style="font-size:2rem;margin-bottom:0.5rem">ℹ️</div>
+                        <div style="font-size:0.9rem">No hay datos disponibles</div>
+                    </td>
+                </tr>`;
+                document.getElementById('cubitoTotalCantidad').textContent = '0';
                 return;
             }
             
             Object.entries(resumenPorTienda)
                 .sort((a, b) => b[1] - a[1])
-                .forEach(([tienda, cantidad], index) => {
+                .forEach(([tienda, cantidad]) => {
                     const config = CUBITO_TIENDA_MAPPING[tienda];
                     if (!config) return;
                     
                     const sociedad = config.Sociedad;
                     const porcentaje = ((cantidad / totalCantidad) * 100).toFixed(2);
                     
-                    // Colores por sociedad
-                    const badgeColor = sociedad === 'R050' 
-                        ? 'background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)' 
-                        : 'background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)';
+                    // Badge simple según imagen
+                    const badgeStyle = sociedad === 'R050' 
+                        ? 'background:#6366f1;color:white;padding:0.35rem 0.75rem;border-radius:12px;font-size:0.75rem;font-weight:600;display:inline-block'
+                        : 'background:#ec4899;color:white;padding:0.35rem 0.75rem;border-radius:12px;font-size:0.75rem;font-weight:600;display:inline-block';
                     
                     const tr = document.createElement('tr');
-                    tr.style.transition = 'all 0.3s';
-                    tr.onmouseover = function() { this.style.background = '#f0f4ff'; this.style.transform = 'translateX(5px)'; };
-                    tr.onmouseout = function() { this.style.background = ''; this.style.transform = 'translateX(0)'; };
+                    tr.style.background = 'white';
+                    tr.style.borderBottom = '1px solid #f1f5f9';
                     
                     tr.innerHTML = `
-                        <td style="padding:0.75rem">
+                        <td style="padding:0.85rem;color:#2d3748;font-size:0.85rem">
                             <div style="display:flex;align-items:center;gap:0.5rem">
-                                <span style="font-size:1.2rem">${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏪'}</span>
+                                <span style="font-size:1.1rem">🏪</span>
                                 <strong>${tienda}</strong>
                             </div>
                         </td>
-                        <td style="padding:0.75rem">
-                            <span style="${badgeColor};color:white;padding:0.25rem 0.75rem;border-radius:12px;font-size:0.75rem;font-weight:600">${sociedad}</span>
+                        <td style="padding:0.85rem;text-align:center">
+                            <span style="${badgeStyle}">${sociedad}</span>
                         </td>
-                        <td style="padding:0.75rem"><strong style="color:#667eea;font-size:1.1rem">${cantidad.toLocaleString()}</strong></td>
-                        <td style="padding:0.75rem">
-                            <div style="display:flex;align-items:center;gap:0.5rem">
-                                <div style="flex:1;background:#e2e8f0;height:8px;border-radius:4px;overflow:hidden">
-                                    <div style="background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);height:100%;width:${porcentaje}%;transition:width 0.5s"></div>
-                                </div>
-                                <strong style="font-size:0.9rem">${porcentaje}%</strong>
-                            </div>
-                        </td>
+                        <td style="padding:0.85rem;text-align:center;color:#2d3748;font-weight:700;font-size:0.95rem">${cantidad.toLocaleString()}</td>
+                        <td style="padding:0.85rem;text-align:center;color:#2d3748;font-weight:600;font-size:0.9rem">${porcentaje}%</td>
                     `;
                     tbody.appendChild(tr);
                 });
             
-            document.getElementById('cubitoTotalCantidad').innerHTML = `<strong style="color:#667eea;font-size:1.1rem">${totalCantidad.toLocaleString()}</strong>`;
+            document.getElementById('cubitoTotalCantidad').textContent = totalCantidad.toLocaleString();
         }
 
         // Filtrar tabla de resumen
