@@ -786,7 +786,10 @@
                         <!-- Matriz Género x Tienda -->
                         <div class="card" style="margin-top:1.5rem">
                             <div class="card-header">
-                                <h4 class="card-title" style="font-size:1rem">📈 Matriz: Género x Tienda (Unidades)</h4>
+                                <h4 class="card-title" style="font-size:1rem">💰 Matriz: Género x Tienda (MONTO)</h4>
+                            </div>
+                            <div style="padding:1.5rem">
+                                <canvas id="chartMatrizGeneroTienda" style="max-height:400px"></canvas>
                             </div>
                             <div class="table-container">
                                 <table id="tablaMatrizGeneroTienda">
@@ -911,7 +914,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="table-container"><table><thead><tr><th>Variante</th><th>Código</th><th>Descripción</th><th>Género</th><th>Marca</th><th>Talla</th><th>Kardex</th><th>PVP</th><th>PVP Regular</th></tr></thead><tbody id="tablaProductos"></tbody></table></div>
+                        <div class="table-container"><table><thead><tr><th>Variante</th><th>Código</th><th>Descripción</th><th>Género</th><th>Marca</th><th>Talla</th><th>Kardex</th><th>PVP</th><th>CV (Costo Venta)</th></tr></thead><tbody id="tablaProductos"></tbody></table></div>
                         <div class="pagination">
                             <button id="prevProductos" onclick="cambiarPagina('productos',-1)">Anterior</button>
                             <span class="pagination-info">Página <span id="paginaProductos">1</span> de <span id="totalPaginasProductos">1</span></span>
@@ -929,10 +932,44 @@
                                 <button class="btn btn-primary" onclick="abrirModal('modalCrearOrden')"><i data-lucide="plus"></i> Nueva Orden</button>
                             </div>
                         </div>
-                        <div class="table-controls">
-                            <div class="search-box"><i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i><input type="text" id="searchOrdenes" placeholder="Buscar..." onkeyup="filtrarOrdenes()"></div>
-                            <select id="filtroEstadoOrden" class="form-select form-input-sm" onchange="filtrarOrdenes()"><option value="">Todos los estados</option><option value="Pendiente División">Pendiente División</option><option value="Pendiente Picking">Pendiente Picking</option><option value="En Picking">En Picking</option><option value="Pendiente Packing">Pendiente Packing</option><option value="En Packing">En Packing</option><option value="Completada">Completada</option></select>
+                        
+                        <!-- Tabs de Órdenes -->
+                        <div class="tabs" style="padding:0 1.5rem;border-bottom:1px solid var(--border)">
+                            <button class="tab active" onclick="cambiarTabOrden('activas')">📋 Órdenes Activas</button>
+                            <button class="tab" onclick="cambiarTabOrden('historial')">📚 Historial de Órdenes</button>
                         </div>
+                        
+                        <!-- Filtros para Activas -->
+                        <div class="table-controls" id="filtrosOrdenActivas">
+                            <div class="search-box"><i data-lucide="search" style="width:16px;height:16px;color:var(--text-secondary)"></i><input type="text" id="searchOrdenes" placeholder="Buscar..." onkeyup="filtrarOrdenes()"></div>
+                            <select id="filtroEstadoOrden" class="form-select form-input-sm" onchange="filtrarOrdenes()"><option value="">Todos los estados</option><option value="Pendiente División">Pendiente División</option><option value="Pendiente Picking">Pendiente Picking</option><option value="En Picking">En Picking</option><option value="Pendiente Packing">Pendiente Packing</option><option value="En Packing">En Packing</option></select>
+                        </div>
+                        
+                        <!-- Filtros para Historial -->
+                        <div id="filtrosOrdenHistorial" style="display:none;padding:1rem 1.5rem;background:#f8fafc;border-bottom:1px solid var(--border)">
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+                                <div>
+                                    <label style="display:block;margin-bottom:0.25rem;font-size:0.85rem;font-weight:500;color:#64748b">🔍 Buscar orden</label>
+                                    <input type="text" id="buscarOrdenHistorial" placeholder="Buscar por nombre de orden..." onkeyup="filtrarOrdenes()" style="width:100%;padding:0.5rem;border:1px solid #cbd5e0;border-radius:6px;font-size:0.85rem">
+                                </div>
+                                <div>
+                                    <label style="display:block;margin-bottom:0.25rem;font-size:0.85rem;font-weight:500;color:#64748b">📅 Fecha desde</label>
+                                    <input type="date" id="filtroFechaDesdeOrden" onchange="filtrarOrdenes()" style="width:100%;padding:0.5rem;border:1px solid #cbd5e0;border-radius:6px;font-size:0.85rem">
+                                </div>
+                                <div>
+                                    <label style="display:block;margin-bottom:0.25rem;font-size:0.85rem;font-weight:500;color:#64748b">📅 Fecha hasta</label>
+                                    <input type="date" id="filtroFechaHastaOrden" onchange="filtrarOrdenes()" style="width:100%;padding:0.5rem;border:1px solid #cbd5e0;border-radius:6px;font-size:0.85rem">
+                                </div>
+                                <div>
+                                    <label style="display:block;margin-bottom:0.25rem;font-size:0.85rem;font-weight:500;color:#64748b">👥 Equipo</label>
+                                    <select id="filtroEquipoOrden" onchange="filtrarOrdenes()" style="width:100%;padding:0.5rem;border:1px solid #cbd5e0;border-radius:6px;font-size:0.85rem">
+                                        <option value="">Todos los equipos</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button onclick="limpiarFiltrosOrden()" style="margin-top:0.75rem;padding:0.4rem 1rem;background:white;border:1px solid #cbd5e0;border-radius:6px;font-size:0.85rem;cursor:pointer">🔄 Limpiar filtros</button>
+                        </div>
+                        
                         <div class="table-container"><table><thead><tr><th>ID</th><th>Nombre</th><th>Fecha</th><th>Unidades</th><th>Monto</th><th>Progreso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaOrdenes"></tbody></table></div>
                     </div>
                 </div>
@@ -967,6 +1004,25 @@
                         <div class="tabs" id="tabsPacking">
                             <div class="tab active" data-tab="activos" onclick="cambiarTabPacking('activos')">Activos</div>
                             <div class="tab" data-tab="historial" onclick="cambiarTabPacking('historial')">Historial</div>
+                        </div>
+                        <div id="filtrosPackingHistorial" style="display:none;padding:1rem;background:#f8fafc;border-radius:8px;margin-bottom:1rem">
+                            <div style="display:grid;grid-template-columns:1fr 200px 200px auto;gap:1rem;align-items:end">
+                                <div class="form-group" style="margin:0">
+                                    <label style="font-size:0.85rem;font-weight:600;color:#475569;margin-bottom:0.5rem">🔍 Buscar Orden</label>
+                                    <input type="text" id="buscarOrdenPacking" placeholder="Buscar por nombre de orden..." onkeyup="filtrarHistorialPacking()" style="width:100%;padding:0.5rem;border:1px solid #cbd5e0;border-radius:6px;font-size:0.85rem">
+                                </div>
+                                <div class="form-group" style="margin:0">
+                                    <label style="font-size:0.85rem;font-weight:600;color:#475569;margin-bottom:0.5rem">📅 Desde</label>
+                                    <input type="date" id="filtroFechaDesde" onchange="filtrarHistorialPacking()" style="width:100%;padding:0.5rem;border:1px solid #cbd5e0;border-radius:6px;font-size:0.85rem">
+                                </div>
+                                <div class="form-group" style="margin:0">
+                                    <label style="font-size:0.85rem;font-weight:600;color:#475569;margin-bottom:0.5rem">📅 Hasta</label>
+                                    <input type="date" id="filtroFechaHasta" onchange="filtrarHistorialPacking()" style="width:100%;padding:0.5rem;border:1px solid #cbd5e0;border-radius:6px;font-size:0.85rem">
+                                </div>
+                                <button onclick="limpiarFiltrosPacking()" class="btn btn-outline" style="padding:0.5rem 1rem">
+                                    <i data-lucide="x" style="width:14px;height:14px"></i> Limpiar
+                                </button>
+                            </div>
                         </div>
                         <div class="table-container"><table><thead><tr><th>Orden</th><th>Parte</th><th>Equipo</th><th>Recibido</th><th>Empacado</th><th>Reclasificado</th><th>Tiempo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaPacking"></tbody></table></div>
                     </div>
@@ -1192,7 +1248,7 @@
                                     <label class="form-check"><input type="checkbox" value="Color" checked> Color</label>
                                     <label class="form-check"><input type="checkbox" value="Kardex" checked> Kardex</label>
                                     <label class="form-check"><input type="checkbox" value="PVP" checked> PVP</label>
-                                    <label class="form-check"><input type="checkbox" value="PVP Regular" checked> PVP Regular</label>
+                                    <label class="form-check"><input type="checkbox" value="CV" checked> CV (Costo Venta)</label>
                                     <label class="form-check"><input type="checkbox" value="Solicitado" checked> Solicitado</label>
                                     <label class="form-check"><input type="checkbox" value="Encontrado" checked> Encontrado</label>
                                 </div>
@@ -1217,7 +1273,7 @@
                                     <label class="form-check"><input type="checkbox" value="Color" checked> Color</label>
                                     <label class="form-check"><input type="checkbox" value="Kardex" checked> Kardex</label>
                                     <label class="form-check"><input type="checkbox" value="PVP" checked> PVP</label>
-                                    <label class="form-check"><input type="checkbox" value="PVP Regular" checked> PVP Regular</label>
+                                    <label class="form-check"><input type="checkbox" value="CV" checked> CV (Costo Venta)</label>
                                     <label class="form-check"><input type="checkbox" value="Solicitado" checked> Solicitado</label>
                                     <label class="form-check"><input type="checkbox" value="Encontrado" checked> Encontrado</label>
                                     <label class="form-check"><input type="checkbox" value="Tiendas" checked disabled> Columnas de Tiendas (siempre)</label>
@@ -1290,11 +1346,11 @@
                 <!-- MODALES (Agregar todos los modales necesarios) -->
                 <div class="modal" id="modalAgregarItem"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Agregar Item</h3><button class="modal-close" onclick="cerrarModal('modalAgregarItem')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><label class="form-label">Variante</label><input type="text" id="inputVariante" class="form-input"></div><div class="form-group"><label class="form-label">Ubicación</label><input type="text" id="inputUbicacion" class="form-input"></div><div class="form-group"><label class="form-label">Stock</label><input type="number" id="inputStock" class="form-input"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalAgregarItem')">Cancelar</button><button class="btn btn-primary" onclick="guardarItem()">Guardar</button></div></div></div>
 
-                <div class="modal" id="modalSubirInventario"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Subir Inventario</h3><button class="modal-close" onclick="cerrarModal('modalSubirInventario')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><input type="file" id="fileInventario" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileInventarioInfo')"><label for="fileInventario" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileInventarioInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileInventario','fileInventarioInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalSubirInventario')">Cancelar</button><button class="btn btn-primary" onclick="procesarInventario()">Procesar</button></div></div></div>
+                <div class="modal" id="modalSubirInventario"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Subir Inventario</h3><button class="modal-close" onclick="cerrarModal('modalSubirInventario')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="alert alert-info" style="margin-bottom:1rem"><div style="display:flex;align-items:start;gap:0.75rem"><i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;margin-top:2px"></i><div style="flex:1"><strong>📋 Columnas OBLIGATORIAS:</strong><div style="margin-top:0.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0.5rem;font-size:0.85rem"><div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Variante</code></div><div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Descripción</code></div><div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Stock_Fisico</code></div><div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Ubicación</code></div></div><div style="margin-top:0.75rem"><strong>Columnas opcionales:</strong><div style="margin-top:0.5rem;font-size:0.82rem;color:#64748b">Genero, Linea, Talla, Stock_Bloqueado, Punto_Reorden</div></div></div></div></div><div class="form-group"><input type="file" id="fileInventario" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileInventarioInfo')"><label for="fileInventario" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileInventarioInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileInventario','fileInventarioInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalSubirInventario')">Cancelar</button><button class="btn btn-primary" onclick="procesarInventario()">Procesar</button></div></div></div>
 
-                <div class="modal" id="modalModificarMasivo"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Modificar Masivo</h3><button class="modal-close" onclick="cerrarModal('modalModificarMasivo')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><input type="file" id="fileModificar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileModificarInfo')"><label for="fileModificar" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileModificarInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileModificar','fileModificarInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalModificarMasivo')">Cancelar</button><button class="btn btn-primary" onclick="procesarModificarMasivo()">Modificar</button></div></div></div>
+                <div class="modal" id="modalModificarMasivo"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Modificar Masivo</h3><button class="modal-close" onclick="cerrarModal('modalModificarMasivo')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="alert alert-info" style="margin-bottom:1rem"><div style="display:flex;align-items:start;gap:0.75rem"><i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;margin-top:2px"></i><div style="flex:1"><strong>📋 Columnas para identificar (OBLIGATORIAS):</strong><div style="margin-top:0.5rem;display:flex;gap:0.5rem;font-size:0.85rem"><div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Variante</code></div><div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Ubicación</code></div></div><div style="margin-top:0.75rem"><strong>Columnas a modificar (al menos una):</strong><div style="margin-top:0.5rem;font-size:0.82rem;color:#64748b">Stock_Fisico, Stock_Bloqueado, Punto_Reorden, Descripción</div></div></div></div></div><div class="form-group"><input type="file" id="fileModificar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileModificarInfo')"><label for="fileModificar" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileModificarInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileModificar','fileModificarInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalModificarMasivo')">Cancelar</button><button class="btn btn-primary" onclick="procesarModificarMasivo()">Modificar</button></div></div></div>
 
-                <div class="modal" id="modalEliminarMasivo"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Eliminar Masivo</h3><button class="modal-close" onclick="cerrarModal('modalEliminarMasivo')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="alert alert-danger"><i data-lucide="alert-triangle"></i><span>Esta acción eliminará los registros especificados</span></div><div class="form-group"><input type="file" id="fileEliminar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileEliminarInfo')"><label for="fileEliminar" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileEliminarInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileEliminar','fileEliminarInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalEliminarMasivo')">Cancelar</button><button class="btn btn-danger" onclick="procesarEliminarMasivo()">Eliminar</button></div></div></div>
+                <div class="modal" id="modalEliminarMasivo"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Eliminar Masivo</h3><button class="modal-close" onclick="cerrarModal('modalEliminarMasivo')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="alert alert-danger"><i data-lucide="alert-triangle"></i><span>Esta acción eliminará los registros especificados</span></div><div class="alert alert-info" style="margin-bottom:1rem;margin-top:1rem"><div style="display:flex;align-items:start;gap:0.75rem"><i data-lucide="info" style="width:20px;height:20px;flex-shrink:0;margin-top:2px"></i><div style="flex:1"><strong>📋 Columnas OBLIGATORIAS:</strong><div style="margin-top:0.5rem;display:flex;gap:0.5rem;font-size:0.85rem"><div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Variante</code></div><div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Ubicación</code></div></div><div style="margin-top:0.5rem;font-size:0.82rem;color:#64748b">Se eliminarán los registros que coincidan con estas variantes y ubicaciones</div></div></div></div><div class="form-group"><input type="file" id="fileEliminar" class="form-file" accept=".xlsx,.xls" onchange="mostrarArchivoSeleccionado(this,'fileEliminarInfo')"><label for="fileEliminar" class="file-upload-btn"><i data-lucide="file-plus"></i> Seleccionar archivo</label><div class="file-selected" id="fileEliminarInfo"><div class="file-selected-icon"><i data-lucide="check"></i></div><span class="file-selected-name"></span><button class="file-selected-remove" onclick="limpiarArchivo('fileEliminar','fileEliminarInfo')"><i data-lucide="x"></i></button></div></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalEliminarMasivo')">Cancelar</button><button class="btn btn-danger" onclick="procesarEliminarMasivo()">Eliminar</button></div></div></div>
 
                 <div class="modal" id="modalVerVariante"><div class="modal-content large"><div class="modal-header"><h3 class="modal-title">Detalle de Variante</h3><button class="modal-close" onclick="cerrarModal('modalVerVariante')"><i data-lucide="x"></i></button></div><div class="modal-body" id="varianteDetalleContent"></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalVerVariante')">Cerrar</button></div></div></div>
 
@@ -1534,6 +1590,14 @@
         // Constantes
         const ITEMS_POR_PAGINA = 100;
         const BATCH_SIZE = 500;
+        
+        // Roles de usuario
+        const ROLES = {
+            JEFE_ALMACEN: 'Jefe de Almacén',
+            PRODUCTO: 'Producto',
+            SUPERVISOR: 'Supervisor',
+            JEFES: 'Jefes'
+        };
 
         // ============================================
         // VARIABLES GLOBALES
@@ -1541,9 +1605,16 @@
         let inventario = [], productos = [], ordenes = [], picking = [], packing = [], reclasificacion = [], equipos = [], configuraciones = [];
         let inventarioFiltrado = [], productosFiltrado = [], ordenesFiltradas = [];
         let paginaInv = 1, paginaProd = 1;
-        let chartEstados, chartMontos, chartEquipos, chartGeneros;
+        let chartEstados, chartMontos, chartEquipos, chartGeneros, chartMatrizGeneroTienda;
         let ordenActual = null, pickingActual = null, packingActual = null, reclasActual = null, equipoActual = null;
         let tabReclasActual = 'pendientes', tabEquiposActual = 'picking';
+        
+        // Usuario actual (por defecto Jefe de Almacén - cambiar según login real)
+        let usuarioActual = {
+            id: 1,
+            nombre: 'Usuario Sistema',
+            rol: ROLES.JEFE_ALMACEN  // Cambiar según el usuario logueado
+        };
         
         // Variables para CUBITO LUKERS
         let cubitoOutputData = [];
@@ -1623,6 +1694,17 @@
 
         function formatMoney(num) {
             return 'S/ ' + (parseFloat(num) || 0).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function calcularCV(pvp, kardex) {
+            // CV = 1 / ((PVP / 1.18) / KARDEX)
+            if (!pvp || !kardex || kardex === 0) return 0;
+            
+            const pvpSinIGV = pvp / 1.18;
+            const ratio = pvpSinIGV / kardex;
+            const cv = 1 / ratio;
+            
+            return parseFloat(cv.toFixed(2));
         }
 
         function formatFecha(iso) {
@@ -2107,6 +2189,13 @@
                 document.getElementById('loadingText').textContent = 'Cargando equipos...';
                 const { data: equiposData } = await supabase.from('equipos').select('*').order('nombre');
                 equipos = equiposData || [];
+                
+                // Poblar selector de equipos en filtros de historial de órdenes
+                const filtroEquipoOrden = document.getElementById('filtroEquipoOrden');
+                if (filtroEquipoOrden) {
+                    filtroEquipoOrden.innerHTML = '<option value="">Todos los equipos</option>' + 
+                        equipos.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
+                }
 
                 document.getElementById('loadingText').textContent = 'Cargando configuraciones...';
                 const { data: configData } = await supabase.from('configuraciones').select('*');
@@ -2435,6 +2524,7 @@
             const tiendas = new Set();
             const generos = new Set();
             
+            // Calcular MONTOS (no cantidades)
             ordenesFiltradas.forEach(o => {
                 if (o.estado === 'Completada' && o.items) {
                     o.items.forEach(item => {
@@ -2442,12 +2532,15 @@
                         if (prod && prod.genero) {
                             generos.add(prod.genero);
                             const dist = item.distribucion || {};
+                            const kardex = prod.kardex || 0;  // Usar kardex para el monto
                             
                             Object.entries(dist).forEach(([tienda, cant]) => {
                                 if (cant > 0) {
                                     tiendas.add(tienda);
                                     if (!matriz[prod.genero]) matriz[prod.genero] = {};
-                                    matriz[prod.genero][tienda] = (matriz[prod.genero][tienda] || 0) + cant;
+                                    // Calcular monto: cantidad * kardex
+                                    const monto = cant * kardex;
+                                    matriz[prod.genero][tienda] = (matriz[prod.genero][tienda] || 0) + monto;
                                 }
                             });
                         }
@@ -2458,10 +2551,17 @@
             if (generos.size === 0 || tiendas.size === 0) {
                 document.getElementById('tablaMatrizGeneroTienda').innerHTML = 
                     '<thead><tr><th>Género</th></tr></thead><tbody><tr><td class="empty-state">Sin datos</td></tr></tbody>';
+                
+                // Limpiar gráfica si existe
+                const ctx = document.getElementById('chartMatrizGeneroTienda');
+                if (ctx && chartMatrizGeneroTienda) {
+                    chartMatrizGeneroTienda.destroy();
+                    chartMatrizGeneroTienda = null;
+                }
                 return;
             }
             
-            // Construir tabla
+            // Construir tabla con MONTOS
             let html = '<thead><tr><th>Género</th>';
             const tiendasArray = Array.from(tiendas).sort();
             tiendasArray.forEach(t => {
@@ -2476,9 +2576,9 @@
                 tiendasArray.forEach(t => {
                     const valor = matriz[g]?.[t] || 0;
                     totalGenero += valor;
-                    html += `<td style="text-align:right">${valor > 0 ? valor.toLocaleString() : '-'}</td>`;
+                    html += `<td style="text-align:right">${valor > 0 ? formatMoney(valor) : '-'}</td>`;
                 });
-                html += `<td style="text-align:right;background:var(--bg-hover);font-weight:600">${totalGenero.toLocaleString()}</td></tr>`;
+                html += `<td style="text-align:right;background:var(--bg-hover);font-weight:600">${formatMoney(totalGenero)}</td></tr>`;
             });
             
             // Fila de totales
@@ -2490,11 +2590,97 @@
                     totalTienda += matriz[g]?.[t] || 0;
                 });
                 granTotal += totalTienda;
-                html += `<td style="text-align:right">${totalTienda.toLocaleString()}</td>`;
+                html += `<td style="text-align:right">${formatMoney(totalTienda)}</td>`;
             });
-            html += `<td style="text-align:right">${granTotal.toLocaleString()}</td></tr></tbody>`;
+            html += `<td style="text-align:right">${formatMoney(granTotal)}</td></tr></tbody>`;
             
             document.getElementById('tablaMatrizGeneroTienda').innerHTML = html;
+            
+            // Generar gráfica visual
+            generarGraficaMatrizGeneroTienda(matriz, generosArray, tiendasArray);
+        }
+        
+        function generarGraficaMatrizGeneroTienda(matriz, generos, tiendas) {
+            const ctx = document.getElementById('chartMatrizGeneroTienda');
+            if (!ctx) return;
+            
+            // Destruir gráfica anterior si existe
+            if (chartMatrizGeneroTienda) {
+                chartMatrizGeneroTienda.destroy();
+            }
+            
+            // Colores por género
+            const coloresPorGenero = {
+                'HOMBRE': '#3b82f6',     // Azul
+                'MUJER': '#ec4899',      // Rosa
+                'NIÑO': '#10b981',       // Verde
+                'NIÑA': '#f59e0b',       // Naranja
+                'BEBE': '#a855f7',       // Morado
+                'UNISEX': '#64748b'      // Gris
+            };
+            
+            // Preparar datasets (un dataset por género)
+            const datasets = generos.map(genero => {
+                const data = tiendas.map(tienda => matriz[genero]?.[tienda] || 0);
+                return {
+                    label: genero,
+                    data: data,
+                    backgroundColor: coloresPorGenero[genero] || '#64748b',
+                    borderColor: 'white',
+                    borderWidth: 2
+                };
+            });
+            
+            // Crear gráfica de barras agrupadas
+            chartMatrizGeneroTienda = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: tiendas.map(t => t.replace('LUKERS ', '')),
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y;
+                                    return label + ': ' + formatMoney(value);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: false,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            stacked: false,
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'S/ ' + value.toLocaleString();
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Monto (S/)'
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function generarGraficas(ordenesFiltradas = ordenes) {
@@ -3114,7 +3300,7 @@
                     <td>${p.talla || '-'}</td>
                     <td><strong style="color:var(--primary)">${formatMoney(p.kardex)}</strong></td>
                     <td><strong style="color:var(--success)">${formatMoney(p.pvp)}</strong></td>
-                    <td>${formatMoney(p.pvp_regular)}</td>
+                    <td>${formatMoney(calcularCV(p.pvp, p.kardex))}</td>
                 </tr>`).join('');
 
             document.getElementById('paginaProductos').textContent = paginaProd;
@@ -3294,7 +3480,23 @@
                         <td>
                             <button class="btn btn-info btn-icon btn-sm" onclick="verHistorialOrden('${o.id}')" title='Historial'><i data-lucide="history" style="width:14px;height:14px"></i></button>
                             ${o.estado === 'Pendiente División' ? `<button class="btn btn-purple btn-icon btn-sm" onclick="abrirDividirOrden('${o.id}')" title='Dividir'><i data-lucide="scissors" style="width:14px;height:14px"></i></button>` : ''}
-                            ${['Pendiente División', 'Cancelada'].includes(o.estado) ? `<button class="btn btn-danger btn-icon btn-sm" onclick="eliminarOrden('${o.id}')" title='Eliminar'><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>` : ''}
+                            ${
+                                // Botón eliminar con validación de permisos
+                                (() => {
+                                    if (o.estado === 'Completada') {
+                                        // Solo Jefe de Almacén y Jefes pueden eliminar completadas
+                                        if ([ROLES.JEFE_ALMACEN, ROLES.JEFES].includes(usuarioActual.rol)) {
+                                            return `<button class="btn btn-danger btn-icon btn-sm" onclick="eliminarOrden('${o.id}')" title='Eliminar (Solo Jefe de Almacén/Jefes)'><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>`;
+                                        } else {
+                                            return `<button class="btn btn-danger btn-icon btn-sm" disabled title='Solo Jefe de Almacén o Jefes pueden eliminar completadas' style="opacity:0.5;cursor:not-allowed"><i data-lucide="lock" style="width:14px;height:14px"></i></button>`;
+                                        }
+                                    } else if (['Pendiente División', 'Cancelada'].includes(o.estado)) {
+                                        // Cualquiera puede eliminar pendientes o canceladas
+                                        return `<button class="btn btn-danger btn-icon btn-sm" onclick="eliminarOrden('${o.id}')" title='Eliminar'><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>`;
+                                    }
+                                    return '';
+                                })()
+                            }
                         </td>
                     </tr>`;
                 }).join('');
@@ -3302,12 +3504,61 @@
         }
 
         function filtrarOrdenes() {
-            const search = normalizarTexto(document.getElementById('searchOrdenes')?.value || '');
-            const estado = document.getElementById('filtroEstadoOrden')?.value || '';
-            ordenesFiltradas = ordenes.filter(o =>
-                (normalizarTexto(o.id).includes(search) || normalizarTexto(o.nombre).includes(search)) &&
-                (!estado || o.estado === estado)
-            );
+            // Determinar qué filtros usar según el tab actual
+            if (tabOrdenActual === 'activas') {
+                // Filtros de órdenes activas
+                const search = normalizarTexto(document.getElementById('searchOrdenes')?.value || '');
+                const estado = document.getElementById('filtroEstadoOrden')?.value || '';
+                
+                ordenesFiltradas = ordenes.filter(o => 
+                    o.estado !== 'Completada' &&  // Solo no completadas
+                    (normalizarTexto(o.id).includes(search) || normalizarTexto(o.nombre).includes(search)) &&
+                    (!estado || o.estado === estado)
+                );
+            } else {
+                // Filtros de historial (completadas)
+                ordenesFiltradas = ordenes.filter(o => o.estado === 'Completada');
+                
+                // Filtrar por búsqueda
+                const busqueda = document.getElementById('buscarOrdenHistorial')?.value.toLowerCase() || '';
+                if (busqueda) {
+                    ordenesFiltradas = ordenesFiltradas.filter(o => 
+                        o.nombre.toLowerCase().includes(busqueda) ||
+                        o.id.toLowerCase().includes(busqueda)
+                    );
+                }
+                
+                // Filtrar por fecha desde
+                const desde = document.getElementById('filtroFechaDesdeOrden')?.value;
+                if (desde) {
+                    ordenesFiltradas = ordenesFiltradas.filter(o => {
+                        const fechaCierre = o.fecha_cierre || o.fecha_fin_packing;
+                        return fechaCierre && new Date(fechaCierre) >= new Date(desde);
+                    });
+                }
+                
+                // Filtrar por fecha hasta
+                const hasta = document.getElementById('filtroFechaHastaOrden')?.value;
+                if (hasta) {
+                    ordenesFiltradas = ordenesFiltradas.filter(o => {
+                        const fechaCierre = o.fecha_cierre || o.fecha_fin_packing;
+                        return fechaCierre && new Date(fechaCierre) <= new Date(hasta + 'T23:59:59');
+                    });
+                }
+                
+                // Filtrar por equipo (buscar en pickings y packings de la orden)
+                const equipo = document.getElementById('filtroEquipoOrden')?.value;
+                if (equipo) {
+                    ordenesFiltradas = ordenesFiltradas.filter(o => {
+                        // Buscar si algún picking o packing tiene ese equipo
+                        const tieneEquipo = 
+                            picking.some(p => p.orden_id === o.id && p.equipo_id === parseInt(equipo)) ||
+                            packing.some(p => p.orden_id === o.id && p.equipo_id === parseInt(equipo));
+                        return tieneEquipo;
+                    });
+                }
+            }
+            
             renderizarOrdenes();
         }
 
@@ -3750,10 +4001,21 @@
         }
 
         async function eliminarOrden(id) {
+            const orden = ordenes.find(o => o.id === id);
+            if (!orden) return;
+            
+            // Validar permisos para eliminar órdenes completadas
+            // Solo Jefe de Almacén y Jefes pueden eliminar completadas
+            if (orden.estado === 'Completada') {
+                if (![ROLES.JEFE_ALMACEN, ROLES.JEFES].includes(usuarioActual.rol)) {
+                    toast('❌ Solo el Jefe de Almacén o Jefes pueden eliminar órdenes completadas', 'error');
+                    return;
+                }
+            }
+            
             if (!confirm('¿Eliminar esta orden?')) return;
             mostrarLoading('Eliminando...');
             
-            const orden = ordenes.find(o => o.id === id);
             if (orden?.items) {
                 for (const item of orden.items) {
                     const inv = inventario.find(i => i.variante === item.variante && i.ubicacion === item.ubicacion);
@@ -3920,14 +4182,22 @@
             if (!pick) return;
             
             const orden = ordenes.find(o => o.id === pick.orden_id);
+            const equipo = equipos.find(e => e.id === pick.equipo_id);
             const encontrados = pick.items_encontrados || [];
             const asignados = pick.items_asignados || [];
+            
+            // Generar lista de integrantes del equipo
+            let equipoHTML = pick.equipo_nombre || '-';
+            if (equipo && equipo.integrantes && equipo.integrantes.length > 0) {
+                const miembros = equipo.integrantes.map(m => `<div style="font-size:0.85rem;color:#64748b;margin-left:0.5rem;display:flex;align-items:center;gap:0.25rem"><i data-lucide="user" style="width:12px;height:12px"></i> ${m}</div>`).join('');
+                equipoHTML = `<div><strong>${pick.equipo_nombre}</strong>${miembros}</div>`;
+            }
             
             let html = `
                 <div class="detail-grid" style="margin-bottom:1rem">
                     <div class="detail-item"><div class="detail-label">Orden</div><div class="detail-value">${orden?.nombre || pick.orden_id}</div></div>
                     <div class="detail-item"><div class="detail-label">Parte</div><div class="detail-value">PT${pick.parte}</div></div>
-                    <div class="detail-item"><div class="detail-label">Equipo</div><div class="detail-value">${pick.equipo_nombre || '-'}</div></div>
+                    <div class="detail-item"><div class="detail-label">👥 Equipo</div><div class="detail-value">${equipoHTML}</div></div>
                     <div class="detail-item"><div class="detail-label">Tiempo</div><div class="detail-value">${calcularTiempoTrabajado(pick)}</div></div>
                     <div class="detail-item"><div class="detail-label">Solicitado</div><div class="detail-value">${pick.total_solicitado}</div></div>
                     <div class="detail-item"><div class="detail-label">Encontrado</div><div class="detail-value" style="color:var(--success)">${pick.total_encontrado}</div></div>
@@ -3957,6 +4227,7 @@
             document.getElementById('pickingFooter').innerHTML = '<button class="btn btn-outline" onclick="cerrarModal(\'modalPicking\')">Cerrar</button>';
             document.getElementById('tituloModalPicking').textContent = 'Detalle de Picking';
             abrirModal('modalPicking');
+            lucide.createIcons();
         }
 
         function exportarHistorialPicking() {
@@ -4156,7 +4427,62 @@
             tabPackingActual = tab;
             document.querySelectorAll('#tabsPacking .tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`#tabsPacking .tab[data-tab="${tab}"]`).classList.add('active');
+            
+            // Mostrar/ocultar filtros según el tab
+            const filtros = document.getElementById('filtrosPackingHistorial');
+            if (filtros) {
+                filtros.style.display = tab === 'historial' ? 'block' : 'none';
+            }
+            
             renderizarPacking();
+        }
+        
+        // ÓRDENES - TABS
+        // ============================================
+        let tabOrdenActual = 'activas';
+        
+        function cambiarTabOrden(tab) {
+            tabOrdenActual = tab;
+            
+            // Cambiar clases activas de los tabs
+            const tabs = document.querySelectorAll('#vista-ordenes .tabs .tab');
+            tabs.forEach((t, idx) => {
+                if ((tab === 'activas' && idx === 0) || (tab === 'historial' && idx === 1)) {
+                    t.classList.add('active');
+                } else {
+                    t.classList.remove('active');
+                }
+            });
+            
+            // Mostrar/ocultar filtros según el tab
+            const filtrosActivas = document.getElementById('filtrosOrdenActivas');
+            const filtrosHistorial = document.getElementById('filtrosOrdenHistorial');
+            
+            if (filtrosActivas && filtrosHistorial) {
+                filtrosActivas.style.display = tab === 'activas' ? 'flex' : 'none';
+                filtrosHistorial.style.display = tab === 'historial' ? 'block' : 'none';
+            }
+            
+            // Limpiar filtros al cambiar de tab
+            if (tab === 'activas') {
+                document.getElementById('searchOrdenes').value = '';
+                document.getElementById('filtroEstadoOrden').value = '';
+            } else {
+                document.getElementById('buscarOrdenHistorial').value = '';
+                document.getElementById('filtroFechaDesdeOrden').value = '';
+                document.getElementById('filtroFechaHastaOrden').value = '';
+                document.getElementById('filtroEquipoOrden').value = '';
+            }
+            
+            filtrarOrdenes();
+        }
+        
+        function limpiarFiltrosOrden() {
+            document.getElementById('buscarOrdenHistorial').value = '';
+            document.getElementById('filtroFechaDesdeOrden').value = '';
+            document.getElementById('filtroFechaHastaOrden').value = '';
+            document.getElementById('filtroEquipoOrden').value = '';
+            filtrarOrdenes();
         }
 
         function renderizarPacking() {
@@ -4164,7 +4490,35 @@
             if (tabPackingActual === 'activos') {
                 packingMostrar = packing.filter(p => ['Pendiente', 'En Proceso', 'Pausado', 'Esperando Picking'].includes(p.estado));
             } else {
+                // Aplicar filtros en historial
                 packingMostrar = packing.filter(p => p.estado === 'Completado');
+                
+                // Filtrar por búsqueda de orden
+                const busqueda = document.getElementById('buscarOrdenPacking')?.value.toLowerCase() || '';
+                if (busqueda) {
+                    packingMostrar = packingMostrar.filter(p => {
+                        const orden = ordenes.find(o => o.id === p.orden_id);
+                        return orden?.nombre.toLowerCase().includes(busqueda);
+                    });
+                }
+                
+                // Filtrar por fecha desde
+                const desde = document.getElementById('filtroFechaDesde')?.value;
+                if (desde) {
+                    packingMostrar = packingMostrar.filter(p => {
+                        const fechaFin = p.fecha_completado || p.fecha_fin;
+                        return fechaFin && new Date(fechaFin) >= new Date(desde);
+                    });
+                }
+                
+                // Filtrar por fecha hasta
+                const hasta = document.getElementById('filtroFechaHasta')?.value;
+                if (hasta) {
+                    packingMostrar = packingMostrar.filter(p => {
+                        const fechaFin = p.fecha_completado || p.fecha_fin;
+                        return fechaFin && new Date(fechaFin) <= new Date(hasta + 'T23:59:59');
+                    });
+                }
             }
             
             document.getElementById('tablaPacking').innerHTML = packingMostrar.length === 0
@@ -4196,6 +4550,11 @@
                     </tr>`;
                 }).join('');
             lucide.createIcons();
+        }
+        
+        // 🔍 Función para filtrar historial de packing
+        function filtrarHistorialPacking() {
+            renderizarPacking();
         }
 
         async function iniciarPacking(id) {
@@ -4262,12 +4621,17 @@
                 '        <div style="flex:1">',
                 '            <strong>📋 Columnas requeridas:</strong>',
                 '            <div style="margin-top:0.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.5rem;font-size:0.85rem">',
-                '                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Variante</code></div>',
-                '                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px">Encontrado</code></div>',
+                '                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Variante</code></div>',
+                '                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#dc2626;font-weight:600">Encontrado</code></div>',
+                '                <div><code style="background:rgba(0,0,0,0.05);padding:2px 6px;border-radius:4px;color:#2563eb;font-weight:600">Unificar</code> <span style="font-size:0.75rem;color:#64748b">(opcional, solo Cubito)</span></div>',
                 '            </div>',
                 '            <div style="margin-top:0.75rem">',
                 '                <strong>Columnas de tiendas:</strong>',
                 '                <div style="margin-top:0.5rem;font-size:0.82rem">EL SOL, TRU PIZARRO, LA MARINA, PROLONGACIÓN IQUITOS, CHI P. RUIZ, TARAPOTO, MENDIOLA, ALFONSO UGARTE, IQT LORES, JR UNION</div>',
+                '            </div>',
+                '            <div style="margin-top:0.75rem;padding:0.75rem;background:#dbeafe;border-radius:6px;font-size:0.82rem">',
+                '                <strong style="color:#1e40af">ℹ️ Columna Unificar:</strong><br>',
+                '                <span style="color:#1e40af">Si una variante tiene valor en "Unificar", esa será la variante que aparecerá en los registros SAP del Cubito. Las variantes sin unificar mantendrán su variante original.</span>',
                 '            </div>',
                 '        </div>',
                 '    </div>',
@@ -4335,6 +4699,9 @@
                     const v = normalizarTexto(getCol(r, ['variante', 'Variante']));
                     if (!v) return;
 
+                    // 🔄 NUEVO: Capturar columna Unificar (solo para Cubito)
+                    const unificar = normalizarTexto(getCol(r, ['unificar', 'Unificar', 'UNIFICAR']));
+
                     const dist = buscarTienda(r);
                     const cantEmpacada = Object.values(dist).reduce((a, b) => a + b, 0);
                     const recibido = packingActual.items_recibidos?.find(i => i.variante === v);
@@ -4342,8 +4709,18 @@
                     const diferencia = cantRecibida - cantEmpacada;
 
                     if (cantEmpacada > 0) {
-                        itemsEmpacados.push({ variante: v, cantidad: cantEmpacada, distribucion: dist });
+                        itemsEmpacados.push({ 
+                            variante: v,                    // Variante original (para Packing)
+                            variante_unificada: unificar,   // Variante unificada (solo para Cubito)
+                            cantidad: cantEmpacada, 
+                            distribucion: dist 
+                        });
                         totalEmpacado += cantEmpacada;
+                        
+                        // Log para debugging
+                        if (unificar) {
+                            console.log(`🔄 ${v} → ${unificar} (unificada para Cubito)`);
+                        }
                     }
 
                     if (diferencia > 0) {
@@ -4386,6 +4763,17 @@
                 ocultarLoading();
                 toast('Error: ' + e.message, 'error');
             }
+        }
+
+        function filtrarHistorialPacking() {
+            renderizarPacking();
+        }
+
+        function limpiarFiltrosPacking() {
+            document.getElementById('buscarOrdenPacking').value = '';
+            document.getElementById('filtroFechaDesde').value = '';
+            document.getElementById('filtroFechaHasta').value = '';
+            renderizarPacking();
         }
 
         async function completarPacking(id) {
@@ -4441,11 +4829,32 @@
                         for (const item of pack.items_empacados || []) {
                             const inv = inventario.find(i => i.variante === item.variante);
                             if (inv) {
+                                const nuevoStockFisico = Math.max(0, (parseInt(inv.stock_fisico) || 0) - item.cantidad);
+                                
                                 await supabase.from('inventario').update({
-                                    stock_fisico: Math.max(0, (parseInt(inv.stock_fisico) || 0) - item.cantidad),
+                                    stock_fisico: nuevoStockFisico,
                                     stock_bloqueado: Math.max(0, (parseInt(inv.stock_bloqueado) || 0) - item.cantidad)
                                 }).eq('variante', item.variante).eq('ubicacion', inv.ubicacion);
+                                
+                                // 🗑️ NUEVO: Eliminar automáticamente si stock llegó a 0
+                                if (nuevoStockFisico === 0) {
+                                    console.log(`🗑️ Eliminando ${item.variante} de ${inv.ubicacion} (stock = 0)`);
+                                    await supabase.from('inventario')
+                                        .delete()
+                                        .eq('variante', item.variante)
+                                        .eq('ubicacion', inv.ubicacion);
+                                }
                             }
+                        }
+                        
+                        // Limpiar cualquier otro registro con stock 0 que pueda existir
+                        console.log('🧹 Limpiando otros registros con stock 0...');
+                        const { data: eliminados } = await supabase.from('inventario')
+                            .delete()
+                            .eq('stock_fisico', 0);
+                        
+                        if (eliminados && eliminados.length > 0) {
+                            console.log(`✅ ${eliminados.length} registros con stock 0 eliminados`);
                         }
                     }
                 }
@@ -5925,6 +6334,14 @@
                     const variante = item.variante || item.Variante || item.VARIANTE;
                     const distribucion = item.distribucion || item.Distribucion || item.DISTRIBUCION || {};
                     
+                    // 🔄 NUEVO: Usar variante unificada si existe (solo para Cubito)
+                    const varianteUnificada = item.variante_unificada || item.Variante_Unificada;
+                    const varianteParaCubito = varianteUnificada || variante;  // Prioridad a unificada
+                    
+                    if (varianteUnificada) {
+                        console.log(`🔄 Usando variante unificada: ${variante} → ${varianteUnificada}`);
+                    }
+                    
                     // Validar que tenga variante
                     if (!variante) {
                         console.warn(`⚠️ Item ${index + 1}: Sin variante`, item);
@@ -5974,7 +6391,7 @@
                             Sociedad: config.Sociedad,
                             CondPago: config.CondPago,
                             TextoCabecera: textoCabecera,
-                            Material: variante,
+                            Material: varianteParaCubito,  // ✅ USA VARIANTE UNIFICADA SI EXISTE
                             Cantidad: cantidadNum,
                             PrecioNeto: config.PrecioNeto,
                             CentroTienda: config.CentroTienda,
@@ -5989,7 +6406,8 @@
                         if (registrosGenerados <= 5) {  // Mostrar primeros 5 para debugging
                             console.log(`  ✅ Registro ${registrosGenerados}:`, {
                                 tienda,
-                                variante,
+                                variante_original: variante,
+                                variante_cubito: varianteParaCubito,
                                 cantidad: cantidadNum,
                                 sociedad: config.Sociedad
                             });
