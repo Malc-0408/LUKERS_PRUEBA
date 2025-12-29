@@ -1038,11 +1038,11 @@
                             </div>
                         </div>
                         <div class="tabs" id="tabsReclas">
-                            <div class="tab active" data-tab="pendientes" onclick="cambiarTabReclas('pendientes')">Pendientes</div>
-                            <div class="tab" data-tab="completadas" onclick="cambiarTabReclas('completadas')">Completadas</div>
-                            <div class="tab" data-tab="todas" onclick="cambiarTabReclas('todas')">Todas</div>
+                            <div class="tab active" data-tab="pendientes" onclick="cambiarTabReclas('pendientes')">🔄 Pendientes</div>
+                            <div class="tab" data-tab="completadas" onclick="cambiarTabReclas('completadas')">✅ Completadas</div>
+                            <div class="tab" data-tab="todas" onclick="cambiarTabReclas('todas')">📋 Todas</div>
                         </div>
-                        <div class="table-container"><table><thead><tr><th>ID</th><th>Orden</th><th>Variante</th><th>Descripción</th><th>Cantidad</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaReclasificacion"></tbody></table></div>
+                        <div class="table-container"><table><thead><tr><th>Orden</th><th>Parte</th><th>Variante</th><th>Cantidad</th><th>Motivo</th><th>Observaciones</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaReclasificacion"></tbody></table></div>
                     </div>
                 </div>
 
@@ -1460,6 +1460,28 @@
                 <div class="modal" id="modalPacking"><div class="modal-content large"><div class="modal-header"><h3 class="modal-title" id="tituloModalPacking">Packing</h3><button class="modal-close" onclick="cerrarModal('modalPacking')"><i data-lucide="x"></i></button></div><div class="modal-body" id="packingContent"></div><div class="modal-footer" id="packingFooter"></div></div></div>
 
                 <div class="modal" id="modalCompletarReclas"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Completar Reclasificación</h3><button class="modal-close" onclick="cerrarModal('modalCompletarReclas')"><i data-lucide="x"></i></button></div><div class="modal-body" id="completarReclasContent"></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalCompletarReclas')">Cancelar</button><button class="btn btn-primary" onclick="confirmarCompletarReclas()">Confirmar</button></div></div></div>
+
+                <!-- Modal Reclasificar Productos No Empacados -->
+                <div class="modal" id="modalReclasificarNoEmpacados">
+                    <div class="modal-content xl">
+                        <div class="modal-header">
+                            <h3 class="modal-title">📦 Productos NO EMPACADOS - Reclasificación</h3>
+                            <button class="modal-close" onclick="cerrarModalReclasificacion()"><i data-lucide="x"></i></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-warning" style="margin-bottom:1.5rem">
+                                <i data-lucide="alert-triangle"></i>
+                                <span><strong>Productos encontrados pero NO empacados:</strong> Debes especificar el motivo y las observaciones para cada producto.</span>
+                            </div>
+                            
+                            <div id="listaProductosNoEmpacados"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline" onclick="cerrarModalReclasificacion()">Cancelar</button>
+                            <button class="btn btn-primary" onclick="guardarReclasificacionYCompletar()">✅ Guardar y Completar Packing</button>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="modal" id="modalCrearEquipo"><div class="modal-content"><div class="modal-header"><h3 class="modal-title" id="tituloModalEquipo">Nuevo Equipo</h3><button class="modal-close" onclick="cerrarModal('modalCrearEquipo')"><i data-lucide="x"></i></button></div><div class="modal-body"><div class="form-group"><label class="form-label">Nombre</label><input type="text" id="equipoNombre" class="form-input"></div><div class="form-group"><label class="form-label">Tipo</label><select id="equipoTipo" class="form-select"><option value="picking">Picking</option><option value="packing">Packing</option></select></div><div class="form-group"><label class="form-label">Integrantes (uno por línea)</label><textarea id="equipoIntegrantes" class="form-textarea" rows="5"></textarea></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="cerrarModal('modalCrearEquipo')">Cancelar</button><button class="btn btn-primary" onclick="guardarEquipo()">Guardar</button></div></div></div>
 
@@ -4780,7 +4802,218 @@
             const pack = packing.find(p => p.id === id);
             if (!pack) return;
 
-            if (!confirm(`¿Completar packing de PT${pack.parte}?\n\nEmpacados: ${pack.total_empacado || 0}\nReclasificados: ${pack.total_reclasificado || 0}`)) return;
+            // Detectar productos NO EMPACADOS (encontrados en picking pero no empacados)
+            const pickingRelacionado = picking.find(p => p.orden_id === pack.orden_id && p.parte === pack.parte);
+            const productosNoEmpacados = [];
+            
+            if (pickingRelacionado && pickingRelacionado.items) {
+                pickingRelacionado.items.forEach(itemPicking => {
+                    const cantidadEncontrada = itemPicking.cantidad_encontrada || 0;
+                    
+                    // Buscar cuánto se empacó de esta variante
+                    const itemEmpacado = (pack.items_empacados || []).find(e => e.variante === itemPicking.variante);
+                    const cantidadEmpacada = itemEmpacado ? itemEmpacado.cantidad : 0;
+                    
+                    // Si hay diferencia, se debe reclasificar
+                    const diferencia = cantidadEncontrada - cantidadEmpacada;
+                    
+                    if (diferencia > 0) {
+                        const prod = productos.find(p => p.variante === itemPicking.variante);
+                        productosNoEmpacados.push({
+                            variante: itemPicking.variante,
+                            descripcion: prod?.descripcion || 'Sin descripción',
+                            cantidad: diferencia,
+                            ubicacion: itemPicking.ubicacion || '',
+                            genero: prod?.genero || '',
+                            linea: prod?.linea || '',
+                            talla: prod?.talla || ''
+                        });
+                    }
+                });
+            }
+            
+            // Si hay productos no empacados, mostrar modal de reclasificación
+            if (productosNoEmpacados.length > 0) {
+                window.packingIdParaCompletar = id;
+                window.productosNoEmpacadosTemp = productosNoEmpacados;
+                mostrarModalReclasificacion(productosNoEmpacados);
+                return;
+            }
+
+            // Si no hay productos no empacados, completar normalmente
+            await confirmarCompletarPacking(id);
+        }
+        
+        function mostrarModalReclasificacion(productosNoEmpacados) {
+            let html = '';
+            
+            productosNoEmpacados.forEach((prod, index) => {
+                html += `
+                    <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;background:linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);border-left:4px solid var(--warning)">
+                        <div style="display:grid;grid-template-columns:auto 1fr;gap:1rem;margin-bottom:1rem">
+                            <div style="width:50px;height:50px;background:linear-gradient(135deg,var(--warning),var(--danger));border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;font-weight:600">
+                                ${prod.cantidad}
+                            </div>
+                            <div>
+                                <div style="font-weight:600;font-size:1.1rem;color:var(--text);margin-bottom:0.25rem">
+                                    ${prod.variante}
+                                </div>
+                                <div style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:0.25rem">
+                                    ${prod.descripcion}
+                                </div>
+                                <div style="display:flex;gap:0.75rem;font-size:0.85rem">
+                                    <span style="color:var(--text-secondary)">📍 ${prod.ubicacion}</span>
+                                    <span style="color:var(--text-secondary)">👤 ${prod.genero}</span>
+                                    <span style="color:var(--text-secondary)">📏 ${prod.talla}</span>
+                                    <span style="color:var(--text-secondary)">📂 ${prod.linea}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom:1rem">
+                            <label class="form-label" style="color:var(--danger);font-weight:600">
+                                ⚠️ Motivo de NO EMPACADO (obligatorio):
+                            </label>
+                            <select class="form-select" id="motivo_${index}" onchange="validarObservaciones(${index})">
+                                <option value="">Seleccionar motivo...</option>
+                                <option value="no_pertenece_genero">❌ No pertenece al género</option>
+                                <option value="no_pertenece_linea">❌ No pertenece a la línea</option>
+                                <option value="mal_estado">⚠️ Mal estado</option>
+                                <option value="no_pertenece_descripcion">❌ No pertenece a la descripción</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" style="color:var(--danger);font-weight:600">
+                                📝 Observaciones (obligatorio):
+                            </label>
+                            <textarea class="form-textarea" id="observaciones_${index}" rows="3" placeholder="Especifica el género correcto, línea correcta, descripción correcta, o detalla el mal estado..."></textarea>
+                            <small style="color:var(--text-secondary);font-size:0.85rem">
+                                💡 Ejemplo: "El género es MUJER, no HOMBRE" o "Tiene manchas en la parte frontal"
+                            </small>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('listaProductosNoEmpacados').innerHTML = html;
+            abrirModal('modalReclasificarNoEmpacados');
+            lucide.createIcons();
+        }
+        
+        function validarObservaciones(index) {
+            const motivo = document.getElementById(`motivo_${index}`).value;
+            const observaciones = document.getElementById(`observaciones_${index}`);
+            
+            if (motivo) {
+                observaciones.style.borderColor = 'var(--danger)';
+            }
+        }
+        
+        function cerrarModalReclasificacion() {
+            if (confirm('¿Seguro que deseas cancelar? Los productos no empacados NO se reclasificarán.')) {
+                cerrarModal('modalReclasificarNoEmpacados');
+                window.packingIdParaCompletar = null;
+                window.productosNoEmpacadosTemp = null;
+            }
+        }
+        
+        async function guardarReclasificacionYCompletar() {
+            const productosNoEmpacados = window.productosNoEmpacadosTemp;
+            if (!productosNoEmpacados) return;
+            
+            // Validar que todos tengan motivo y observaciones
+            const registrosReclasificacion = [];
+            let todosValidos = true;
+            
+            for (let i = 0; i < productosNoEmpacados.length; i++) {
+                const motivo = document.getElementById(`motivo_${i}`).value;
+                const observaciones = document.getElementById(`observaciones_${i}`).value.trim();
+                
+                if (!motivo) {
+                    toast(`⚠️ Falta seleccionar motivo para ${productosNoEmpacados[i].variante}`, 'error');
+                    todosValidos = false;
+                    break;
+                }
+                
+                if (!observaciones) {
+                    toast(`⚠️ Falta especificar observaciones para ${productosNoEmpacados[i].variante}`, 'error');
+                    todosValidos = false;
+                    break;
+                }
+                
+                registrosReclasificacion.push({
+                    variante: productosNoEmpacados[i].variante,
+                    descripcion: productosNoEmpacados[i].descripcion,
+                    cantidad: productosNoEmpacados[i].cantidad,
+                    ubicacion: productosNoEmpacados[i].ubicacion,
+                    motivo: motivo,
+                    observaciones: observaciones,
+                    genero_original: productosNoEmpacados[i].genero,
+                    linea_original: productosNoEmpacados[i].linea,
+                    talla_original: productosNoEmpacados[i].talla
+                });
+            }
+            
+            if (!todosValidos) return;
+            
+            // Guardar en tabla de reclasificación
+            const pack = packing.find(p => p.id === window.packingIdParaCompletar);
+            const orden = ordenes.find(o => o.id === pack.orden_id);
+            
+            mostrarLoading('Guardando reclasificación...');
+            
+            try {
+                // Insertar registros de reclasificación
+                for (const registro of registrosReclasificacion) {
+                    const reclasId = 'RECLAS-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 5).toUpperCase();
+                    
+                    const estadoInicial = registro.motivo === 'mal_estado' ? 'Pendiente Ubicación Picking' : 'Pendiente Corrección Producto';
+                    
+                    await supabase.from('reclasificacion').insert([{
+                        id: reclasId,
+                        orden_id: pack.orden_id,
+                        orden_nombre: orden?.nombre || '',
+                        parte: pack.parte,
+                        variante: registro.variante,
+                        descripcion: registro.descripcion,
+                        cantidad: registro.cantidad,
+                        ubicacion_origen: registro.ubicacion,
+                        ubicacion_destino: null,
+                        motivo: registro.motivo,
+                        observaciones: registro.observaciones,
+                        estado: estadoInicial,
+                        genero_original: registro.genero_original,
+                        linea_original: registro.linea_original,
+                        talla_original: registro.talla_original,
+                        genero_corregido: null,
+                        linea_corregida: null,
+                        talla_corregida: null,
+                        descripcion_corregida: null,
+                        variante_corregida: null,
+                        fecha: new Date().toISOString()
+                    }]);
+                }
+                
+                // Cerrar modal
+                cerrarModal('modalReclasificarNoEmpacados');
+                
+                // Ahora sí completar el packing
+                await confirmarCompletarPacking(window.packingIdParaCompletar);
+                
+                window.packingIdParaCompletar = null;
+                window.productosNoEmpacadosTemp = null;
+                
+            } catch (e) {
+                ocultarLoading();
+                toast('Error al guardar reclasificación: ' + e.message, 'error');
+                console.error(e);
+            }
+        }
+        
+        async function confirmarCompletarPacking(id) {
+            const pack = packing.find(p => p.id === id);
+            if (!pack) return;
 
             mostrarLoading('Completando packing...');
             try {
@@ -4860,7 +5093,7 @@
                 }
 
                 ocultarLoading();
-                toast('Packing completado', 'success');
+                toast('✅ Packing completado exitosamente', 'success');
                 await cargarDatos();
             } catch (e) {
                 ocultarLoading();
@@ -5035,7 +5268,7 @@
         function renderizarReclasificacion() {
             let filtradas = reclasificacion;
             if (tabReclasActual === 'pendientes') {
-                filtradas = reclasificacion.filter(r => r.estado === 'Pendiente');
+                filtradas = reclasificacion.filter(r => r.estado !== 'Completada');
             } else if (tabReclasActual === 'completadas') {
                 filtradas = reclasificacion.filter(r => r.estado === 'Completada');
             }
@@ -5043,19 +5276,49 @@
             document.getElementById('tablaReclasificacion').innerHTML = filtradas.length === 0
                 ? '<tr><td colspan="8" class="empty-state">No hay reclasificaciones</td></tr>'
                 : filtradas.map(r => {
-                    const prod = productos.find(p => p.variante === r.variante_original);
+                    // Determinar badge según motivo
+                    let badgeMotivo = '';
+                    switch(r.motivo) {
+                        case 'no_pertenece_genero':
+                            badgeMotivo = '<span class="badge badge-danger">❌ No pertenece al género</span>';
+                            break;
+                        case 'no_pertenece_linea':
+                            badgeMotivo = '<span class="badge badge-danger">❌ No pertenece a la línea</span>';
+                            break;
+                        case 'mal_estado':
+                            badgeMotivo = '<span class="badge badge-warning">⚠️ Mal estado</span>';
+                            break;
+                        case 'no_pertenece_descripcion':
+                            badgeMotivo = '<span class="badge badge-danger">❌ No pertenece a la descripción</span>';
+                            break;
+                        default:
+                            badgeMotivo = `<span class="badge badge-secondary">${r.motivo}</span>`;
+                    }
+                    
+                    // Determinar badge según estado
+                    let badgeEstado = '';
+                    let botonAccion = '';
+                    
+                    if (r.estado === 'Pendiente Corrección Producto') {
+                        badgeEstado = '<span class="badge badge-purple">🔄 Pendiente Producto</span>';
+                        botonAccion = `<button class="btn btn-primary btn-icon btn-sm" onclick="corregirProducto('${r.id}')" title='Corregir Información'><i data-lucide="edit" style="width:14px;height:14px"></i></button>`;
+                    } else if (r.estado === 'Pendiente Ubicación Picking') {
+                        badgeEstado = '<span class="badge badge-warning">📍 Pendiente Picking</span>';
+                        botonAccion = `<button class="btn btn-success btn-icon btn-sm" onclick="asignarUbicacion('${r.id}')" title='Asignar Ubicación'><i data-lucide="map-pin" style="width:14px;height:14px"></i></button>`;
+                    } else if (r.estado === 'Completada') {
+                        badgeEstado = '<span class="badge badge-success">✅ Completada</span>';
+                        botonAccion = `<span style="font-size:0.85rem;color:var(--text-secondary)">${r.ubicacion_destino || 'Procesada'}</span>`;
+                    }
+                    
                     return `<tr>
-                        <td>#${r.id}</td>
-                        <td>${r.orden_id || '-'}</td>
-                        <td><strong>${r.variante_original}</strong></td>
-                        <td class="td-wrap">${prod?.descripcion || r.info_variante?.descripcion || '-'}</td>
-                        <td>${r.cantidad}</td>
-                        <td><span class="badge badge-purple">${r.motivo}</span></td>
-                        <td>${getBadge(r.estado)}</td>
-                        <td>
-                            ${r.estado === 'Pendiente' ? `<button class="btn btn-success btn-icon btn-sm" onclick="abrirCompletarReclas(${r.id})" title='Completar'><i data-lucide="check" style="width:14px;height:14px"></i></button>` : ''}
-                            ${r.estado === 'Completada' ? `<span class="badge badge-info">${r.nueva_ubicacion || '-'}</span>` : ''}
-                        </td>
+                        <td><strong style="font-size:0.9rem">${r.orden_nombre || r.orden_id || '-'}</strong></td>
+                        <td><span class="badge badge-info">PT${r.parte}</span></td>
+                        <td><strong>${r.variante}</strong><br><small style="color:var(--text-secondary)">${r.descripcion || ''}</small></td>
+                        <td><strong style="color:var(--primary)">${r.cantidad}</strong></td>
+                        <td>${badgeMotivo}</td>
+                        <td class="td-wrap" style="max-width:250px;font-size:0.85rem">${r.observaciones || '-'}</td>
+                        <td>${badgeEstado}</td>
+                        <td>${botonAccion}</td>
                     </tr>`;
                 }).join('');
             lucide.createIcons();
@@ -5147,6 +5410,249 @@
             } catch (e) {
                 ocultarLoading();
                 toast('Error: ' + e.message, 'error');
+            }
+        }
+        
+        // NUEVAS FUNCIONES - FLUJO DE RECLASIFICACIÓN
+        // ============================================
+        
+        function corregirProducto(id) {
+            reclasActual = reclasificacion.find(r => r.id === id);
+            if (!reclasActual) return;
+            
+            document.getElementById('completarReclasContent').innerHTML = `
+                <div class="alert alert-info" style="margin-bottom:1.5rem">
+                    <i data-lucide="info"></i>
+                    <span><strong>Rol: PRODUCTO</strong> - Corrige la información incorrecta del producto</span>
+                </div>
+                
+                <div style="background:#f8fafc;padding:1rem;border-radius:8px;margin-bottom:1.5rem">
+                    <div style="font-weight:600;margin-bottom:0.5rem;color:var(--text-secondary)">📦 Información Original:</div>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;font-size:0.9rem">
+                        <div><strong>Variante:</strong> ${reclasActual.variante}</div>
+                        <div><strong>Cantidad:</strong> ${reclasActual.cantidad}</div>
+                        <div><strong>Género:</strong> ${reclasActual.genero_original || '-'}</div>
+                        <div><strong>Línea:</strong> ${reclasActual.linea_original || '-'}</div>
+                        <div><strong>Talla:</strong> ${reclasActual.talla_original || '-'}</div>
+                        <div><strong>Descripción:</strong> ${reclasActual.descripcion || '-'}</div>
+                    </div>
+                    <div style="margin-top:0.75rem;padding:0.75rem;background:var(--warning);color:white;border-radius:4px;font-size:0.9rem">
+                        <strong>Motivo:</strong> ${reclasActual.motivo}<br>
+                        <strong>Observaciones:</strong> ${reclasActual.observaciones}
+                    </div>
+                </div>
+                
+                <h4 style="margin-bottom:1rem;color:var(--primary)">✏️ Información Corregida:</h4>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Variante Correcta *</label>
+                        <input type="text" id="varianteCorregida" class="form-input" value="${reclasActual.variante}" placeholder="Ej: SKU-12345">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descripción Correcta *</label>
+                        <input type="text" id="descripcionCorregida" class="form-input" value="${reclasActual.descripcion || ''}" placeholder="Descripción del producto">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Género Correcto *</label>
+                        <select id="generoCorregido" class="form-select">
+                            <option value="">Seleccionar...</option>
+                            <option value="HOMBRE" ${reclasActual.genero_original === 'HOMBRE' ? 'selected' : ''}>HOMBRE</option>
+                            <option value="MUJER" ${reclasActual.genero_original === 'MUJER' ? 'selected' : ''}>MUJER</option>
+                            <option value="NIÑO" ${reclasActual.genero_original === 'NIÑO' ? 'selected' : ''}>NIÑO</option>
+                            <option value="NIÑA" ${reclasActual.genero_original === 'NIÑA' ? 'selected' : ''}>NIÑA</option>
+                            <option value="BEBE" ${reclasActual.genero_original === 'BEBE' ? 'selected' : ''}>BEBE</option>
+                            <option value="UNISEX" ${reclasActual.genero_original === 'UNISEX' ? 'selected' : ''}>UNISEX</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Línea Correcta *</label>
+                        <input type="text" id="lineaCorregida" class="form-input" value="${reclasActual.linea_original || ''}" placeholder="Ej: CASUAL, DEPORTIVO">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Talla Correcta</label>
+                    <input type="text" id="tallaCorregida" class="form-input" value="${reclasActual.talla_original || ''}" placeholder="Ej: M, 42, XL">
+                </div>
+            `;
+            
+            document.getElementById('tituloModalEquipo').textContent = '✏️ Corregir Información - PRODUCTO';
+            
+            // Reemplazar footer con nuevo botón
+            const modal = document.getElementById('modalCompletarReclas');
+            const footer = modal.querySelector('.modal-footer');
+            footer.innerHTML = `
+                <button class="btn btn-outline" onclick="cerrarModal('modalCompletarReclas')">Cancelar</button>
+                <button class="btn btn-primary" onclick="guardarCorreccionProducto()">✅ Guardar y Enviar a PICKING</button>
+            `;
+            
+            abrirModal('modalCompletarReclas');
+            lucide.createIcons();
+        }
+        
+        async function guardarCorreccionProducto() {
+            if (!reclasActual) return;
+            
+            const varianteCorregida = document.getElementById('varianteCorregida').value.trim();
+            const descripcionCorregida = document.getElementById('descripcionCorregida').value.trim();
+            const generoCorregido = document.getElementById('generoCorregido').value;
+            const lineaCorregida = document.getElementById('lineaCorregida').value.trim();
+            const tallaCorregida = document.getElementById('tallaCorregida').value.trim();
+            
+            if (!varianteCorregida || !descripcionCorregida || !generoCorregido || !lineaCorregida) {
+                toast('⚠️ Completa todos los campos obligatorios', 'error');
+                return;
+            }
+            
+            mostrarLoading('Guardando corrección...');
+            
+            try {
+                // Actualizar registro de reclasificación
+                await supabase.from('reclasificacion').update({
+                    variante_corregida: varianteCorregida,
+                    descripcion_corregida: descripcionCorregida,
+                    genero_corregido: generoCorregido,
+                    linea_corregida: lineaCorregida,
+                    talla_corregida: tallaCorregida,
+                    estado: 'Pendiente Ubicación Picking',
+                    fecha_correccion_producto: new Date().toISOString()
+                }).eq('id', reclasActual.id);
+                
+                ocultarLoading();
+                toast('✅ Información corregida. Ahora PICKING debe asignar ubicación', 'success');
+                cerrarModal('modalCompletarReclas');
+                await cargarDatos();
+                
+            } catch (e) {
+                ocultarLoading();
+                toast('Error: ' + e.message, 'error');
+                console.error(e);
+            }
+        }
+        
+        function asignarUbicacion(id) {
+            reclasActual = reclasificacion.find(r => r.id === id);
+            if (!reclasActual) return;
+            
+            // Determinar si viene de corrección o de mal estado
+            const vieneDeCorreccion = reclasActual.variante_corregida != null;
+            
+            document.getElementById('completarReclasContent').innerHTML = `
+                <div class="alert alert-success" style="margin-bottom:1.5rem">
+                    <i data-lucide="map-pin"></i>
+                    <span><strong>Rol: PICKING</strong> - Asigna la ubicación correcta para el producto</span>
+                </div>
+                
+                <div style="background:#f8fafc;padding:1rem;border-radius:8px;margin-bottom:1.5rem">
+                    <div style="font-weight:600;margin-bottom:0.5rem;color:var(--text-secondary)">
+                        📦 ${vieneDeCorreccion ? 'Información Corregida' : 'Información del Producto'}:
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;font-size:0.9rem">
+                        <div><strong>Variante:</strong> ${reclasActual.variante_corregida || reclasActual.variante}</div>
+                        <div><strong>Cantidad:</strong> ${reclasActual.cantidad}</div>
+                        <div><strong>Descripción:</strong> ${reclasActual.descripcion_corregida || reclasActual.descripcion || '-'}</div>
+                        <div><strong>Género:</strong> ${reclasActual.genero_corregido || reclasActual.genero_original || '-'}</div>
+                        <div><strong>Línea:</strong> ${reclasActual.linea_corregida || reclasActual.linea_original || '-'}</div>
+                        <div><strong>Talla:</strong> ${reclasActual.talla_corregida || reclasActual.talla_original || '-'}</div>
+                    </div>
+                    ${reclasActual.motivo === 'mal_estado' ? `
+                        <div style="margin-top:0.75rem;padding:0.75rem;background:var(--warning);color:white;border-radius:4px;font-size:0.9rem">
+                            <strong>⚠️ MAL ESTADO:</strong> ${reclasActual.observaciones}<br>
+                            <small>Asignar a zona de productos dañados o con defectos</small>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:600;color:var(--primary)">
+                        📍 Ubicación Destino en Inventario *
+                    </label>
+                    <input type="text" id="ubicacionDestino" class="form-input" placeholder="Ej: A001-01-03 o DAÑADOS-01">
+                    <small style="color:var(--text-secondary);font-size:0.85rem;display:block;margin-top:0.5rem">
+                        💡 ${reclasActual.motivo === 'mal_estado' ? 'Usa una ubicación específica para productos dañados' : 'Ubicación donde quedará almacenado el producto corregido'}
+                    </small>
+                </div>
+            `;
+            
+            // Reemplazar footer con nuevo botón
+            const modal = document.getElementById('modalCompletarReclas');
+            const footer = modal.querySelector('.modal-footer');
+            footer.innerHTML = `
+                <button class="btn btn-outline" onclick="cerrarModal('modalCompletarReclas')">Cancelar</button>
+                <button class="btn btn-success" onclick="guardarUbicacionYCompletarReclasificacion()">✅ Asignar y Regresar a Inventario</button>
+            `;
+            
+            abrirModal('modalCompletarReclas');
+            lucide.createIcons();
+        }
+        
+        async function guardarUbicacionYCompletarReclasificacion() {
+            if (!reclasActual) return;
+            
+            const ubicacionDestino = document.getElementById('ubicacionDestino').value.trim().toUpperCase();
+            
+            if (!ubicacionDestino) {
+                toast('⚠️ Ingresa la ubicación destino', 'error');
+                return;
+            }
+            
+            mostrarLoading('Completando reclasificación...');
+            
+            try {
+                // Usar variante corregida si existe, sino la original
+                const varianteFinal = reclasActual.variante_corregida || reclasActual.variante;
+                const descripcionFinal = reclasActual.descripcion_corregida || reclasActual.descripcion;
+                const generoFinal = reclasActual.genero_corregido || reclasActual.genero_original;
+                const lineaFinal = reclasActual.linea_corregida || reclasActual.linea_original;
+                const tallaFinal = reclasActual.talla_corregida || reclasActual.talla_original;
+                
+                // Verificar si ya existe en inventario
+                const invExiste = inventario.find(i => i.variante === varianteFinal && i.ubicacion === ubicacionDestino);
+                
+                if (invExiste) {
+                    // Actualizar stock existente
+                    await supabase.from('inventario').update({
+                        stock_fisico: (parseInt(invExiste.stock_fisico) || 0) + reclasActual.cantidad,
+                        descripcion: descripcionFinal,
+                        genero: generoFinal,
+                        linea: lineaFinal,
+                        talla: tallaFinal
+                    }).eq('variante', varianteFinal).eq('ubicacion', ubicacionDestino);
+                } else {
+                    // Crear nuevo registro en inventario
+                    await supabase.from('inventario').insert([{
+                        variante: varianteFinal,
+                        descripcion: descripcionFinal,
+                        ubicacion: ubicacionDestino,
+                        stock_fisico: reclasActual.cantidad,
+                        stock_bloqueado: 0,
+                        genero: generoFinal,
+                        linea: lineaFinal,
+                        talla: tallaFinal,
+                        punto_reorden: 0
+                    }]);
+                }
+                
+                // Actualizar registro de reclasificación como completado
+                await supabase.from('reclasificacion').update({
+                    ubicacion_destino: ubicacionDestino,
+                    estado: 'Completada',
+                    fecha_completado: new Date().toISOString()
+                }).eq('id', reclasActual.id);
+                
+                ocultarLoading();
+                toast('✅ Reclasificación completada. Producto regresó a inventario correctamente', 'success');
+                cerrarModal('modalCompletarReclas');
+                await cargarDatos();
+                
+            } catch (e) {
+                ocultarLoading();
+                toast('Error: ' + e.message, 'error');
+                console.error(e);
             }
         }
 
