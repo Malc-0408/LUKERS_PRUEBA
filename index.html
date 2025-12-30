@@ -1938,9 +1938,16 @@
             document.getElementById('headerTitle').textContent = titulos[nombre] || 'MAWI';
             document.getElementById('headerBreadcrumb').textContent = titulos[nombre] || 'MAWI';
             
+            // ⚡ CARGA BAJO DEMANDA
+            if (nombre === 'inventario' && !inventarioCargado) {
+                cargarInventarioSiNecesario();
+            } else if (nombre === 'productos' && !productosCargados) {
+                cargarProductosSiNecesario();
+            }
+            
             // Actualizar filtros específicos según la vista
             if (nombre === 'productos') {
-                actualizarFiltrosProductos();
+                if (productosCargados) actualizarFiltrosProductos();
             } else if (nombre === 'dashboard') {
                 inicializarFiltrosDashboard();
                 actualizarDashboard();
@@ -2259,59 +2266,84 @@
             return allData;
         }
 
+        // ============================================
+        // CARGA OPTIMIZADA - SOLO DATOS ESENCIALES
+        // ============================================
         async function cargarDatos() {
             mostrarLoading('Cargando datos...');
             try {
-                document.getElementById('loadingText').textContent = 'Cargando inventario...';
-                inventario = await cargarTodosLosRegistros('inventario', 'variante');
-                inventarioFiltrado = [...inventario];
-
-                document.getElementById('loadingText').textContent = 'Cargando productos...';
-                productos = await cargarTodosLosRegistros('productos_system', 'variante');
-                productosFiltrado = [...productos];
-
+                // 1️⃣ ÓRDENES (pocos registros, rápido)
                 document.getElementById('loadingText').textContent = 'Cargando órdenes...';
-                const { data: ordenesData } = await supabase.from('ordenes').select('*').order('fecha', { ascending: false });
+                const { data: ordenesData } = await supabase.from('ordenes').select('*').order('fecha', { ascending: false }).limit(500);
                 ordenes = ordenesData || [];
                 ordenesFiltradas = [...ordenes];
 
+                // 2️⃣ PICKING (pocos registros, rápido)
                 document.getElementById('loadingText').textContent = 'Cargando picking...';
-                const { data: pickingData } = await supabase.from('picking').select('*').order('id', { ascending: false });
+                const { data: pickingData } = await supabase.from('picking').select('*').order('id', { ascending: false }).limit(500);
                 picking = pickingData || [];
 
                 document.getElementById('loadingText').textContent = 'Cargando packing...';
-                const { data: packingData } = await supabase.from('packing').select('*').order('id', { ascending: false });
+                const { data: packingData } = await supabase.from('packing').select('*').order('id', { ascending: false }).limit(500);
                 packing = packingData || [];
 
+                // 3️⃣ RECLASIFICACIÓN (pocos registros, rápido)
                 document.getElementById('loadingText').textContent = 'Cargando reclasificación...';
-                const { data: reclasData } = await supabase.from('reclasificacion').select('*').order('fecha', { ascending: false });
+                const { data: reclasData } = await supabase.from('reclasificacion').select('*').order('fecha', { ascending: false }).limit(500);
                 reclasificacion = reclasData || [];
 
+                // 4️⃣ EQUIPOS (muy pocos registros)
                 document.getElementById('loadingText').textContent = 'Cargando equipos...';
                 const { data: equiposData } = await supabase.from('equipos').select('*').order('nombre');
                 equipos = equiposData || [];
                 
-                // Poblar selector de equipos en filtros de historial de órdenes
+                // Poblar selector de equipos
                 const filtroEquipoOrden = document.getElementById('filtroEquipoOrden');
                 if (filtroEquipoOrden) {
                     filtroEquipoOrden.innerHTML = '<option value="">Todos los equipos</option>' + 
                         equipos.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
                 }
 
+                // 5️⃣ CONFIGURACIONES (muy pocos registros)
                 document.getElementById('loadingText').textContent = 'Cargando configuraciones...';
                 const { data: configData } = await supabase.from('configuraciones').select('*');
                 configuraciones = configData || [];
-                
-                // Aplicar configuraciones cargadas
                 aplicarConfiguraciones();
 
-                actualizarFiltrosProductos();
-                renderizarTodo();
+                // 6️⃣ INVENTARIO Y PRODUCTOS - Cargar SOLO metadatos (counts)
+                document.getElementById('loadingText').textContent = 'Obteniendo estadísticas...';
+                
+                // Contar registros sin cargarlos
+                const { count: countInv } = await supabase.from('inventario').select('*', { count: 'exact', head: true });
+                const { count: countProd } = await supabase.from('productos_system').select('*', { count: 'exact', head: true });
+                
+                // Inicializar arrays vacíos - se cargarán bajo demanda
+                inventario = [];
+                productos = [];
+                inventarioFiltrado = [];
+                productosFiltrado = [];
+                
+                // Guardar counts para mostrar
+                window.totalInventario = countInv || 0;
+                window.totalProductos = countProd || 0;
+
+                // Renderizar solo lo necesario (NO inventario ni productos aún)
+                renderizarOrdenes();
+                renderizarPicking();
+                renderizarPacking();
+                renderizarReclasificacion();
+                renderizarEquipos();
+                actualizarBadges();
                 inicializarFiltrosDashboard();
                 actualizarDashboard();
                 
                 ocultarLoading();
-                toast(`Datos cargados correctamente`, 'success');
+                toast(`✅ Carga rápida completada`, 'success');
+                
+                // 7️⃣ CARGAR INVENTARIO Y PRODUCTOS EN BACKGROUND (opcional)
+                // Solo si el usuario va a esas secciones
+                console.log('💡 Inventario y Productos se cargarán cuando los necesites');
+                
             } catch (e) {
                 ocultarLoading();
                 toast('Error: ' + e.message, 'error');
@@ -2322,6 +2354,102 @@
         async function sincronizarDatos() {
             await cargarDatos();
         }
+
+        // ============================================
+        // CARGA BAJO DEMANDA - INVENTARIO Y PRODUCTOS
+        // ============================================
+        
+        let inventarioCargado = false;
+        let productosCargados = false;
+
+        async function cargarInventarioSiNecesario() {
+            if (inventarioCargado) return;
+            
+            mostrarLoading('Cargando inventario completo...');
+            try {
+                inventario = await cargarTodosLosRegistros('inventario', 'variante');
+                inventarioFiltrado = [...inventario];
+                inventarioCargado = true;
+                actualizarFiltrosInventario();
+                renderizarInventario();
+                ocultarLoading();
+                toast('Inventario cargado', 'success');
+            } catch (e) {
+                ocultarLoading();
+                toast('Error cargando inventario: ' + e.message, 'error');
+            }
+        }
+
+        async function cargarProductosSiNecesario() {
+            if (productosCargados) return;
+            
+            mostrarLoading('Cargando productos completos...');
+            try {
+                productos = await cargarTodosLosRegistros('productos_system', 'variante');
+                productosFiltrado = [...productos];
+                productosCargados = true;
+                actualizarFiltrosProductos();
+                renderizarProductos();
+                ocultarLoading();
+                toast('Productos cargados', 'success');
+            } catch (e) {
+                ocultarLoading();
+                toast('Error cargando productos: ' + e.message, 'error');
+            }
+        }
+
+        // ============================================
+        // BÚSQUEDA RÁPIDA EN SERVIDOR (SIN CARGAR TODO)
+        // ============================================
+        
+        async function buscarInventarioRapido(termino) {
+            if (!termino || termino.length < 2) {
+                inventarioFiltrado = inventarioCargado ? inventario : [];
+                renderizarInventario();
+                return;
+            }
+
+            mostrarLoading('Buscando...');
+            try {
+                const { data } = await supabase
+                    .from('inventario')
+                    .select('*')
+                    .or(`variante.ilike.%${termino}%,descripcion.ilike.%${termino}%,ubicacion.ilike.%${termino}%`)
+                    .limit(100);
+                
+                inventarioFiltrado = data || [];
+                renderizarInventario();
+                ocultarLoading();
+            } catch (e) {
+                ocultarLoading();
+                toast('Error en búsqueda', 'error');
+            }
+        }
+
+        async function buscarProductosRapido(termino) {
+            if (!termino || termino.length < 2) {
+                productosFiltrado = productosCargados ? productos : [];
+                renderizarProductos();
+                return;
+            }
+
+            mostrarLoading('Buscando...');
+            try {
+                const { data } = await supabase
+                    .from('productos_system')
+                    .select('*')
+                    .or(`variante.ilike.%${termino}%,descripcion.ilike.%${termino}%,codigo_comercial.ilike.%${termino}%`)
+                    .limit(100);
+                
+                productosFiltrado = data || [];
+                renderizarProductos();
+                ocultarLoading();
+            } catch (e) {
+                ocultarLoading();
+                toast('Error en búsqueda', 'error');
+            }
+        }
+
 
         // ============================================
         // SISTEMA DE NOTIFICACIONES Y SINCRONIZACIÓN
@@ -3000,6 +3128,14 @@
 
         function filtrarInventario() {
             const search = normalizarTexto(document.getElementById('searchInventario')?.value || '');
+            
+            // Si inventario NO está cargado, usar búsqueda en servidor
+            if (!inventarioCargado && search.length >= 2) {
+                buscarInventarioRapido(search);
+                return;
+            }
+            
+            // Si está cargado, filtrar localmente
             inventarioFiltrado = inventario.filter(i => 
                 normalizarTexto(i.variante).includes(search) || normalizarTexto(i.ubicacion).includes(search)
             );
@@ -3535,6 +3671,13 @@
         function filtrarProductos() {
             const search = normalizarTexto(document.getElementById('searchProductos')?.value || '');
             
+            // Si productos NO están cargados, usar búsqueda en servidor
+            if (!productosCargados && search.length >= 2) {
+                buscarProductosRapido(search);
+                return;
+            }
+            
+            // Si están cargados, filtrar localmente
             productosFiltrado = productos.filter(p => {
                 // Filtro de búsqueda por texto
                 const matchSearch = search === '' || 
