@@ -483,6 +483,18 @@
         
         .config-section{display:none}
         .config-section:first-of-type{display:block}
+        
+        /* Animación para notificaciones */
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -630,52 +642,91 @@
                 </div>
             </header>
 
+            <!-- 🔔 Notificación de Sincronización -->
+            <div id="notificacionSincronizar" style="display:none;position:fixed;bottom:2rem;right:2rem;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:1.25rem 1.5rem;border-radius:12px;box-shadow:0 8px 24px rgba(102,126,234,0.4);z-index:10000;min-width:350px;animation:slideInUp 0.3s ease">
+                <div style="display:flex;align-items:center;gap:1rem">
+                    <div style="flex-shrink:0;width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center">
+                        <i data-lucide="bell" style="width:24px;height:24px"></i>
+                    </div>
+                    <div style="flex:1">
+                        <div style="font-weight:700;font-size:1rem;margin-bottom:0.25rem">¡Hay cambios nuevos!</div>
+                        <div style="font-size:0.85rem;opacity:0.9">Los datos han sido actualizados</div>
+                    </div>
+                    <button onclick="cerrarNotificacionSincronizar()" style="background:none;border:none;color:white;cursor:pointer;padding:0.25rem">
+                        <i data-lucide="x" style="width:20px;height:20px"></i>
+                    </button>
+                </div>
+                <div style="display:flex;gap:0.75rem;margin-top:1rem">
+                    <button onclick="sincronizarSinPerder()" style="flex:1;background:white;color:#667eea;border:none;padding:0.6rem;border-radius:8px;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <i data-lucide="refresh-cw" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:0.5rem"></i>
+                        Sincronizar Ahora
+                    </button>
+                    <button onclick="cerrarNotificacionSincronizar()" style="flex:0.5;background:rgba(255,255,255,0.15);color:white;border:none;padding:0.6rem;border-radius:8px;font-weight:600;cursor:pointer">
+                        Después
+                    </button>
+                </div>
+            </div>
+
             <div class="content-area" id="contentArea">
                 <!-- VISTA DASHBOARD -->
                 <div id="vista-dashboard" class="vista active">
                     <!-- Filtros Mejorados -->
-                    <div class="filters-bar" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center">
-                        <div class="filter-group">
-                            <label class="filter-label">Período:</label>
-                            <select id="filtroPeriodo" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
-                                <option value="hoy">Hoy</option>
-                                <option value="semana">Esta Semana</option>
-                                <option value="mes" selected>Este Mes</option>
-                                <option value="año">Este Año</option>
-                                <option value="custom">Personalizado</option>
-                            </select>
+                    <div class="filters-bar" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:1rem 1.5rem;border-radius:12px;box-shadow:0 4px 12px rgba(102,126,234,0.3);margin-bottom:1.5rem">
+                        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center">
+                            <!-- Filtro Período -->
+                            <div style="flex:1;min-width:150px">
+                                <select id="filtroPeriodo" class="form-select form-input-sm" onchange="aplicarFiltrosDashboard()" style="border:none;background:rgba(255,255,255,0.95);font-weight:500;color:#1a202c;padding:0.6rem 0.8rem;border-radius:8px">
+                                    <option value="hoy">📅 Hoy</option>
+                                    <option value="semana">📅 Esta Semana</option>
+                                    <option value="mes" selected>📅 Este Mes</option>
+                                    <option value="año">📅 Este Año</option>
+                                    <option value="custom">📅 Personalizado</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Filtro Equipo -->
+                            <div style="flex:1;min-width:140px">
+                                <select id="filtroEquipo" class="form-select form-input-sm" onchange="aplicarFiltrosDashboard()" style="border:none;background:rgba(255,255,255,0.95);font-weight:500;color:#1a202c;padding:0.6rem 0.8rem;border-radius:8px">
+                                    <option value="">👥 Todos los equipos</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Filtro Género -->
+                            <div style="flex:1;min-width:130px">
+                                <select id="filtroGenero" class="form-select form-input-sm" onchange="aplicarFiltrosDashboard()" style="border:none;background:rgba(255,255,255,0.95);font-weight:500;color:#1a202c;padding:0.6rem 0.8rem;border-radius:8px">
+                                    <option value="">👤 Todos los géneros</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Filtro Línea -->
+                            <div style="flex:1;min-width:130px">
+                                <select id="filtroLinea" class="form-select form-input-sm" onchange="aplicarFiltrosDashboard()" style="border:none;background:rgba(255,255,255,0.95);font-weight:500;color:#1a202c;padding:0.6rem 0.8rem;border-radius:8px">
+                                    <option value="">📂 Todas las líneas</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Filtro Tienda -->
+                            <div style="flex:1;min-width:130px">
+                                <select id="filtroTienda" class="form-select form-input-sm" onchange="aplicarFiltrosDashboard()" style="border:none;background:rgba(255,255,255,0.95);font-weight:500;color:#1a202c;padding:0.6rem 0.8rem;border-radius:8px">
+                                    <option value="">🏪 Todas las tiendas</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Botón Limpiar -->
+                            <button class="btn btn-sm" onclick="limpiarFiltrosDashboard()" style="background:rgba(255,255,255,0.25);border:none;color:white;font-weight:600;padding:0.6rem 1rem;border-radius:8px;white-space:nowrap;backdrop-filter:blur(10px);transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.25)'">
+                                <i data-lucide="rotate-ccw" style="width:14px;height:14px"></i> Limpiar
+                            </button>
                         </div>
-                        <div class="filter-group">
-                            <label class="filter-label">Equipo:</label>
-                            <select id="filtroEquipo" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
-                                <option value="">Todos</option>
-                            </select>
+                        
+                        <!-- Filtro Custom (Fechas personalizadas) -->
+                        <div id="filtroCustom" style="display:none;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid rgba(255,255,255,0.2)">
+                            <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">
+                                <span style="font-size:0.85rem;font-weight:600;color:white">Rango:</span>
+                                <input type="date" id="filtroFechaDesde" class="form-input form-input-sm" onchange="aplicarFiltrosDashboard()" style="border:none;background:rgba(255,255,255,0.95);padding:0.5rem;border-radius:6px">
+                                <span style="color:white">—</span>
+                                <input type="date" id="filtroFechaHasta" class="form-input form-input-sm" onchange="aplicarFiltrosDashboard()" style="border:none;background:rgba(255,255,255,0.95);padding:0.5rem;border-radius:6px">
+                            </div>
                         </div>
-                        <div class="filter-group">
-                            <label class="filter-label">Género:</label>
-                            <select id="filtroGenero" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
-                                <option value="">Todos</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label">Línea:</label>
-                            <select id="filtroLinea" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
-                                <option value="">Todas</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label">Tienda:</label>
-                            <select id="filtroTienda" class="form-select form-input-sm" style="width:auto" onchange="aplicarFiltrosDashboard()">
-                                <option value="">Todas</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" id="filtroCustom" style="display:none">
-                            <input type="date" id="filtroFechaDesde" class="form-input form-input-sm" style="width:auto">
-                            <span style="color:var(--text-secondary)">a</span>
-                            <input type="date" id="filtroFechaHasta" class="form-input form-input-sm" style="width:auto">
-                            <button class="btn btn-sm btn-primary" onclick="aplicarFiltrosDashboard()">Aplicar</button>
-                        </div>
-                        <button class="btn btn-sm btn-outline" onclick="limpiarFiltrosDashboard()"><i data-lucide="x"></i> Limpiar</button>
                     </div>
 
                     <!-- Stats -->
@@ -934,9 +985,9 @@
                         </div>
                         
                         <!-- Tabs de Órdenes -->
-                        <div class="tabs" style="padding:0 1.5rem;border-bottom:1px solid var(--border)">
-                            <button class="tab active" onclick="cambiarTabOrden('activas')">📋 Órdenes Activas</button>
-                            <button class="tab" onclick="cambiarTabOrden('historial')">📚 Historial de Órdenes</button>
+                        <div class="tabs" id="tabsOrdenes">
+                            <div class="tab active" data-tab="activas" onclick="cambiarTabOrden('activas')">Activos</div>
+                            <div class="tab" data-tab="historial" onclick="cambiarTabOrden('historial')">Historial</div>
                         </div>
                         
                         <!-- Filtros para Activas -->
@@ -1631,6 +1682,30 @@
         let ordenActual = null, pickingActual = null, packingActual = null, reclasActual = null, equipoActual = null;
         let tabReclasActual = 'pendientes', tabEquiposActual = 'picking';
         
+        // ============================================
+        // FUNCIÓN SEGURA PARA RENDERIZAR ICONOS LUCIDE
+        // ============================================
+        function renderIcons() {
+            try {
+                if (typeof lucide !== 'undefined' && lucide && typeof lucide.createIcons === 'function') {
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                // Silenciar error si Lucide no está disponible aún
+                console.debug('Lucide icons not ready yet');
+            }
+        }
+        
+        // Intentar renderizar iconos cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(renderIcons, 100);
+            });
+        } else {
+            setTimeout(renderIcons, 100);
+        }
+
+        
         // Usuario actual (por defecto Jefe de Almacén - cambiar según login real)
         let usuarioActual = {
             id: 1,
@@ -1719,14 +1794,18 @@
         }
 
         function calcularCV(pvp, kardex) {
-            // CV = 1 / ((PVP / 1.18) / KARDEX)
+            // CV = 1 / ((PVP / 1.18) / KARDEX) * 100
             if (!pvp || !kardex || kardex === 0) return 0;
             
             const pvpSinIGV = pvp / 1.18;
             const ratio = pvpSinIGV / kardex;
-            const cv = 1 / ratio;
+            const cv = (1 / ratio) * 100;
             
             return parseFloat(cv.toFixed(2));
+        }
+        
+        function formatPorcentaje(num) {
+            return (parseFloat(num) || 0).toFixed(2) + '%';
         }
 
         function formatFecha(iso) {
@@ -1768,7 +1847,7 @@
             if (input.files && input.files[0]) {
                 infoDiv.querySelector('.file-selected-name').textContent = input.files[0].name;
                 infoDiv.classList.add('show');
-                lucide.createIcons();
+                renderIcons();
             }
         }
 
@@ -1820,7 +1899,7 @@
 
         function abrirModal(id) {
             document.getElementById(id).classList.add('active');
-            lucide.createIcons();
+            renderIcons();
         }
 
         function cerrarModal(id) {
@@ -1870,7 +1949,7 @@
                 cargarPackingsCompletados();
             }
             
-            lucide.createIcons();
+            renderIcons();
         }
 
         document.querySelectorAll('.nav-item').forEach(i => {
@@ -2243,6 +2322,128 @@
         async function sincronizarDatos() {
             await cargarDatos();
         }
+
+        // ============================================
+        // SISTEMA DE NOTIFICACIONES Y SINCRONIZACIÓN
+        // ============================================
+
+        let ultimaActualizacion = new Date();
+        let intervaloVerificacion = null;
+        let hayDatosNuevos = false;
+
+        // Iniciar verificación automática cada 30 segundos
+        function iniciarVerificacionAutomatica() {
+            if (intervaloVerificacion) {
+                clearInterval(intervaloVerificacion);
+            }
+            
+            intervaloVerificacion = setInterval(async () => {
+                await verificarCambios();
+            }, 30000); // 30 segundos
+        }
+
+        // Verificar si hay cambios en la base de datos
+        async function verificarCambios() {
+            try {
+                // Verificar ordenes
+                const { data: ordenesNuevas } = await supabase
+                    .from('ordenes')
+                    .select('id, fecha')
+                    .gt('fecha', ultimaActualizacion.toISOString())
+                    .limit(1);
+                
+                // Verificar picking
+                const { data: pickingNuevo } = await supabase
+                    .from('picking')
+                    .select('id, created_at')
+                    .gt('created_at', ultimaActualizacion.toISOString())
+                    .limit(1);
+                
+                // Verificar packing
+                const { data: packingNuevo } = await supabase
+                    .from('packing')
+                    .select('id, created_at')
+                    .gt('created_at', ultimaActualizacion.toISOString())
+                    .limit(1);
+                
+                // Si hay cambios, mostrar notificación
+                if ((ordenesNuevas && ordenesNuevas.length > 0) || 
+                    (pickingNuevo && pickingNuevo.length > 0) || 
+                    (packingNuevo && packingNuevo.length > 0)) {
+                    hayDatosNuevos = true;
+                    mostrarNotificacionSincronizacion();
+                }
+            } catch (e) {
+                console.error('Error verificando cambios:', e);
+            }
+        }
+
+        // Mostrar notificación de sincronización
+        function mostrarNotificacionSincronizacion() {
+            const notificacion = document.getElementById('notificacionSincronizar');
+            if (notificacion) {
+                notificacion.style.display = 'flex';
+                
+                // Renderizar iconos
+                setTimeout(renderIcons, 100);
+                
+                // Vibración si está soportada
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+            }
+        }
+
+        // Sincronizar sin perder trabajo actual
+        async function sincronizarSinPerder() {
+            if (!hayDatosNuevos) {
+                toast('No hay cambios nuevos', 'info');
+                return;
+            }
+            
+            // Guardar estado actual
+            const estadoActual = {
+                vistaActual: document.querySelector('.vista.active')?.id,
+                scrollPosition: window.scrollY,
+                modalesAbiertos: []
+            };
+            
+            // Identificar modales abiertos
+            document.querySelectorAll('.modal').forEach(modal => {
+                if (modal.style.display === 'flex') {
+                    estadoActual.modalesAbiertos.push(modal.id);
+                }
+            });
+            
+            // Recargar datos
+            await cargarDatos();
+            
+            // Restaurar estado
+            if (estadoActual.vistaActual) {
+                const vistaId = estadoActual.vistaActual.replace('vista-', '');
+                cambiarVista(vistaId);
+            }
+            
+            window.scrollTo(0, estadoActual.scrollPosition);
+            
+            // Ocultar notificación
+            const notificacion = document.getElementById('notificacionSincronizar');
+            if (notificacion) {
+                notificacion.style.display = 'none';
+            }
+            
+            hayDatosNuevos = false;
+            ultimaActualizacion = new Date();
+        }
+
+        // Cerrar notificación sin sincronizar
+        function cerrarNotificacionSincronizar() {
+            const notificacion = document.getElementById('notificacionSincronizar');
+            if (notificacion) {
+                notificacion.style.display = 'none';
+            }
+        }
+
 
         function renderizarTodo() {
             renderizarInventario();
@@ -2794,7 +2995,7 @@
             document.getElementById('totalPaginasInventario').textContent = totalPag;
             document.getElementById('prevInventario').disabled = paginaInv === 1;
             document.getElementById('nextInventario').disabled = paginaInv >= totalPag;
-            lucide.createIcons();
+            renderIcons();
         }
 
         function filtrarInventario() {
@@ -2975,7 +3176,7 @@
             }
             
             document.getElementById('infoTabContent').innerHTML = html;
-            lucide.createIcons();
+            renderIcons();
         }
 
         async function desbloquearItem(variante, ubicacion) {
@@ -3322,7 +3523,7 @@
                     <td>${p.talla || '-'}</td>
                     <td><strong style="color:var(--primary)">${formatMoney(p.kardex)}</strong></td>
                     <td><strong style="color:var(--success)">${formatMoney(p.pvp)}</strong></td>
-                    <td>${formatMoney(calcularCV(p.pvp, p.kardex))}</td>
+                    <td><strong style="color:var(--info)">${formatPorcentaje(calcularCV(p.pvp, p.kardex))}</strong></td>
                 </tr>`).join('');
 
             document.getElementById('paginaProductos').textContent = paginaProd;
@@ -3522,7 +3723,7 @@
                         </td>
                     </tr>`;
                 }).join('');
-            lucide.createIcons();
+            renderIcons();
         }
 
         function filtrarOrdenes() {
@@ -4019,7 +4220,7 @@
             }
 
             document.getElementById('historialContent').innerHTML = html;
-            lucide.createIcons();
+            renderIcons();
         }
 
         async function eliminarOrden(id) {
@@ -4105,7 +4306,7 @@
                         </td>
                     </tr>`;
                 }).join('');
-            lucide.createIcons();
+            renderIcons();
         }
 
         function calcularTiempoTrabajado(registro) {
@@ -4249,7 +4450,7 @@
             document.getElementById('pickingFooter').innerHTML = '<button class="btn btn-outline" onclick="cerrarModal(\'modalPicking\')">Cerrar</button>';
             document.getElementById('tituloModalPicking').textContent = 'Detalle de Picking';
             abrirModal('modalPicking');
-            lucide.createIcons();
+            renderIcons();
         }
 
         function exportarHistorialPicking() {
@@ -4280,7 +4481,15 @@
 
         function descargarHojaPicking(id) {
             const pick = picking.find(p => p.id === id);
-            if (!pick) return;
+            if (!pick) {
+                toast('Error: Picking no encontrado', 'error');
+                return;
+            }
+            
+            if (!pick.items_asignados || pick.items_asignados.length === 0) {
+                toast('Error: No hay items asignados para descargar', 'error');
+                return;
+            }
             
             const orden = ordenes.find(o => o.id === pick.orden_id);
 
@@ -4317,6 +4526,11 @@
                 };
             });
 
+            if (data.length === 0) {
+                toast('Error: No hay datos para descargar', 'error');
+                return;
+            }
+
             // Ordenar por ubicación
             data.sort((a, b) => (a['Ubicación'] || '').localeCompare(b['Ubicación'] || ''));
 
@@ -4347,8 +4561,15 @@
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'HojaPicking');
             const filename = `Picking_${orden?.nombre || pick.orden_id}_PT${pick.parte}.xlsx`;
-            XLSX.writeFile(wb, filename);
-            toast('Hoja descargada', 'success');
+            
+            try {
+                XLSX.writeFile(wb, filename);
+                console.log('✅ Archivo descargado:', filename);
+                toast('✅ Hoja descargada exitosamente', 'success');
+            } catch (e) {
+                console.error('❌ Error al descargar:', e);
+                toast('Error al descargar: ' + e.message, 'error');
+            }
         }
 
         function abrirSubirCantidadesPicking(id) {
@@ -4466,14 +4687,9 @@
         function cambiarTabOrden(tab) {
             tabOrdenActual = tab;
             
-            // Cambiar clases activas de los tabs
-            const tabs = document.querySelectorAll('#vista-ordenes .tabs .tab');
-            tabs.forEach((t, idx) => {
-                if ((tab === 'activas' && idx === 0) || (tab === 'historial' && idx === 1)) {
-                    t.classList.add('active');
-                } else {
-                    t.classList.remove('active');
-                }
+            // Cambiar clases activas de los tabs usando data-tab
+            document.querySelectorAll('#tabsOrdenes .tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tab);
             });
             
             // Mostrar/ocultar filtros según el tab
@@ -4571,7 +4787,7 @@
                         </td>
                     </tr>`;
                 }).join('');
-            lucide.createIcons();
+            renderIcons();
         }
         
         // 🔍 Función para filtrar historial de packing
@@ -4700,7 +4916,7 @@
             
             document.getElementById('tituloModalPacking').textContent = 'Subir Distribución';
             abrirModal('modalPacking');
-            lucide.createIcons();
+            renderIcons();
         }
 
 
@@ -4898,7 +5114,7 @@
             
             document.getElementById('listaProductosNoEmpacados').innerHTML = html;
             abrirModal('modalReclasificarNoEmpacados');
-            lucide.createIcons();
+            renderIcons();
         }
         
         function validarObservaciones(index) {
@@ -5159,7 +5375,15 @@
 
         function descargarHojaPacking(id) {
             const pack = packing.find(p => p.id === id);
-            if (!pack) return;
+            if (!pack) {
+                toast('Error: Packing no encontrado', 'error');
+                return;
+            }
+            
+            if (!pack.items_recibidos || pack.items_recibidos.length === 0) {
+                toast('Error: No hay items recibidos para descargar', 'error');
+                return;
+            }
             
             const orden = ordenes.find(o => o.id === pack.orden_id);
 
@@ -5222,6 +5446,11 @@
                 return row;
             });
 
+            if (data.length === 0) {
+                toast('Error: No hay datos para descargar', 'error');
+                return;
+            }
+
             const ws = XLSX.utils.json_to_sheet(data);
             
             // Ajustar anchos de columnas
@@ -5250,8 +5479,15 @@
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'HojaPacking');
             const filename = `Packing_${orden?.nombre || pack.orden_id}_PT${pack.parte}.xlsx`;
-            XLSX.writeFile(wb, filename);
-            toast('Hoja descargada', 'success');
+            
+            try {
+                XLSX.writeFile(wb, filename);
+                console.log('✅ Archivo descargado:', filename);
+                toast('✅ Hoja descargada exitosamente', 'success');
+            } catch (e) {
+                console.error('❌ Error al descargar:', e);
+                toast('Error al descargar: ' + e.message, 'error');
+            }
         }
 
         // ============================================
@@ -5321,7 +5557,7 @@
                         <td>${botonAccion}</td>
                     </tr>`;
                 }).join('');
-            lucide.createIcons();
+            renderIcons();
         }
 
         function exportarReclasificacionesPendientes() {
@@ -5491,7 +5727,7 @@
             `;
             
             abrirModal('modalCompletarReclas');
-            lucide.createIcons();
+            renderIcons();
         }
         
         async function guardarCorreccionProducto() {
@@ -5587,7 +5823,7 @@
             `;
             
             abrirModal('modalCompletarReclas');
-            lucide.createIcons();
+            renderIcons();
         }
         
         async function guardarUbicacionYCompletarReclasificacion() {
@@ -5682,7 +5918,7 @@
                         <button class="btn btn-danger btn-icon btn-sm" onclick="eliminarEquipo(${e.id})" title='Eliminar'><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
                     </td>
                 </tr>`).join('');
-            lucide.createIcons();
+            renderIcons();
         }
 
         function editarEquipo(id) {
@@ -5760,7 +5996,7 @@
                         <button class="chip-remove" onclick="eliminarTienda('${t}')"><i data-lucide="x" style="width:12px;height:12px"></i></button>
                     </div>
                 `).join('');
-                lucide.createIcons();
+                renderIcons();
             }
         }
 
@@ -6096,7 +6332,7 @@
             
             console.log('✅ Supabase disponible, continuando...');
             
-            lucide.createIcons();
+            renderIcons();
             await verificarSesion();
             document.getElementById('loginPassword')?.addEventListener('keypress', e => {
                 if (e.key === 'Enter') iniciarSesion();
@@ -7076,7 +7312,7 @@
             abrirModal('modalCubitoVisualizacion');
             
             // Reiniciar lucide icons
-            setTimeout(() => lucide.createIcons(), 100);
+            setTimeout(() => renderIcons(), 100);
         }
         
         // Función para filtrar datos en el modal con búsqueda
@@ -7240,7 +7476,13 @@
             if (!r040Input.value) r040Input.value = cubitoFormatDate(cubitoAddDaysToDate(hoy, 26), "YYYY-MM-DD");
         }
 
-        console.log('✅ MAWI v7.0 - Sistema Integrado Completo con funcionalidades principales');
+        console.log('✅ MAWI v7.3 - Sistema con notificaciones y optimización');
+        
+        // Iniciar sistema de verificación automática después de cargar datos
+        cargarDatos().then(() => {
+            iniciarVerificacionAutomatica();
+            console.log('🔔 Sistema de notificaciones activo (verifica cada 30s)');
+        });
     </script>
 </body>
 </html>
